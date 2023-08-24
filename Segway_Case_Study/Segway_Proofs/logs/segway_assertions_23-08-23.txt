@@ -1,0 +1,112 @@
+P_Segway :[deadlock free]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway ; RUN({r__}) :[deadlock free]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway :[deterministic]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway :[divergence free]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway_P2_Renamed :[deadlock free]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway_P2_Renamed ; RUN({r__}) :[deadlock free]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway_P2_Renamed :[deterministic]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway_P2_Renamed :[divergence free]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway_P3_Renamed :[deadlock free]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway_P3_Renamed ; RUN({r__}) :[deadlock free]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway_P3_Renamed :[deterministic]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway_P3_Renamed :[divergence free]:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway_P2_Renamed [T= P_Segway:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway [T= P_Segway_P2_Renamed:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway_P3_Renamed [T= P_Segway:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B
+P_Segway [T= P_Segway_P3_Renamed:
+    Log:
+        Result: Passed
+        Visited States: 199
+        Visited Transitions: 732
+        Visited Plys: 17
+        Estimated Total Storage: 0B

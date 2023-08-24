@@ -1,0 +1,64 @@
+
+--
+-- RoboChart generator version 3.0.0.202306261132
+-- Automatically generated on 22-08-2023 01:53:02
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "core_timed_defs.csp"
+include "core_defs.csp"
+include "state_timed_defs.csp"
+include "file_Segway_P3_defs.csp"
+include "Segway_P3_AnglePID_C.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+
+transparent wbisim
+channel r__
+-- generate Segway_P3_AnglePID_C
+P_Segway_P3_AnglePID_C = let
+	id__ = 0
+	
+	
+	
+	const_Segway_P3_AnglePID_C_stm_ref0_P = const_AnglePID_S_P
+	const_Segway_P3_AnglePID_C_stm_ref0_D = const_AnglePID_S_D
+		
+within
+	Segway_P3_AnglePID_C::O__(id__,
+			    const_Segway_P3_AnglePID_C_stm_ref0_P,
+			    const_Segway_P3_AnglePID_C_stm_ref0_D)
+
+assert P_Segway_P3_AnglePID_C :[deadlock-free]	
+assert P_Segway_P3_AnglePID_C;RUN({r__}) :[deadlock-free]
+assert P_Segway_P3_AnglePID_C :[deterministic]
+assert P_Segway_P3_AnglePID_C :[divergence-free]
+
+-- generate Segway_P3_AnglePID_C_stm_ref0
+P_Segway_P3_AnglePID_C_stm_ref0 = let
+	id__ = 0
+	
+	
+	
+within
+	Segway_P3_AnglePID_C::stm_ref0::O__(
+		id__,
+		const_AnglePID_S_P,
+		const_AnglePID_S_D
+	)
+assert P_Segway_P3_AnglePID_C_stm_ref0 :[deadlock-free]	
+assert P_Segway_P3_AnglePID_C_stm_ref0;RUN({r__}) :[deadlock-free]
+assert P_Segway_P3_AnglePID_C_stm_ref0 :[deterministic]
+assert P_Segway_P3_AnglePID_C_stm_ref0 :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_Segway_P3_AnglePID_C_stm_ref0[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_Segway_P3_AnglePID_C_stm_ref0
+-- timed deadlock free
+assert prioritise(P_Segway_P3_AnglePID_C[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_Segway_P3_AnglePID_C

@@ -1,0 +1,34 @@
+
+--
+-- RoboChart generator version 3.0.0.202306261132
+-- Automatically generated on 22-08-2023 01:53:01
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "file_RotationPID_S.csp"
+
+-- generate RotationPID_S
+P_RotationPID_S = let
+	id__ = 0
+	
+	
+	
+within
+	RotationPID_S::O__(
+		id__,
+		const_RotationPID_S_D
+	)
+assert P_RotationPID_S :[deadlock-free]	
+assert P_RotationPID_S;RUN({r__}) :[deadlock-free]
+assert P_RotationPID_S :[deterministic]
+assert P_RotationPID_S :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_RotationPID_S[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_RotationPID_S
+
+
+

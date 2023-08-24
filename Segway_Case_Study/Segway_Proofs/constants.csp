@@ -1,0 +1,24 @@
+--CONSTANTS --
+BalanceSTM_maxAngle = 1
+
+--Timed Constants
+BalanceSTM_loopTime = 0
+BalanceSTM_startupDelay = 0
+BalanceSTM_speedUpdate = 0
+BalanceSTM_rotationUpdate = 0
+BalanceSTM_angleBudget = 0
+BalanceSTM_speedBudget = 0
+BalanceSTM_rotationBudget = 0
+BalanceSTM_motorBudget = 0
+
+--SpeedPID constants:
+SpeedPID_P = 1
+SpeedPID_I = 1
+SpeedPID_maxIntegral = 1
+
+--RotationPID 
+RotationPID_D = 1
+
+--AnglePID
+AnglePID_P = 1
+AnglePID_D = 1

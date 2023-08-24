@@ -1,0 +1,35 @@
+
+--
+-- RoboChart generator version 3.0.0.202306261132
+-- Automatically generated on 22-08-2023 01:53:00
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "AnglePID.csp"
+include "core_defs.csp"
+include "state_defs.csp"
+include "file_AnglePID_defs.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+channel r__
+-- generate OP_AnglePID
+P_OP_AnglePID = let
+	id__ = 0
+	
+	param_newError = 0
+	param_diff = 0
+	
+	
+	
+within
+	OP_AnglePID::O__(id__,
+				param_newError,
+				param_diff,
+			    const_AnglePID_P,
+			    const_AnglePID_D)
+assert P_OP_AnglePID :[deadlock-free]	
+assert P_OP_AnglePID;RUN({r__}) :[deadlock-free]
+assert P_OP_AnglePID :[deterministic]
+assert P_OP_AnglePID :[divergence-free]

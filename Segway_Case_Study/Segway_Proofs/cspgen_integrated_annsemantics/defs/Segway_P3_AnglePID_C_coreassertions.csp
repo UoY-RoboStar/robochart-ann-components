@@ -1,0 +1,35 @@
+
+--
+-- RoboChart generator version 3.0.0.202306261132
+-- Automatically generated on 22-08-2023 01:53:02
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+-- MODIFIED TO only check the ANN. removed state machine. 
+
+include "core_defs.csp"
+include "state_defs.csp"
+include "file_Segway_P3_defs.csp"
+include "Segway_P3_AnglePID_C.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+channel r__
+-- generate Segway_P3_AnglePID_C
+P_Segway_P3_AnglePID_C = let
+	id__ = 0
+	
+	
+	
+	const_Segway_P3_AnglePID_C_stm_ref0_P = const_AnglePID_S_P
+	const_Segway_P3_AnglePID_C_stm_ref0_D = const_AnglePID_S_D
+		
+within
+	Segway_P3_AnglePID_C::O__(id__,
+			    const_Segway_P3_AnglePID_C_stm_ref0_P,
+			    const_Segway_P3_AnglePID_C_stm_ref0_D)
+
+
+assert P_Segway_P3_AnglePID_C :[deadlock-free]	
+assert P_Segway_P3_AnglePID_C;RUN({r__}) :[deadlock-free]
+assert P_Segway_P3_AnglePID_C :[deterministic]
+assert P_Segway_P3_AnglePID_C :[divergence-free]

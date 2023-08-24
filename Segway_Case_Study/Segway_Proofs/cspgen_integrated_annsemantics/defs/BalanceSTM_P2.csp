@@ -1,0 +1,2500 @@
+
+--
+-- RoboChart generator version 3.0.0.202306261132
+-- Automatically generated on 22-08-2023 01:53:00
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+module BalanceSTM_P2
+exports
+	transparent diamond
+	transparent sbisim
+	transparent dbisim
+	transparent chase
+
+	-- Transition identifiers
+	-- declaring identifiers of transitions
+	datatype NIDS = 
+	              NID_i0|
+	              NID_Initialisation|
+	              NID_WaitForNextIteration|
+	              NID_Setup|
+	              NID_ReceiveInput|
+	              NID_SendSpeed|
+	              NID_SendAngle|
+	              NID_SendRotation|
+	              NID_SetMotors|
+	              NID_StopMotors|
+	              NID_j2
+	
+	channel internal__ : NIDS
+	
+	-- Flow channels		
+	channel interrupt
+	channel exited
+	channel exit
+	channel terminate
+	
+	-- Variable channels
+	channel get_currAngle, set_currAngle, setL_currAngle, setR_currAngle: core_real
+	channel get_currGyroX, set_currGyroX, setL_currGyroX, setR_currGyroX: core_real
+	channel get_currGyroY, set_currGyroY, setL_currGyroY, setR_currGyroY: core_real
+	channel get_currGyroZ, set_currGyroZ, setL_currGyroZ, setR_currGyroZ: core_real
+	channel get_currLeftVel, set_currLeftVel, setL_currLeftVel, setR_currLeftVel: core_real
+	channel get_currRightVel, set_currRightVel, setL_currRightVel, setR_currRightVel: core_real
+	channel get_speedCount, set_speedCount, setL_speedCount, setR_speedCount: core_nat
+	channel get_rotationCount, set_rotationCount, setL_rotationCount, setR_rotationCount: core_nat
+	channel get_angleOutput, set_angleOutput, setL_angleOutput, setR_angleOutput: core_real
+	channel get_speedOutput, set_speedOutput, setL_speedOutput, setR_speedOutput: core_real
+	channel get_rotationOutput, set_rotationOutput, setL_rotationOutput, setR_rotationOutput: core_real
+	channel get_speedSent, set_speedSent, setL_speedSent, setR_speedSent: core_boolean
+	channel get_angleSent, set_angleSent, setL_angleSent, setR_angleSent: core_boolean
+	channel get_rotationSent, set_rotationSent, setL_rotationSent, setR_rotationSent: core_boolean
+	channel get_angleReceived, set_angleReceived, setL_angleReceived, setR_angleReceived: core_boolean
+	channel get_speedIntegral, set_speedIntegral, setL_speedIntegral, setR_speedIntegral: core_real
+	
+	-- Shared variable channels
+	
+	-- Local variable channels for defined operations that are required by the state machine
+	
+	-- Declaring state machine events
+	channel leftMotorVelocity__: NIDS.InOut.core_real
+	channel leftMotorVelocity: InOut.core_real
+	channel rightMotorVelocity__: NIDS.InOut.core_real
+	channel rightMotorVelocity: InOut.core_real
+	channel angle__: NIDS.InOut.core_real
+	channel angle: InOut.core_real
+	channel gyroX__: NIDS.InOut.core_real
+	channel gyroX: InOut.core_real
+	channel gyroY__: NIDS.InOut.core_real
+	channel gyroY: InOut.core_real
+	channel gyroZ__: NIDS.InOut.core_real
+	channel gyroZ: InOut.core_real
+	channel angleOutputE__: NIDS.InOut.core_real
+	channel angleOutputE: InOut.core_real
+	channel anewError__: NIDS.InOut.core_real
+	channel anewError: InOut.core_real
+	channel adiff__: NIDS.InOut.core_real
+	channel adiff: InOut.core_real
+	channel snewError__: NIDS.InOut.core_real
+	channel snewError: InOut.core_real
+	channel speedOutputE__: NIDS.InOut.core_real
+	channel speedOutputE: InOut.core_real
+	channel rdiff__: NIDS.InOut.core_real
+	channel rdiff: InOut.core_real
+	channel rotationOutputE__: NIDS.InOut.core_real
+	channel rotationOutputE: InOut.core_real
+	
+	-- Declaring call and ret events for undefined operations
+	channel setLeftMotorSpeedCall: core_real
+	channel enableInterruptsCall
+	channel setRightMotorSpeedCall: core_real
+	channel disableInterruptsCall
+	
+	enterSS = {|
+	i0::enter,
+	Initialisation::enter,
+	WaitForNextIteration::enter,
+	Setup::enter,
+	ReceiveInput::enter,
+	SendSpeed::enter,
+	SendAngle::enter,
+	SendRotation::enter,
+	SetMotors::enter,
+	StopMotors::enter,
+	j2::enter
+	|}
+	
+	enteredSS = 	{|
+	Initialisation::entered,
+	WaitForNextIteration::entered,
+	Setup::entered,
+	ReceiveInput::entered,
+	SendSpeed::entered,
+	SendAngle::entered,
+	SendRotation::entered,
+	SetMotors::entered,
+	StopMotors::entered
+	|}
+	
+	internal_events = union(enteredSS,union(enterSS,{|interrupt,exited|}))
+	
+	shared_variable_events = {|
+	|}
+	
+	-- channel set with all visible events
+	sem__events = {|
+		terminate
+	,	leftMotorVelocity,
+		rightMotorVelocity,
+		angle,
+		gyroX,
+		gyroY,
+		gyroZ,
+		angleOutputE,
+		anewError,
+		adiff,
+		snewError,
+		speedOutputE,
+		rdiff,
+		rotationOutputE
+	,	setLeftMotorSpeedCall,
+		enableInterruptsCall,
+		setRightMotorSpeedCall,
+		disableInterruptsCall
+		|}
+
+	-- Nodes --
+	-- declaring all nodes
+	
+	----------------------------------------------------------------------
+	-- Initial: i0
+	module i0
+	exports
+	
+		channel enter, interrupt
+		
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+			dbisim(let
+				Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+				
+				Termination = terminate -> SKIP
+				
+				Active 		= share__choice(interrupt -> SKIP) ; Inactive
+			within
+				Inactive [| {terminate} |> SKIP)
+		
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget)
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	
+	----------------------------------------------------------------------
+	-- State: Initialisation
+	module Initialisation
+	
+	enterSS = {}
+	
+	enteredSS = {}
+	
+	exports
+	
+		--  Declarations
+		
+		channel enter, entered, interrupt
+		channel enteredL, enteredR
+		
+						
+		
+		--	Nodes
+		-- declaring all nodes
+		
+		
+		--	Rule: behaviours(Node)
+		--  Note that FDR has problems with efficiently compiling the process below
+		-- 	if using a different recursion pattern.
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			-- IMPLEMENTATION NOTE: 
+			-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+			-- however FDR struggles with that form in certain cases. So we use the exception operator
+			-- instead to 'terminate'.
+			
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= share__choice(true & (share__choice(set_speedCount!0 -> SKIP)));share__choice(true & (share__choice(set_rotationCount!0 -> SKIP)));SKIP;SKIP;share__choice(true & (share__choice(set_speedSent!false -> SKIP)));share__choice(true & (share__choice(set_angleSent!false -> SKIP)));share__choice(true & (share__choice(set_rotationSent!false -> SKIP))) ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+			
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= share__choice(true & (share__choice(set_speedCount!0 -> SKIP)));share__choice(true & (share__choice(set_rotationCount!0 -> SKIP)));SKIP;SKIP;share__choice(true & (share__choice(set_speedSent!false -> SKIP)));share__choice(true & (share__choice(set_angleSent!false -> SKIP)));share__choice(true & (share__choice(set_rotationSent!false -> SKIP))) ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+		
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	
+	----------------------------------------------------------------------
+	-- State: WaitForNextIteration
+	module WaitForNextIteration
+	
+	enterSS = {}
+	
+	enteredSS = {}
+	
+	exports
+	
+		--  Declarations
+		
+		channel enter, entered, interrupt
+		channel enteredL, enteredR
+		
+						
+		
+		--	Nodes
+		-- declaring all nodes
+		
+		
+		--	Rule: behaviours(Node)
+		--  Note that FDR has problems with efficiently compiling the process below
+		-- 	if using a different recursion pattern.
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			-- IMPLEMENTATION NOTE: 
+			-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+			-- however FDR struggles with that form in certain cases. So we use the exception operator
+			-- instead to 'terminate'.
+			
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+			
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+		
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	
+	----------------------------------------------------------------------
+	-- State: Setup
+	module Setup
+	
+	enterSS = {}
+	
+	enteredSS = {}
+	
+	exports
+	
+		--  Declarations
+		
+		channel enter, entered, interrupt
+		channel enteredL, enteredR
+		
+						
+		
+		--	Nodes
+		-- declaring all nodes
+		
+		
+		--	Rule: behaviours(Node)
+		--  Note that FDR has problems with efficiently compiling the process below
+		-- 	if using a different recursion pattern.
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			-- IMPLEMENTATION NOTE: 
+			-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+			-- however FDR struggles with that form in certain cases. So we use the exception operator
+			-- instead to 'terminate'.
+			
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= true&CALL__enableInterrupts(
+						id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget
+					);share__choice(share__choice(get_rotationCount?rotationCount -> true & (share__choice(set_rotationCount!Plus(rotationCount, 1, core_nat) -> SKIP))));share__choice(share__choice(get_speedCount?speedCount -> true & (share__choice(set_speedCount!Plus(speedCount, 1, core_nat) -> SKIP))));share__choice(true & (share__choice(set_angleReceived!false -> SKIP))) ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+			
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= true&CALL__enableInterrupts(
+						id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget
+					);share__choice(share__choice(get_rotationCount?rotationCount -> true & (share__choice(set_rotationCount!Plus(rotationCount, 1, core_nat) -> SKIP))));share__choice(share__choice(get_speedCount?speedCount -> true & (share__choice(set_speedCount!Plus(speedCount, 1, core_nat) -> SKIP))));share__choice(true & (share__choice(set_angleReceived!false -> SKIP))) ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+		
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	
+	----------------------------------------------------------------------
+	-- State: ReceiveInput
+	module ReceiveInput
+	
+	enterSS = {}
+	
+	enteredSS = {}
+	
+	exports
+	
+		--  Declarations
+		
+		channel enter, entered, interrupt
+		channel enteredL, enteredR
+		
+						
+		
+		--	Nodes
+		-- declaring all nodes
+		
+		
+		--	Rule: behaviours(Node)
+		--  Note that FDR has problems with efficiently compiling the process below
+		-- 	if using a different recursion pattern.
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			-- IMPLEMENTATION NOTE: 
+			-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+			-- however FDR struggles with that form in certain cases. So we use the exception operator
+			-- instead to 'terminate'.
+			
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+			
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+		
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	
+	----------------------------------------------------------------------
+	-- State: SendSpeed
+	module SendSpeed
+	
+	enterSS = {}
+	
+	enteredSS = {}
+	
+	exports
+	
+		--  Declarations
+		
+		channel enter, entered, interrupt
+		channel enteredL, enteredR
+		
+						
+		
+		--	Nodes
+		-- declaring all nodes
+		
+		
+		--	Rule: behaviours(Node)
+		--  Note that FDR has problems with efficiently compiling the process below
+		-- 	if using a different recursion pattern.
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			-- IMPLEMENTATION NOTE: 
+			-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+			-- however FDR struggles with that form in certain cases. So we use the exception operator
+			-- instead to 'terminate'.
+			
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= true&(share__choice(leftMotorVelocity.in?currLeftVel -> (SStop /\ set_currLeftVel!currLeftVel -> SKIP)));true&(share__choice(rightMotorVelocity.in?currRightVel -> (SStop /\ set_currRightVel!currRightVel -> SKIP)));share__choice(get_currRightVel?currRightVel -> share__choice(get_currLeftVel?currLeftVel -> true&(share__choice(snewError.out!(Plus(currLeftVel, currRightVel, core_real)) -> SKIP))));share__choice(true & (share__choice(set_speedCount!0 -> SKIP)));SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+			
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= true&(share__choice(leftMotorVelocity.in?currLeftVel -> (SStop /\ set_currLeftVel!currLeftVel -> SKIP)));true&(share__choice(rightMotorVelocity.in?currRightVel -> (SStop /\ set_currRightVel!currRightVel -> SKIP)));share__choice(get_currRightVel?currRightVel -> share__choice(get_currLeftVel?currLeftVel -> true&(share__choice(snewError.out!(Plus(currLeftVel, currRightVel, core_real)) -> SKIP))));share__choice(true & (share__choice(set_speedCount!0 -> SKIP)));SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+		
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	
+	----------------------------------------------------------------------
+	-- State: SendAngle
+	module SendAngle
+	
+	enterSS = {}
+	
+	enteredSS = {}
+	
+	exports
+	
+		--  Declarations
+		
+		channel enter, entered, interrupt
+		channel enteredL, enteredR
+		
+						
+		
+		--	Nodes
+		-- declaring all nodes
+		
+		
+		--	Rule: behaviours(Node)
+		--  Note that FDR has problems with efficiently compiling the process below
+		-- 	if using a different recursion pattern.
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			-- IMPLEMENTATION NOTE: 
+			-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+			-- however FDR struggles with that form in certain cases. So we use the exception operator
+			-- instead to 'terminate'.
+			
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= true&(share__choice(angle.in?currAngle -> (SStop /\ set_currAngle!currAngle -> SKIP)));true&(share__choice(gyroX.in?currGyroX -> (SStop /\ set_currGyroX!currGyroX -> SKIP)));share__choice(get_currAngle?currAngle -> true&(share__choice(anewError.out!currAngle -> SKIP)));share__choice(get_currGyroX?currGyroX -> true&(share__choice(adiff.out!currGyroX -> SKIP)));SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+			
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= true&(share__choice(angle.in?currAngle -> (SStop /\ set_currAngle!currAngle -> SKIP)));true&(share__choice(gyroX.in?currGyroX -> (SStop /\ set_currGyroX!currGyroX -> SKIP)));share__choice(get_currAngle?currAngle -> true&(share__choice(anewError.out!currAngle -> SKIP)));share__choice(get_currGyroX?currGyroX -> true&(share__choice(adiff.out!currGyroX -> SKIP)));SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+		
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	
+	----------------------------------------------------------------------
+	-- State: SendRotation
+	module SendRotation
+	
+	enterSS = {}
+	
+	enteredSS = {}
+	
+	exports
+	
+		--  Declarations
+		
+		channel enter, entered, interrupt
+		channel enteredL, enteredR
+		
+						
+		
+		--	Nodes
+		-- declaring all nodes
+		
+		
+		--	Rule: behaviours(Node)
+		--  Note that FDR has problems with efficiently compiling the process below
+		-- 	if using a different recursion pattern.
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			-- IMPLEMENTATION NOTE: 
+			-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+			-- however FDR struggles with that form in certain cases. So we use the exception operator
+			-- instead to 'terminate'.
+			
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= true&(share__choice(gyroZ.in?currGyroZ -> (SStop /\ set_currGyroZ!currGyroZ -> SKIP)));share__choice(get_currGyroZ?currGyroZ -> true&(share__choice(rdiff.out!currGyroZ -> SKIP)));share__choice(true & (share__choice(set_rotationCount!0 -> SKIP)));SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+			
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= true&(share__choice(gyroZ.in?currGyroZ -> (SStop /\ set_currGyroZ!currGyroZ -> SKIP)));share__choice(get_currGyroZ?currGyroZ -> true&(share__choice(rdiff.out!currGyroZ -> SKIP)));share__choice(true & (share__choice(set_rotationCount!0 -> SKIP)));SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+		
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	
+	----------------------------------------------------------------------
+	-- State: SetMotors
+	module SetMotors
+	
+	enterSS = {}
+	
+	enteredSS = {}
+	
+	exports
+	
+		--  Declarations
+		
+		channel enter, entered, interrupt
+		channel enteredL, enteredR
+		
+						
+		
+		--	Nodes
+		-- declaring all nodes
+		
+		
+		--	Rule: behaviours(Node)
+		--  Note that FDR has problems with efficiently compiling the process below
+		-- 	if using a different recursion pattern.
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			-- IMPLEMENTATION NOTE: 
+			-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+			-- however FDR struggles with that form in certain cases. So we use the exception operator
+			-- instead to 'terminate'.
+			
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= share__choice(get_rotationOutput?rotationOutput -> share__choice(get_speedOutput?speedOutput -> share__choice(get_angleOutput?angleOutput -> true&CALL__setLeftMotorSpeed(
+						id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget,
+						Minus(Plus(angleOutput, speedOutput, core_real), rotationOutput, core_real)
+					))));share__choice(get_rotationOutput?rotationOutput -> share__choice(get_speedOutput?speedOutput -> share__choice(get_angleOutput?angleOutput -> true&CALL__setRightMotorSpeed(
+						id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget,
+						Plus(Plus(angleOutput, speedOutput, core_real), rotationOutput, core_real)
+					))));SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+			
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= share__choice(get_rotationOutput?rotationOutput -> share__choice(get_speedOutput?speedOutput -> share__choice(get_angleOutput?angleOutput -> true&CALL__setLeftMotorSpeed(
+						id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget,
+						Minus(Plus(angleOutput, speedOutput, core_real), rotationOutput, core_real)
+					))));share__choice(get_rotationOutput?rotationOutput -> share__choice(get_speedOutput?speedOutput -> share__choice(get_angleOutput?angleOutput -> true&CALL__setRightMotorSpeed(
+						id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget,
+						Plus(Plus(angleOutput, speedOutput, core_real), rotationOutput, core_real)
+					))));SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+		
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	
+	----------------------------------------------------------------------
+	-- State: StopMotors
+	module StopMotors
+	
+	enterSS = {}
+	
+	enteredSS = {}
+	
+	exports
+	
+		--  Declarations
+		
+		channel enter, entered, interrupt
+		channel enteredL, enteredR
+		
+						
+		
+		--	Nodes
+		-- declaring all nodes
+		
+		
+		--	Rule: behaviours(Node)
+		--  Note that FDR has problems with efficiently compiling the process below
+		-- 	if using a different recursion pattern.
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			-- IMPLEMENTATION NOTE: 
+			-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+			-- however FDR struggles with that form in certain cases. So we use the exception operator
+			-- instead to 'terminate'.
+			
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= true&CALL__setLeftMotorSpeed(
+						id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget,
+						0
+					);true&CALL__setRightMotorSpeed(
+						id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget,
+						0
+					);SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+			
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim(let
+			Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+			
+			Termination = terminate -> SKIP
+			
+			Active 		= true&CALL__setLeftMotorSpeed(
+						id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget,
+						0
+					);true&CALL__setRightMotorSpeed(
+						id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget,
+						0
+					);SKIP ; 
+					 	  Behaviour ; 
+					 	  share__choice(exit -> SKIP) ; SKIP ; 
+					 	  share__choice(exited -> SKIP) ; Inactive
+		
+			Behaviour 	= entered -> During
+			During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+		within
+			Inactive [| {terminate} |> SKIP)
+		
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	
+	----------------------------------------------------------------------
+	-- Junction: j2
+	module j2
+	exports
+	
+		channel enter, interrupt
+		
+		D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = 
+			dbisim(let
+				Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+				
+				Active 		= share__choice(interrupt -> SKIP) ; Inactive
+			within
+				Inactive [| {terminate} |> SKIP)
+			
+		VS_O__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget) = D__(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget)
+	
+	endmodule
+	----------------------------------------------------------------------
+	
+	-- END of Nodes --
+	
+	-- Operation calls --
+	-- Only the undefined operations are declared here.
+	-- If the state machine is in isolation, all required operations will be undefined.
+	-- If it is in the context of a controller, the required operations not provided by the
+	-- controller will be declared here, and the defined operations will be defined in the
+	-- context of the Controller module, and therefore within scope of the state machine module.
+	CALL__setLeftMotorSpeed(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget,
+				param_speed) 	= setLeftMotorSpeedCall.param_speed -> SKIP
+	CALL__enableInterrupts(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) 	= enableInterruptsCall -> SKIP
+	CALL__setRightMotorSpeed(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget,
+				param_speed) 	= setRightMotorSpeedCall.param_speed -> SKIP
+	CALL__disableInterrupts(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) 	= disableInterruptsCall -> SKIP
+	
+	-- END of Operation calls --
+	
+	-- STM processes
+	STM(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+	( 
+		(
+			(
+				(IteratedStateful(id__,
+						    const_BalanceSTM_P2_maxAngle,
+						    const_BalanceSTM_P2_loopTime,
+						    const_BalanceSTM_P2_startupDelay,
+						    const_BalanceSTM_P2_speedUpdate,
+						    const_BalanceSTM_P2_rotationUpdate,
+						    const_BalanceSTM_P2_motorBudget,
+						    const_BalanceSTM_P2_angleBudget,
+						    const_BalanceSTM_P2_speedBudget,
+						    const_BalanceSTM_P2_rotationBudget) \ {terminate} ; share__choice(terminate -> SKIP))
+			 	[[ share__ <- x__ | x__ <- {||} ]]
+			)
+		[| {share__} |]
+		SKIP
+		)
+		[| union(sharedVarSync,{terminate}) |]
+		dbisim(sharedVarMemory(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget))
+	)\sharedVarHide
+	
+	STM_VS_O(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+	( 
+		(
+			(
+				(IteratedStateful_VS_O(id__,
+						    const_BalanceSTM_P2_maxAngle,
+						    const_BalanceSTM_P2_loopTime,
+						    const_BalanceSTM_P2_startupDelay,
+						    const_BalanceSTM_P2_speedUpdate,
+						    const_BalanceSTM_P2_rotationUpdate,
+						    const_BalanceSTM_P2_motorBudget,
+						    const_BalanceSTM_P2_angleBudget,
+						    const_BalanceSTM_P2_speedBudget,
+						    const_BalanceSTM_P2_rotationBudget) \ {terminate} ; share__choice(terminate -> SKIP))
+			 	[[ share__ <- x__ | x__ <- {||} ]]
+			)
+		[| {share__} |]
+		SKIP
+		)
+		[| union(sharedVarSync,{terminate}) |]
+		dbisim(sharedVarMemory(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget))
+	)\sharedVarHide
+	
+	-- Transitions
+	Transitions(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = ((let
+		Trans = share__choice(get_angleReceived?angleReceived -> get_rotationCount?rotationCount -> get_speedCount?speedCount -> get_speedSent?speedSent -> get_currAngle?currAngle -> get_rotationSent?rotationSent -> get_angleSent?angleSent -> (
+			((share__ -> SKIP
+			 [] dbisim((((((((angleReceived==true)) and ((speedSent==false))) and ((rotationSent==false))) and ((((speedCount==0)) or ((speedCount<const_BalanceSTM_P2_speedUpdate))))) and ((((rotationCount==0)) or ((rotationCount<const_BalanceSTM_P2_rotationUpdate))))))&(internal__!NID_ReceiveInput -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; j2::enter -> SKIP)))
+			 	 [] dbisim((angleOutputE__!NID_ReceiveInput.in?angleOutput:{angleOutput|angleOutput <- core_real, (((angleSent==true) and (angleReceived==false)))} -> share__choice(set_angleOutput!angleOutput -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(true & (share__choice(set_angleSent!false -> SKIP)));share__choice(true & (share__choice(set_angleReceived!true -> SKIP))) ; ReceiveInput::enter -> SKIP)))
+			 	 [] dbisim(((((angleSent==false) and ((angleReceived==false)))))&(internal__!NID_ReceiveInput -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; SendAngle::enter -> SKIP)))
+			 	 [] dbisim((true)&(internal__!NID_SendAngle -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(true & (share__choice(set_angleSent!true -> SKIP))) ; ReceiveInput::enter -> SKIP)))
+			 	 [] dbisim((speedOutputE__!NID_ReceiveInput.in?speedOutput:{speedOutput|speedOutput <- core_real, (speedSent==true)} -> share__choice(set_speedOutput!speedOutput -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(true & (share__choice(set_speedSent!false -> SKIP))) ; ReceiveInput::enter -> SKIP)))
+			 	 [] dbisim((((((speedSent==false) and (((speedCount>=const_BalanceSTM_P2_speedUpdate) and (speedCount>0))))) and (angleReceived==true)))&(internal__!NID_ReceiveInput -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; SendSpeed::enter -> SKIP)))
+			 	 [] dbisim((true)&(internal__!NID_SendSpeed -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(true & (share__choice(set_speedSent!true -> SKIP))) ; ReceiveInput::enter -> SKIP)))
+			 	 [] dbisim((rotationOutputE__!NID_ReceiveInput.in?rotationOutput:{rotationOutput|rotationOutput <- core_real, (rotationSent==true)} -> share__choice(set_rotationOutput!rotationOutput -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(true & (share__choice(set_rotationSent!false -> SKIP))) ; ReceiveInput::enter -> SKIP)))
+			 	 [] dbisim(((((((rotationSent==false) and (((rotationCount>=const_BalanceSTM_P2_rotationUpdate) and (rotationCount>0))))) and (angleReceived==true)) and ((((speedCount==0)) or ((speedCount<const_BalanceSTM_P2_speedUpdate))))))&(internal__!NID_ReceiveInput -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; SendRotation::enter -> SKIP)))
+			 	 [] dbisim((true)&(internal__!NID_SendRotation -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(true & (share__choice(set_rotationSent!true -> SKIP))) ; ReceiveInput::enter -> SKIP)))
+			 	 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((SKIP ; Initialisation::enter -> SKIP))))
+			 	 [] dbisim((true)&(internal__!NID_Initialisation -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; WaitForNextIteration::enter -> SKIP)))
+			 	 [] dbisim((true)&(internal__!NID_WaitForNextIteration -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; true&CALL__disableInterrupts(
+			 			id__,
+			 		    const_BalanceSTM_P2_maxAngle,
+			 		    const_BalanceSTM_P2_loopTime,
+			 		    const_BalanceSTM_P2_startupDelay,
+			 		    const_BalanceSTM_P2_speedUpdate,
+			 		    const_BalanceSTM_P2_rotationUpdate,
+			 		    const_BalanceSTM_P2_motorBudget,
+			 		    const_BalanceSTM_P2_angleBudget,
+			 		    const_BalanceSTM_P2_speedBudget,
+			 		    const_BalanceSTM_P2_rotationBudget
+			 		) ; Setup::enter -> SKIP)))
+			 	 [] dbisim((true)&(internal__!NID_Setup -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; ReceiveInput::enter -> SKIP)))
+			 	 [] dbisim((((currAngle<=const_BalanceSTM_P2_maxAngle) and (currAngle>=Neg(const_BalanceSTM_P2_maxAngle, core_real))))&(internal__!NID_j2 -> SKIP ;  ((SKIP ; SetMotors::enter -> SKIP))))
+			 	 [] dbisim((((currAngle>const_BalanceSTM_P2_maxAngle) or (currAngle<Neg(const_BalanceSTM_P2_maxAngle, core_real))))&(internal__!NID_j2 -> SKIP ;  ((SKIP ; StopMotors::enter -> SKIP))))
+			 	 [] dbisim((true)&(internal__!NID_SetMotors -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; WaitForNextIteration::enter -> SKIP)))
+			 	 [] dbisim((true)&(internal__!NID_StopMotors -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; WaitForNextIteration::enter -> SKIP)))
+			 ) ; Trans)
+			 []
+			 (interrupt -> share__choice(exit -> SKIP) ; share__choice(exited -> terminate -> SKIP))
+			 []
+			 terminate -> SKIP
+		)
+		)
+	within
+		Trans
+	)
+	)
+	
+	-- Stateful
+	-- RULE: Stateful(stm:StateMachineBody) : CSPProcess
+	
+	-- Named process definitions
+	MachineBody(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim((
+		let
+			finalNodesEntered = {||}
+		within
+			((let
+				-- IMPLEMENTATION NOTE:
+				-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+				-- modules for defining the semantics of each node.
+				enterSS = {|
+				i0::enter,
+				Initialisation::enter,
+				WaitForNextIteration::enter,
+				Setup::enter,
+				ReceiveInput::enter,
+				SendSpeed::enter,
+				SendAngle::enter,
+				SendRotation::enter,
+				SetMotors::enter,
+				StopMotors::enter,
+				j2::enter
+				|}
+				hideSet = union(enterSS,{|exit,exited,internal__|})
+			within 
+				((let
+					-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+					-- because CSPM modules are used for the semantics of Node.
+					flowevts = union(enterSS,{|exit,exited,interrupt|})
+					transSync = {|internal__.NID_ReceiveInput,angleOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput,internal__.NID_SendAngle,speedOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput,internal__.NID_SendSpeed,rotationOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput,internal__.NID_SendRotation,internal__.NID_i0,internal__.NID_Initialisation,internal__.NID_WaitForNextIteration,internal__.NID_Setup,internal__.NID_j2,internal__.NID_j2,internal__.NID_SetMotors,internal__.NID_StopMotors|}
+				within
+					((
+					 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+					   i0::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   Initialisation::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   WaitForNextIteration::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   Setup::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   ReceiveInput::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   SendSpeed::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   SendAngle::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   SendRotation::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   SetMotors::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   StopMotors::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   j2::D__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   )
+					   )
+					   )
+					   )
+					   )
+					   )
+					   )
+					   )
+					   )
+					   )
+					 )
+					 [[Initialisation::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_Initialisation|}]]
+					 [[WaitForNextIteration::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_WaitForNextIteration|}]]
+					 [[Setup::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_Setup|}]]
+					 [[ReceiveInput::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_ReceiveInput,angleOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput,speedOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput,rotationOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput|}]]
+					 [[SendSpeed::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_SendSpeed|}]]
+					 [[SendAngle::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_SendAngle|}]]
+					 [[SendRotation::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_SendRotation|}]]
+					 [[SetMotors::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_SetMotors|}]]
+					 [[StopMotors::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_StopMotors|}]]
+					 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
+					 [[j2::interrupt <- x__ | x__ <- {|internal__.NID_j2,internal__.NID_j2|}]]
+					 )
+					  [[ share__ <- x__ | x__ <- {| share__,setR_rotationOutput,setR_speedOutput,setR_angleOutput |} ]] 
+					  [[set_angleReceived <- setL_angleReceived,set_rotationCount <- setL_rotationCount,set_speedCount <- setL_speedCount,set_speedSent <- setL_speedSent,set_currAngle <- setL_currAngle,set_rotationSent <- setL_rotationSent,set_angleSent <- setL_angleSent]]
+					 )
+					 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+					 			,setL_angleReceived
+					 			,setL_rotationCount
+					 			,setL_speedCount
+					 			,setL_speedSent
+					 			,setL_currAngle
+					 			,setL_rotationSent
+					 			,setL_angleSent
+					 			,setR_rotationOutput
+					 			 			,setR_speedOutput
+					 			 			,setR_angleOutput
+					 			|}) |]
+					 ((i0::enter -> Transitions(id__,
+					 		    const_BalanceSTM_P2_maxAngle,
+					 		    const_BalanceSTM_P2_loopTime,
+					 		    const_BalanceSTM_P2_startupDelay,
+					 		    const_BalanceSTM_P2_speedUpdate,
+					 		    const_BalanceSTM_P2_rotationUpdate,
+					 		    const_BalanceSTM_P2_motorBudget,
+					 		    const_BalanceSTM_P2_angleBudget,
+					 		    const_BalanceSTM_P2_speedBudget,
+					 		    const_BalanceSTM_P2_rotationBudget))
+					  [[ share__ <- x__ | x__ <- {| share__,setL_angleReceived,setL_rotationCount,setL_speedCount,setL_speedSent,setL_currAngle,setL_rotationSent,setL_angleSent |} ]]
+					  [[set_rotationOutput <- setR_rotationOutput,set_speedOutput <- setR_speedOutput,set_angleOutput <- setR_angleOutput]]
+					 )
+					)[[setL_angleReceived <- set_angleReceived,setL_rotationCount <- set_rotationCount,setL_speedCount <- set_speedCount,setL_speedSent <- set_speedSent,setL_currAngle <- set_currAngle,setL_rotationSent <- set_rotationSent,setL_angleSent <- set_angleSent]]
+					 [[setR_rotationOutput <- set_rotationOutput,setR_speedOutput <- set_speedOutput,setR_angleOutput <- set_angleOutput]]
+					)
+				)
+				 \ hideSet)
+				[[
+					leftMotorVelocity__.x____ <- leftMotorVelocity,
+					rightMotorVelocity__.x____ <- rightMotorVelocity,
+					angle__.x____ <- angle,
+					gyroX__.x____ <- gyroX,
+					gyroY__.x____ <- gyroY,
+					gyroZ__.x____ <- gyroZ,
+					angleOutputE__.x____ <- angleOutputE,
+					anewError__.x____ <- anewError,
+					adiff__.x____ <- adiff,
+					snewError__.x____ <- snewError,
+					speedOutputE__.x____ <- speedOutputE,
+					rdiff__.x____ <- rdiff,
+					rotationOutputE__.x____ <- rotationOutputE
+					| x____ <- NIDS
+				]]
+			)
+			 [| {| interrupt |} |] SKIP)
+		)
+		)
+	
+	Behaviour(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim((MachineBody(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget)\ enteredSS)
+		)
+	
+	IteratedBehaviour(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim((MachineBody(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget)\ enteredSS)
+		)
+	
+	Stateful(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = 
+		((
+			(Behaviour(id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget) [| union(getsetLocalChannels,{terminate}) |] varMemory(id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget))
+		 	\getsetLocalChannels
+		)
+		)
+	
+	IteratedStateful(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) =
+		(dbisim(
+			sbisim(
+				dbisim(
+					sbisim(
+						dbisim(
+							sbisim(
+								dbisim(
+									sbisim(
+										dbisim(
+											sbisim(
+												dbisim(
+													sbisim(
+														dbisim(
+															sbisim(
+																dbisim(
+																	sbisim(
+																		dbisim(
+																			sbisim(
+																				dbisim(
+																					sbisim(
+																						dbisim(
+																							sbisim(
+																								dbisim(
+																									sbisim(
+																										dbisim(
+																											sbisim(
+																												dbisim(
+																													sbisim(
+																														dbisim(
+																															sbisim(
+																																dbisim(
+																																	sbisim(
+																																		Behaviour(id__,
+																																				    const_BalanceSTM_P2_maxAngle,
+																																				    const_BalanceSTM_P2_loopTime,
+																																				    const_BalanceSTM_P2_startupDelay,
+																																				    const_BalanceSTM_P2_speedUpdate,
+																																				    const_BalanceSTM_P2_rotationUpdate,
+																																				    const_BalanceSTM_P2_motorBudget,
+																																				    const_BalanceSTM_P2_angleBudget,
+																																				    const_BalanceSTM_P2_speedBudget,
+																																				    const_BalanceSTM_P2_rotationBudget)
+																																		[| {|get_speedIntegral,set_speedIntegral,terminate|} |]
+																																		Memory_speedIntegral(0)
+																																	)\{|get_speedIntegral,set_speedIntegral|}
+																																)
+																																[| {|get_angleReceived,set_angleReceived,terminate|} |]
+																																Memory_angleReceived(true)
+																															)\{|get_angleReceived,set_angleReceived|}
+																														)
+																														[| {|get_rotationSent,set_rotationSent,terminate|} |]
+																														Memory_rotationSent(true)
+																													)\{|get_rotationSent,set_rotationSent|}
+																												)
+																												[| {|get_angleSent,set_angleSent,terminate|} |]
+																												Memory_angleSent(true)
+																											)\{|get_angleSent,set_angleSent|}
+																										)
+																										[| {|get_speedSent,set_speedSent,terminate|} |]
+																										Memory_speedSent(true)
+																									)\{|get_speedSent,set_speedSent|}
+																								)
+																								[| {|get_rotationOutput,set_rotationOutput,terminate|} |]
+																								Memory_rotationOutput(0)
+																							)\{|get_rotationOutput,set_rotationOutput|}
+																						)
+																						[| {|get_speedOutput,set_speedOutput,terminate|} |]
+																						Memory_speedOutput(0)
+																					)\{|get_speedOutput,set_speedOutput|}
+																				)
+																				[| {|get_angleOutput,set_angleOutput,terminate|} |]
+																				Memory_angleOutput(0)
+																			)\{|get_angleOutput,set_angleOutput|}
+																		)
+																		[| {|get_rotationCount,set_rotationCount,terminate|} |]
+																		Memory_rotationCount(0)
+																	)\{|get_rotationCount,set_rotationCount|}
+																)
+																[| {|get_speedCount,set_speedCount,terminate|} |]
+																Memory_speedCount(0)
+															)\{|get_speedCount,set_speedCount|}
+														)
+														[| {|get_currRightVel,set_currRightVel,terminate|} |]
+														Memory_currRightVel(0)
+													)\{|get_currRightVel,set_currRightVel|}
+												)
+												[| {|get_currLeftVel,set_currLeftVel,terminate|} |]
+												Memory_currLeftVel(0)
+											)\{|get_currLeftVel,set_currLeftVel|}
+										)
+										[| {|get_currGyroZ,set_currGyroZ,terminate|} |]
+										Memory_currGyroZ(0)
+									)\{|get_currGyroZ,set_currGyroZ|}
+								)
+								[| {|get_currGyroY,set_currGyroY,terminate|} |]
+								Memory_currGyroY(0)
+							)\{|get_currGyroY,set_currGyroY|}
+						)
+						[| {|get_currGyroX,set_currGyroX,terminate|} |]
+						Memory_currGyroX(0)
+					)\{|get_currGyroX,set_currGyroX|}
+				)
+				[| {|get_currAngle,set_currAngle,terminate|} |]
+				Memory_currAngle(0)
+			)\{|get_currAngle,set_currAngle|}
+		)
+		)
+	
+	-- Visible counterparts
+	MachineBody_VS_O(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim((
+		let
+			finalNodesEntered = {||}
+		within
+			((let
+				-- IMPLEMENTATION NOTE:
+				-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+				-- modules for defining the semantics of each node.
+				enterSS = {|
+				i0::enter,
+				Initialisation::enter,
+				WaitForNextIteration::enter,
+				Setup::enter,
+				ReceiveInput::enter,
+				SendSpeed::enter,
+				SendAngle::enter,
+				SendRotation::enter,
+				SetMotors::enter,
+				StopMotors::enter,
+				j2::enter
+				|}
+				hideSet = union(enterSS,{|exit,exited,internal__|})
+			within 
+				((let
+					-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+					-- because CSPM modules are used for the semantics of Node.
+					flowevts = union(enterSS,{|exit,exited,interrupt|})
+					transSync = {|internal__.NID_ReceiveInput,angleOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput,internal__.NID_SendAngle,speedOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput,internal__.NID_SendSpeed,rotationOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput,internal__.NID_SendRotation,internal__.NID_i0,internal__.NID_Initialisation,internal__.NID_WaitForNextIteration,internal__.NID_Setup,internal__.NID_j2,internal__.NID_j2,internal__.NID_SetMotors,internal__.NID_StopMotors|}
+				within
+					((
+					 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+					   i0::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   Initialisation::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   WaitForNextIteration::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   Setup::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   ReceiveInput::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   SendSpeed::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   SendAngle::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   SendRotation::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   SetMotors::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   StopMotors::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   [| { share__, terminate } |] (
+					   j2::VS_O__(id__,
+					   		    const_BalanceSTM_P2_maxAngle,
+					   		    const_BalanceSTM_P2_loopTime,
+					   		    const_BalanceSTM_P2_startupDelay,
+					   		    const_BalanceSTM_P2_speedUpdate,
+					   		    const_BalanceSTM_P2_rotationUpdate,
+					   		    const_BalanceSTM_P2_motorBudget,
+					   		    const_BalanceSTM_P2_angleBudget,
+					   		    const_BalanceSTM_P2_speedBudget,
+					   		    const_BalanceSTM_P2_rotationBudget)
+					   )
+					   )
+					   )
+					   )
+					   )
+					   )
+					   )
+					   )
+					   )
+					   )
+					 )
+					 [[Initialisation::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_Initialisation|}]]
+					 [[WaitForNextIteration::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_WaitForNextIteration|}]]
+					 [[Setup::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_Setup|}]]
+					 [[ReceiveInput::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_ReceiveInput,angleOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput,speedOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput,rotationOutputE__.NID_ReceiveInput.in,internal__.NID_ReceiveInput|}]]
+					 [[SendSpeed::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_SendSpeed|}]]
+					 [[SendAngle::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_SendAngle|}]]
+					 [[SendRotation::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_SendRotation|}]]
+					 [[SetMotors::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_SetMotors|}]]
+					 [[StopMotors::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_StopMotors|}]]
+					 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
+					 [[j2::interrupt <- x__ | x__ <- {|internal__.NID_j2,internal__.NID_j2|}]]
+					 )
+					  [[ share__ <- x__ | x__ <- {| share__,setR_rotationOutput,setR_speedOutput,setR_angleOutput |} ]] 
+					  [[set_angleReceived <- setL_angleReceived,set_rotationCount <- setL_rotationCount,set_speedCount <- setL_speedCount,set_speedSent <- setL_speedSent,set_currAngle <- setL_currAngle,set_rotationSent <- setL_rotationSent,set_angleSent <- setL_angleSent]]
+					 )
+					 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+					 			,setL_angleReceived
+					 			,setL_rotationCount
+					 			,setL_speedCount
+					 			,setL_speedSent
+					 			,setL_currAngle
+					 			,setL_rotationSent
+					 			,setL_angleSent
+					 			,setR_rotationOutput
+					 			 			,setR_speedOutput
+					 			 			,setR_angleOutput
+					 			|}) |]
+					 ((i0::enter -> Transitions(id__,
+					 		    const_BalanceSTM_P2_maxAngle,
+					 		    const_BalanceSTM_P2_loopTime,
+					 		    const_BalanceSTM_P2_startupDelay,
+					 		    const_BalanceSTM_P2_speedUpdate,
+					 		    const_BalanceSTM_P2_rotationUpdate,
+					 		    const_BalanceSTM_P2_motorBudget,
+					 		    const_BalanceSTM_P2_angleBudget,
+					 		    const_BalanceSTM_P2_speedBudget,
+					 		    const_BalanceSTM_P2_rotationBudget))
+					  [[ share__ <- x__ | x__ <- {| share__,setL_angleReceived,setL_rotationCount,setL_speedCount,setL_speedSent,setL_currAngle,setL_rotationSent,setL_angleSent |} ]]
+					  [[set_rotationOutput <- setR_rotationOutput,set_speedOutput <- setR_speedOutput,set_angleOutput <- setR_angleOutput]]
+					 )
+					)[[setL_angleReceived <- set_angleReceived,setL_rotationCount <- set_rotationCount,setL_speedCount <- set_speedCount,setL_speedSent <- set_speedSent,setL_currAngle <- set_currAngle,setL_rotationSent <- set_rotationSent,setL_angleSent <- set_angleSent]]
+					 [[setR_rotationOutput <- set_rotationOutput,setR_speedOutput <- set_speedOutput,setR_angleOutput <- set_angleOutput]]
+					)
+				)
+				 \ hideSet)
+				[[
+					leftMotorVelocity__.x____ <- leftMotorVelocity,
+					rightMotorVelocity__.x____ <- rightMotorVelocity,
+					angle__.x____ <- angle,
+					gyroX__.x____ <- gyroX,
+					gyroY__.x____ <- gyroY,
+					gyroZ__.x____ <- gyroZ,
+					angleOutputE__.x____ <- angleOutputE,
+					anewError__.x____ <- anewError,
+					adiff__.x____ <- adiff,
+					snewError__.x____ <- snewError,
+					speedOutputE__.x____ <- speedOutputE,
+					rdiff__.x____ <- rdiff,
+					rotationOutputE__.x____ <- rotationOutputE
+					| x____ <- NIDS
+				]]
+			)
+			 [| {| interrupt |} |] SKIP)
+		)
+		)
+	
+	Behaviour_VS_O(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim((MachineBody_VS_O(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget))
+		)
+	
+	IteratedBehaviour_VS_O(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim((MachineBody_VS_O(id__,
+				    const_BalanceSTM_P2_maxAngle,
+				    const_BalanceSTM_P2_loopTime,
+				    const_BalanceSTM_P2_startupDelay,
+				    const_BalanceSTM_P2_speedUpdate,
+				    const_BalanceSTM_P2_rotationUpdate,
+				    const_BalanceSTM_P2_motorBudget,
+				    const_BalanceSTM_P2_angleBudget,
+				    const_BalanceSTM_P2_speedBudget,
+				    const_BalanceSTM_P2_rotationBudget))
+		)
+	
+	Stateful_VS_O(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = 
+		dbisim((
+			(Behaviour_VS_O(id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget) [| union(getsetLocalChannels,{terminate}) |] varMemory(id__,
+					    const_BalanceSTM_P2_maxAngle,
+					    const_BalanceSTM_P2_loopTime,
+					    const_BalanceSTM_P2_startupDelay,
+					    const_BalanceSTM_P2_speedUpdate,
+					    const_BalanceSTM_P2_rotationUpdate,
+					    const_BalanceSTM_P2_motorBudget,
+					    const_BalanceSTM_P2_angleBudget,
+					    const_BalanceSTM_P2_speedBudget,
+					    const_BalanceSTM_P2_rotationBudget))
+		 	\getsetLocalChannels
+		)
+		)
+	
+	IteratedStateful_VS_O(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) =
+		(dbisim(
+			sbisim(
+				dbisim(
+					sbisim(
+						dbisim(
+							sbisim(
+								dbisim(
+									sbisim(
+										dbisim(
+											sbisim(
+												dbisim(
+													sbisim(
+														dbisim(
+															sbisim(
+																dbisim(
+																	sbisim(
+																		dbisim(
+																			sbisim(
+																				dbisim(
+																					sbisim(
+																						dbisim(
+																							sbisim(
+																								dbisim(
+																									sbisim(
+																										dbisim(
+																											sbisim(
+																												dbisim(
+																													sbisim(
+																														dbisim(
+																															sbisim(
+																																dbisim(
+																																	sbisim(
+																																		Behaviour_VS_O(id__,
+																																				    const_BalanceSTM_P2_maxAngle,
+																																				    const_BalanceSTM_P2_loopTime,
+																																				    const_BalanceSTM_P2_startupDelay,
+																																				    const_BalanceSTM_P2_speedUpdate,
+																																				    const_BalanceSTM_P2_rotationUpdate,
+																																				    const_BalanceSTM_P2_motorBudget,
+																																				    const_BalanceSTM_P2_angleBudget,
+																																				    const_BalanceSTM_P2_speedBudget,
+																																				    const_BalanceSTM_P2_rotationBudget)
+																																		[| {|get_speedIntegral,set_speedIntegral,terminate|} |]
+																																		Memory_speedIntegral(0)
+																																	)\{|get_speedIntegral,set_speedIntegral|}
+																																)
+																																[| {|get_angleReceived,set_angleReceived,terminate|} |]
+																																Memory_angleReceived(true)
+																															)\{|get_angleReceived,set_angleReceived|}
+																														)
+																														[| {|get_rotationSent,set_rotationSent,terminate|} |]
+																														Memory_rotationSent(true)
+																													)\{|get_rotationSent,set_rotationSent|}
+																												)
+																												[| {|get_angleSent,set_angleSent,terminate|} |]
+																												Memory_angleSent(true)
+																											)\{|get_angleSent,set_angleSent|}
+																										)
+																										[| {|get_speedSent,set_speedSent,terminate|} |]
+																										Memory_speedSent(true)
+																									)\{|get_speedSent,set_speedSent|}
+																								)
+																								[| {|get_rotationOutput,set_rotationOutput,terminate|} |]
+																								Memory_rotationOutput(0)
+																							)\{|get_rotationOutput,set_rotationOutput|}
+																						)
+																						[| {|get_speedOutput,set_speedOutput,terminate|} |]
+																						Memory_speedOutput(0)
+																					)\{|get_speedOutput,set_speedOutput|}
+																				)
+																				[| {|get_angleOutput,set_angleOutput,terminate|} |]
+																				Memory_angleOutput(0)
+																			)\{|get_angleOutput,set_angleOutput|}
+																		)
+																		[| {|get_rotationCount,set_rotationCount,terminate|} |]
+																		Memory_rotationCount(0)
+																	)\{|get_rotationCount,set_rotationCount|}
+																)
+																[| {|get_speedCount,set_speedCount,terminate|} |]
+																Memory_speedCount(0)
+															)\{|get_speedCount,set_speedCount|}
+														)
+														[| {|get_currRightVel,set_currRightVel,terminate|} |]
+														Memory_currRightVel(0)
+													)\{|get_currRightVel,set_currRightVel|}
+												)
+												[| {|get_currLeftVel,set_currLeftVel,terminate|} |]
+												Memory_currLeftVel(0)
+											)\{|get_currLeftVel,set_currLeftVel|}
+										)
+										[| {|get_currGyroZ,set_currGyroZ,terminate|} |]
+										Memory_currGyroZ(0)
+									)\{|get_currGyroZ,set_currGyroZ|}
+								)
+								[| {|get_currGyroY,set_currGyroY,terminate|} |]
+								Memory_currGyroY(0)
+							)\{|get_currGyroY,set_currGyroY|}
+						)
+						[| {|get_currGyroX,set_currGyroX,terminate|} |]
+						Memory_currGyroX(0)
+					)\{|get_currGyroX,set_currGyroX|}
+				)
+				[| {|get_currAngle,set_currAngle,terminate|} |]
+				Memory_currAngle(0)
+			)\{|get_currAngle,set_currAngle|}
+		)
+		)
+	
+	-- END
+	
+	-- Memory
+	-- Memory variables
+	Memory_currAngle(currAngle) =
+		get_currAngle!currAngle -> Memory_currAngle(currAngle)
+		[]
+		set_currAngle?x__ -> Memory_currAngle(x__)
+		[]
+		terminate -> SKIP
+	Memory_currGyroX(currGyroX) =
+		get_currGyroX!currGyroX -> Memory_currGyroX(currGyroX)
+		[]
+		set_currGyroX?x__ -> Memory_currGyroX(x__)
+		[]
+		terminate -> SKIP
+	Memory_currGyroY(currGyroY) =
+		get_currGyroY!currGyroY -> Memory_currGyroY(currGyroY)
+		[]
+		set_currGyroY?x__ -> Memory_currGyroY(x__)
+		[]
+		terminate -> SKIP
+	Memory_currGyroZ(currGyroZ) =
+		get_currGyroZ!currGyroZ -> Memory_currGyroZ(currGyroZ)
+		[]
+		set_currGyroZ?x__ -> Memory_currGyroZ(x__)
+		[]
+		terminate -> SKIP
+	Memory_currLeftVel(currLeftVel) =
+		get_currLeftVel!currLeftVel -> Memory_currLeftVel(currLeftVel)
+		[]
+		set_currLeftVel?x__ -> Memory_currLeftVel(x__)
+		[]
+		terminate -> SKIP
+	Memory_currRightVel(currRightVel) =
+		get_currRightVel!currRightVel -> Memory_currRightVel(currRightVel)
+		[]
+		set_currRightVel?x__ -> Memory_currRightVel(x__)
+		[]
+		terminate -> SKIP
+	Memory_speedCount(speedCount) =
+		get_speedCount!speedCount -> Memory_speedCount(speedCount)
+		[]
+		set_speedCount?x__ -> Memory_speedCount(x__)
+		[]
+		terminate -> SKIP
+	Memory_rotationCount(rotationCount) =
+		get_rotationCount!rotationCount -> Memory_rotationCount(rotationCount)
+		[]
+		set_rotationCount?x__ -> Memory_rotationCount(x__)
+		[]
+		terminate -> SKIP
+	Memory_angleOutput(angleOutput) =
+		get_angleOutput!angleOutput -> Memory_angleOutput(angleOutput)
+		[]
+		set_angleOutput?x__ -> Memory_angleOutput(x__)
+		[]
+		terminate -> SKIP
+	Memory_speedOutput(speedOutput) =
+		get_speedOutput!speedOutput -> Memory_speedOutput(speedOutput)
+		[]
+		set_speedOutput?x__ -> Memory_speedOutput(x__)
+		[]
+		terminate -> SKIP
+	Memory_rotationOutput(rotationOutput) =
+		get_rotationOutput!rotationOutput -> Memory_rotationOutput(rotationOutput)
+		[]
+		set_rotationOutput?x__ -> Memory_rotationOutput(x__)
+		[]
+		terminate -> SKIP
+	Memory_speedSent(speedSent) =
+		get_speedSent!speedSent -> Memory_speedSent(speedSent)
+		[]
+		set_speedSent?x__ -> Memory_speedSent(x__)
+		[]
+		terminate -> SKIP
+	Memory_angleSent(angleSent) =
+		get_angleSent!angleSent -> Memory_angleSent(angleSent)
+		[]
+		set_angleSent?x__ -> Memory_angleSent(x__)
+		[]
+		terminate -> SKIP
+	Memory_rotationSent(rotationSent) =
+		get_rotationSent!rotationSent -> Memory_rotationSent(rotationSent)
+		[]
+		set_rotationSent?x__ -> Memory_rotationSent(x__)
+		[]
+		terminate -> SKIP
+	Memory_angleReceived(angleReceived) =
+		get_angleReceived!angleReceived -> Memory_angleReceived(angleReceived)
+		[]
+		set_angleReceived?x__ -> Memory_angleReceived(x__)
+		[]
+		terminate -> SKIP
+	Memory_speedIntegral(speedIntegral) =
+		get_speedIntegral!speedIntegral -> Memory_speedIntegral(speedIntegral)
+		[]
+		set_speedIntegral?x__ -> Memory_speedIntegral(x__)
+		[]
+		terminate -> SKIP
+	
+	-- varMemory process
+	varMemory(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = Memory_currAngle(0)
+	[| { terminate } |] (
+	Memory_currGyroX(0)
+	[| { terminate } |] (
+	Memory_currGyroY(0)
+	[| { terminate } |] (
+	Memory_currGyroZ(0)
+	[| { terminate } |] (
+	Memory_currLeftVel(0)
+	[| { terminate } |] (
+	Memory_currRightVel(0)
+	[| { terminate } |] (
+	Memory_speedCount(0)
+	[| { terminate } |] (
+	Memory_rotationCount(0)
+	[| { terminate } |] (
+	Memory_angleOutput(0)
+	[| { terminate } |] (
+	Memory_speedOutput(0)
+	[| { terminate } |] (
+	Memory_rotationOutput(0)
+	[| { terminate } |] (
+	Memory_speedSent(true)
+	[| { terminate } |] (
+	Memory_angleSent(true)
+	[| { terminate } |] (
+	Memory_rotationSent(true)
+	[| { terminate } |] (
+	Memory_angleReceived(true)
+	[| { terminate } |] (
+	Memory_speedIntegral(0)
+	)
+	)
+	)
+	)
+	)
+	)
+	)
+	)
+	)
+	)
+	)
+	)
+	)
+	)
+	)
+	
+	getsetLocalChannels = {|get_currAngle,set_currAngle,get_currGyroX,set_currGyroX,get_currGyroY,set_currGyroY,get_currGyroZ,set_currGyroZ,get_currLeftVel,set_currLeftVel,get_currRightVel,set_currRightVel,get_speedCount,set_speedCount,get_rotationCount,set_rotationCount,get_angleOutput,set_angleOutput,get_speedOutput,set_speedOutput,get_rotationOutput,set_rotationOutput,get_speedSent,set_speedSent,get_angleSent,set_angleSent,get_rotationSent,set_rotationSent,get_angleReceived,set_angleReceived,get_speedIntegral,set_speedIntegral|}
+	
+	-- Definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+	FVS__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = STM_VS_O(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget)
+	
+	D__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = STM(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) \ internal_events
+	O__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = sbisim(diamond(D__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget)))
+	VS__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = FVS__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget)
+	VS_O__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = sbisim(diamond(FVS__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget)))
+	HEXT__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = O__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) [|shared_variable_events|] SKIP
+	HUP__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = O__(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) [|{share__}|] SKIP
+	
+	-- Shared memory
+	-- Shared memory variables
+	
+	-- sharedVarMemory process
+	sharedVarMemory(id__,
+			    const_BalanceSTM_P2_maxAngle,
+			    const_BalanceSTM_P2_loopTime,
+			    const_BalanceSTM_P2_startupDelay,
+			    const_BalanceSTM_P2_speedUpdate,
+			    const_BalanceSTM_P2_rotationUpdate,
+			    const_BalanceSTM_P2_motorBudget,
+			    const_BalanceSTM_P2_angleBudget,
+			    const_BalanceSTM_P2_speedBudget,
+			    const_BalanceSTM_P2_rotationBudget) = terminate -> SKIP
+	
+	sharedVarSync = {||}
+	
+	sharedVarHide = {||}
+endmodule
