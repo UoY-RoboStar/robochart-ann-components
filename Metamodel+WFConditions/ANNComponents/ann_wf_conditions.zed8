@@ -1,0 +1,157 @@
+﻿─ section spec parents standard_toolkit
+└
+
+─ [ Parameters, String ] └
+
+─
+  Boolean ::= False | True
+└
+
+─
+  ActivationFunction ::= RELU | LINEAR | NOTSPECIFIED
+└
+
+─
+  Expression ::= num ⟪ 𝔸 ⟫ | string ⟪ String ⟫ | nest ⟪ seq Expression ⟫ 
+└
+
+─
+  SeqExp ::= null_seq | values ⟪ seq Expression ⟫
+└
+
+─
+  StringExp ::= null_string | value ⟪ Expression ⟫
+└
+
+┌ Event
+  type : Expression
+  broadcast : Boolean
+└
+
+┌ ANNParameters
+  insize : ℤ
+  outsize : ℤ
+  layerstructure : SeqExp
+  weights : SeqExp
+  biases : SeqExp
+  filename : StringExp
+  activationfunction : ActivationFunction
+└
+
+┌ ANNOperation
+  parameters : ℙ Parameters
+  annparameters : ANNParameters
+└
+
+┌ ANNController
+  events : ℙ Event
+  annparameters : ANNParameters
+└
+
+─
+  ConnectionNode == ANNController
+└
+
+┌ Connection
+  from : ConnectionNode
+  to :  ConnectionNode
+  efrom : Event
+  eto : Event
+  async : Boolean
+  bidirec : Boolean
+└
+
+┌ RCModule
+  connections : ℙ Connection
+  nodes : ℙ ConnectionNode
+└
+
+╷
+  WF1 : ℙ ANNParameters
+|
+  ∀ annparams : ANNParameters ⦁ 
+    annparams.insize > 0 ∧
+    annparams.outsize > 0 ∧
+    (annparams.weights ≠ null_seq ∧ annparams.biases ≠ null_seq ∧ annparams.layerstructure ≠ null_seq ) ⇒ 
+     (values∼) annparams.weights ≠ ∅ ∧ (values∼) annparams.biases ≠ ∅ ∧ (values∼) annparams.layerstructure ≠ ∅ ∧
+      # (values∼) annparams.weights = # (values∼) annparams.layerstructure ∧
+      # (values∼) annparams.biases = # (values∼) annparams.layerstructure
+└
+
+╷
+  WF2 : ℙ ANNParameters
+|
+  ∀ annparams : ANNParameters ⦁ 
+    (annparams.filename = null_string) ⇒ 
+    	annparams.weights ≠ null_seq ∧ annparams.biases ≠ null_seq ∧ annparams.layerstructure ≠ null_seq
+└
+
+╷
+  WF3 : ℙ ANNParameters
+|
+  ∀ annparams : ANNParameters ⦁ 
+    (annparams.weights = null_seq ∧ annparams.biases = null_seq ∧ annparams.layerstructure = null_seq) ⇒ 
+    	annparams.filename ≠ null_string
+    ∨
+    annparams.weights ≠ null_seq ∧ annparams.biases ≠ null_seq ∧ annparams.layerstructure ≠ null_seq
+└
+
+╷
+  WF4 : ℙ ANNParameters
+|
+  ∀ annparams : ANNParameters ⦁ 
+    (annparams.activationfunction = NOTSPECIFIED)  ⇔ (annparams.filename ≠ null_string)
+└
+
+╷
+  WF5 : ℙ ANNParameters
+|
+  ∀ annparams : ANNParameters ⦁ 
+    (annparams.filename = null_string) ⇒ 
+      ∀ i : dom ((values∼) annparams.layerstructure) ⦁
+        #((nest∼) (((values∼) annparams.weights) i)) = (num∼) (((values∼) annparams.layerstructure) i) ∧
+        #((nest∼) (((values∼) annparams.biases) i)) = (num∼) (((values∼) annparams.layerstructure) i)
+└
+
+╷
+  WF6 : ℙ ANNParameters
+|
+  ∀ annparams : ANNParameters ⦁ 
+    (annparams.filename = null_string) ⇒ 
+      ∀ i : dom ((values∼) annparams.layerstructure) ⦁
+      	∀ j : dom ((nest∼) (((values∼) annparams.weights) i)) ⦁ 
+      		( i > 1) ⇒ 
+      			# (nest∼) ((((nest∼) (((values∼) annparams.weights) i))) j) = (num∼) (((values∼) annparams.layerstructure) (i − 1))
+      		∧
+      		( i = 1) ⇒ 
+      			# (nest∼) ((((nest∼) (((values∼) annparams.weights) i))) j) = annparams.insize
+└
+
+╷
+  WF7 : ℙ ANNController
+|
+  ∀ anncontroller : ANNController ⦁ 
+    # anncontroller.events = 2 ∨ 
+   	# anncontroller.events = anncontroller.annparameters.insize +
+   											  anncontroller.annparameters.outsize
+└
+
+╷
+  WF8 : ℙ RCModule
+|
+  ∀ module : RCModule ⦁
+     ∀ anncontroller : ANNController | anncontroller ∈ module.nodes ⦁
+     	# { conns : module.connections |  conns.to = anncontroller } = anncontroller.annparameters.insize ∧
+     	# { conns : module.connections |  conns.from = anncontroller } = anncontroller.annparameters.outsize ∧
+       ∀ from_conn, to_conn : module.connections | from_conn.from = anncontroller ∧ to_conn.to = anncontroller  ⦁	
+         ∃ ann_input, ann_output : anncontroller.events ⦁
+			from_conn.efrom.type = ann_output.type ∧
+			to_conn.eto.type = ann_input.type
+└
+
+╷
+  WF9 : ℙ ANNOperation
+|
+  ∀ annoperation : ANNOperation ⦁
+    # annoperation.parameters = 1 ∨ # annoperation.parameters = annoperation.annparameters.insize + annoperation.annparameters.outsize
+└
