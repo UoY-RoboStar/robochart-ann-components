@@ -1,7 +1,7 @@
 ﻿─ section spec parents standard_toolkit
 └
 
-─ [ Parameters, String ] └
+─ [ Parameters, String, Expression ] └
 
 ─
   Boolean ::= False | True
@@ -12,11 +12,7 @@
 └
 
 ─
-  Expression ::= num ⟪ 𝔸 ⟫ | string ⟪ String ⟫ | nest ⟪ seq Expression ⟫ 
-└
-
-─
-  SeqExp ::= null_seq | values ⟪ seq Expression ⟫
+  SeqExp ::= null_seq | vector ⟪ seq ℤ ⟫ | matrix ⟪ seq seq Expression ⟫  | tensor ⟪ seq seq seq Expression ⟫
 └
 
 ─
@@ -73,9 +69,9 @@
     annparams.insize > 0 ∧
     annparams.outsize > 0 ∧
     (annparams.weights ≠ null_seq ∧ annparams.biases ≠ null_seq ∧ annparams.layerstructure ≠ null_seq ) ⇒ 
-     (values∼) annparams.weights ≠ ∅ ∧ (values∼) annparams.biases ≠ ∅ ∧ (values∼) annparams.layerstructure ≠ ∅ ∧
-      # (values∼) annparams.weights = # (values∼) annparams.layerstructure ∧
-      # (values∼) annparams.biases = # (values∼) annparams.layerstructure
+     (vector∼) annparams.weights ≠ ∅ ∧ (vector∼) annparams.biases ≠ ∅ ∧ (vector∼) annparams.layerstructure ≠ ∅ ∧
+      # (tensor∼) annparams.weights = # (tensor∼) annparams.layerstructure ∧
+      # (matrix∼) annparams.biases = # (matrix∼) annparams.layerstructure
 └
 
 ╷
@@ -108,9 +104,9 @@
 |
   ∀ annparams : ANNParameters ⦁ 
     (annparams.filename = null_string) ⇒ 
-      ∀ i : dom ((values∼) annparams.layerstructure) ⦁
-        #((nest∼) (((values∼) annparams.weights) i)) = (num∼) (((values∼) annparams.layerstructure) i) ∧
-        #((nest∼) (((values∼) annparams.biases) i)) = (num∼) (((values∼) annparams.layerstructure) i)
+      ∀ i : dom ((vector∼) annparams.layerstructure) ⦁
+        # (tensor∼) annparams.weights i = (vector∼) annparams.layerstructure i ∧
+         #(matrix∼) annparams.biases i = (vector∼) annparams.layerstructure i
 └
 
 ╷
@@ -118,13 +114,13 @@
 |
   ∀ annparams : ANNParameters ⦁ 
     (annparams.filename = null_string) ⇒ 
-      ∀ i : dom ((values∼) annparams.layerstructure) ⦁
-      	∀ j : dom ((nest∼) (((values∼) annparams.weights) i)) ⦁ 
+      ∀ i : dom ((vector∼) annparams.layerstructure) ⦁
+      	∀ j : dom ((tensor∼) annparams.weights i) ⦁ 
       		( i > 1) ⇒ 
-      			# (nest∼) ((((nest∼) (((values∼) annparams.weights) i))) j) = (num∼) (((values∼) annparams.layerstructure) (i − 1))
+      			# (tensor∼) annparams.weights i j = (vector∼) annparams.layerstructure i 
       		∧
       		( i = 1) ⇒ 
-      			# (nest∼) ((((nest∼) (((values∼) annparams.weights) i))) j) = annparams.insize
+      			# (tensor∼) annparams.weights i j = annparams.insize
 └
 
 ╷
