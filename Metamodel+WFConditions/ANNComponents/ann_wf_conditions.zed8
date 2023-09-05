@@ -69,9 +69,9 @@
     annparams.insize > 0 ∧
     annparams.outsize > 0 ∧
     (annparams.weights ≠ null_seq ∧ annparams.biases ≠ null_seq ∧ annparams.layerstructure ≠ null_seq ) ⇒ 
-     (vector∼) annparams.weights ≠ ∅ ∧ (vector∼) annparams.biases ≠ ∅ ∧ (vector∼) annparams.layerstructure ≠ ∅ ∧
-      # (tensor∼) annparams.weights = # (tensor∼) annparams.layerstructure ∧
-      # (matrix∼) annparams.biases = # (matrix∼) annparams.layerstructure
+     (tensor∼) annparams.weights ≠ ∅ ∧ (matrix∼) annparams.biases ≠ ∅ ∧ (vector∼) annparams.layerstructure ≠ ∅ ∧
+      # (tensor∼) annparams.weights = # (vector∼) annparams.layerstructure ∧
+      # (matrix∼) annparams.biases = # (vector∼) annparams.layerstructure
 └
 
 ╷
@@ -86,8 +86,7 @@
   WF3 : ℙ ANNParameters
 |
   ∀ annparams : ANNParameters ⦁ 
-    (annparams.weights = null_seq ∧ annparams.biases = null_seq ∧ annparams.layerstructure = null_seq) ⇒ 
-    	annparams.filename ≠ null_string
+    annparams.weights = null_seq ∧ annparams.biases = null_seq ∧ annparams.layerstructure = null_seq ∧ annparams.filename ≠ null_string
     ∨
     annparams.weights ≠ null_seq ∧ annparams.biases ≠ null_seq ∧ annparams.layerstructure ≠ null_seq
 └
