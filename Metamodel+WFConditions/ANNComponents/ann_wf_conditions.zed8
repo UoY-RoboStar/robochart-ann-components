@@ -148,5 +148,5 @@
   WF9 : ℙ ANNOperation
 |
   ∀ annoperation : ANNOperation ⦁
-    # annoperation.parameters = 1 ∨ # annoperation.parameters = annoperation.annparameters.insize + annoperation.annparameters.outsize
+    # annoperation.parameters = 1 ∨ # annoperation.parameters = annoperation.annparameters.insize
 └
