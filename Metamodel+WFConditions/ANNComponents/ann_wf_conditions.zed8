@@ -68,10 +68,10 @@
   ∀ annparams : ANNParameters ⦁ 
     annparams.insize > 0 ∧
     annparams.outsize > 0 ∧
-    (annparams.weights ≠ null_seq ∧ annparams.biases ≠ null_seq ∧ annparams.layerstructure ≠ null_seq ) ⇒ 
+    (annparams.weights ≠ null_seq ∧ annparams.biases ≠ null_seq ∧ annparams.layerstructure ≠ null_seq  ⇒ 
      (tensor∼) annparams.weights ≠ ∅ ∧ (matrix∼) annparams.biases ≠ ∅ ∧ (vector∼) annparams.layerstructure ≠ ∅ ∧
       # (tensor∼) annparams.weights = # (vector∼) annparams.layerstructure ∧
-      # (matrix∼) annparams.biases = # (vector∼) annparams.layerstructure
+      # (matrix∼) annparams.biases = # (vector∼) annparams.layerstructure)
 └
 
 ╷
