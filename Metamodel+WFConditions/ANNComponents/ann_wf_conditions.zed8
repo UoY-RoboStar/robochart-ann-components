@@ -1,7 +1,7 @@
 ﻿─ section spec parents standard_toolkit
 └
 
-─ [ Parameters, String, Expression ] └
+─ [ Parameters, String, Expression, Variable ] └
 
 ─
   Boolean ::= False | True
@@ -9,6 +9,10 @@
 
 ─
   ActivationFunction ::= RELU | LINEAR | NOTSPECIFIED
+└
+
+─
+  VariableModifier ::= VAR | CONST
 └
 
 ─
@@ -34,9 +38,23 @@
   activationfunction : ActivationFunction
 └
 
+┌ VariableList
+  modifier : VariableModifier
+  vars : ℙ Variable
+ |
+   # vars > 0
+└
+
+┌ Interface
+  variableList : ℙ VariableList
+  
+└
+
+
 ┌ ANNOperation
   parameters : ℙ Parameters
   annparameters : ANNParameters
+  rInterface : Interface
 └
 
 ┌ ANNController
@@ -78,7 +96,7 @@
   WF2 : ℙ ANNParameters
 |
   ∀ annparams : ANNParameters ⦁ 
-    (annparams.filename = null_string) ⇒ 
+    annparams.filename = null_string ⇒ 
     	annparams.weights ≠ null_seq ∧ annparams.biases ≠ null_seq ∧ annparams.layerstructure ≠ null_seq
 └
 
@@ -148,5 +166,8 @@
   WF9 : ℙ ANNOperation
 |
   ∀ annoperation : ANNOperation ⦁
-    # annoperation.parameters = 1 ∨ # annoperation.parameters = annoperation.annparameters.insize
+    (# annoperation.parameters = 1 ∨ # annoperation.parameters = annoperation.annparameters.insize)
+    ∧
+     ( # ⋃ { varList : VariableList | varList ∈ annoperation.rInterface.variableList ∧ varList.modifier = VAR  ⦁ varList.vars} = 1 ∨
+     	# ⋃ { varList : VariableList | varList ∈ annoperation.rInterface.variableList ∧ varList.modifier = VAR  ⦁ varList.vars} = annoperation.annparameters.outsize)
 └

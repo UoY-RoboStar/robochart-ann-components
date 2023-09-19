@@ -865,5 +865,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="events" ordered="false"
         upperBound="-1" eType="#//Event" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ANNOperation" eSuperTypes="#//ANN #//GeneralOperation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ANNOperation" eSuperTypes="#//ANN #//GeneralOperation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rInterface" unique="false"
+        lowerBound="1" eType="#//Interface"/>
+  </eClassifiers>
 </ecore:EPackage>
