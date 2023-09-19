@@ -846,7 +846,8 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="biases" eType="#//SeqExp"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="activationfunction" eType="#//ActivationFunction"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="activationfunction" lowerBound="1"
+        eType="#//ActivationFunction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="filename" eType="#//StringExp"
         containment="true"/>
   </eClassifiers>

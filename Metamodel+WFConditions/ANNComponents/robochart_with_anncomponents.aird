@@ -7,7 +7,7 @@
     </ownedViews>
     <ownedViews xmi:type="viewpoint:DView" uid="_lCvbAEDjEe67CNpjYTh4TA">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_mbf9sEDjEe67CNpjYTh4TA" name="ann_component_diagram" repPath="#_mbO38EDjEe67CNpjYTh4TA" changeId="9086b25e-53b7-4ae3-bd25-7daf4ba7c1cf">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_mbf9sEDjEe67CNpjYTh4TA" name="ann_component_diagram" repPath="#_mbO38EDjEe67CNpjYTh4TA" changeId="5b8fcb72-ccbb-4074-a32d-cbdcdc225fce">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']"/>
         <target xmi:type="ecore:EPackage" href="robochart_with_anncomponents.ecore#/"/>
       </ownedRepresentationDescriptors>
@@ -6681,8 +6681,8 @@
       <ownedElements xmi:type="diagram:DNodeListElement" uid="_m_fbkEDjEe67CNpjYTh4TA" name="activationfunction : ActivationFunction = RELU" tooltipText="">
         <target xmi:type="ecore:EAttribute" href="robochart_with_anncomponents.ecore#//ANNParameters/activationfunction"/>
         <semanticElements xmi:type="ecore:EAttribute" href="robochart_with_anncomponents.ecore#//ANNParameters/activationfunction"/>
-        <ownedStyle xmi:type="diagram:BundledImage" uid="_m_gCoEDjEe67CNpjYTh4TA" labelAlignment="LEFT">
-          <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']/@style"/>
+        <ownedStyle xmi:type="diagram:BundledImage" uid="_4rHYs1bwEe6XooZ21RXjjQ" labelAlignment="LEFT" description="_m_CIkEDjEe67CNpjYTh4TA">
+          <labelFormat>bold</labelFormat>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
       </ownedElements>
