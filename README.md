@@ -1,6 +1,6 @@
 # RoboChart ANN Components
 
-The `Metamodel+WFConditions` directory contains a modelling project, `ANNComponents`, that presents the RoboChart metamodel with ANN components integrated, and the well-formedness conditions of the ANN components formalised in Z.
+The `Metamodel+WFConditions` directory contains a modelling project, `ANNComponents`, that presents the RoboChart metamodel with ANN (artificial neural network) components integrated, and the well-formedness conditions of the ANN components formalised in Z.
 
 The `Segway_Case_Study` directory contains files relevant to the Segway case study. It contains: 
  - A `RoboChart` directory, that contains a RoboChart project `SegwayComparison` containinng all four versions of the Segway RoboChart model, 
