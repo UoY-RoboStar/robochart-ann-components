@@ -1,0 +1,107 @@
+
+noClients = 3
+
+I = { 0..(noClients-1) }
+
+Value = {0,1}
+channel lr : I.Value
+
+--value it communicates
+transfer = 0
+
+Writer(i) =
+  let
+    P' =
+		lr.i.transfer -> SKIP
+  within
+    P'
+	
+SubReader(i) = 
+	let
+		P' = 
+			lr.i?x -> SKIP
+	within
+		P'
+
+Reader(i) = 
+	let
+		P' = 
+			(||| j: I @ SubReader(j)); SKIP
+	within
+		P'
+		
+		
+System = ( ||| i: I @ Writer(i) ) 
+				[| {|lr|} |]
+			( [| {| lr |} |] i: I @ Reader(i) )
+			
+NewSystem = (||| i : I @ Writer(i))
+
+assert System [FD= NewSystem
+assert NewSystem [FD= System
+
+
+assert System:[divergence-free]
+assert System:[deterministic]
+			
+channel temp_ch : I.I.Value
+
+
+ISubWriter(i, j, value) = 
+	let
+		P' = temp_ch.i.j.value -> SKIP
+	within
+		P'
+		
+IWriter(i) = 
+  let
+	P' = 
+		(; j : seq(I) @ ISubWriter(i, j, transfer));SKIP
+	within
+		P'
+		
+ISubReader(i, j) = 
+	let
+		P' = 
+			temp_ch.i.j?x -> SKIP
+	within
+		P'
+
+IReader(i) = 
+	let
+		P' = 
+			(||| j: I @ ISubReader(i, j)); SKIP
+	within
+		P'
+		
+
+System_Impl = (
+			   ( 
+				( ||| i: I @ IWriter(i) )
+					[| {|temp_ch|} |]
+				( ||| i: I @ IReader(i) ) 
+				)[[temp_ch.0.0 <- lr.0, temp_ch.1.0 <- lr.1, temp_ch.2.0 <- lr.2]]
+				) \ {|temp_ch|}
+				
+Rec_Impl = System_Impl ; Rec_Impl
+Rec_Spec = System ; Rec_Spec
+
+assert Rec_Impl:[deadlock-free]
+assert Rec_Spec:[deadlock-free]
+
+assert Rec_Spec [FD= Rec_Impl 
+assert Rec_Impl [FD= Rec_Spec
+
+assert System_Impl:[divergence-free]
+assert System_Impl:[deterministic]
+
+assert System_Impl [FD= System 
+
+assert System [FD= System_Impl	
+
+
+assert System_Impl [FD= NewSystem 
+
+assert NewSystem [FD= System_Impl	
+
+
