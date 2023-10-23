@@ -11,3 +11,5 @@ The `Segway_Case_Study` directory contains files relevant to the Segway case stu
    `SegwayComparison` project, and those semantics with an ANN process added manually. 
 
 The `Supporting Proofs` directory contains CSPM documents establishing proofs required for our verification strategy. 
+
+The `Validation` directory contains a Java implementation of our CSP semantics, written using the JCSP library. 
