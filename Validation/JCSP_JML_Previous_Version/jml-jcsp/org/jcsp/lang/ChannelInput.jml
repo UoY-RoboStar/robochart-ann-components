@@ -1,0 +1,16 @@
+package org.jcsp.lang;
+
+import org.jcsp.lang.Poisonable;
+
+public interface ChannelInput extends Poisonable
+{
+	//@ ensures \result instanceof Double;
+	//@ pure
+    public /*@ non_null @*/ Object read();
+	
+    //@ pure
+    public /*@ non_null @*/ Object startRead();
+	
+	//@ pure
+    public void endRead();
+}

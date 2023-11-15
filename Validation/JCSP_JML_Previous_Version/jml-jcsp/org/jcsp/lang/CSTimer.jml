@@ -1,0 +1,12 @@
+package org.jcsp.lang;
+//Read and after.
+public class CSTimer extends Guard {
+	//@ pure
+	public CSTimer();
+
+	//@ pure
+    public long read();
+	
+	//@ pure
+    public void after(final long msecs);
+}

@@ -1,0 +1,10 @@
+package org.jcsp.lang;
+
+public class Parallel implements CSProcess {
+	//@ pure
+	public Parallel();
+	//@ pure
+	public Parallel(CSProcess[] processes);
+	//@ pure
+	public void run();
+}

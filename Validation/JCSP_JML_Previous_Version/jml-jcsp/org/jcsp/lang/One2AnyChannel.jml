@@ -1,0 +1,10 @@
+package org.jcsp.lang;
+
+public interface One2AnyChannel
+{
+	//@ pure
+    public SharedChannelInput in();
+
+	//@ pure
+    public ChannelOutput out();
+}

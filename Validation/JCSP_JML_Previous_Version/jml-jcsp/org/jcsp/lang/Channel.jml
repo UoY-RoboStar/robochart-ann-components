@@ -1,0 +1,41 @@
+package org.jcsp.lang;
+
+public class Channel
+{
+	//@ pure
+    public static One2OneChannel one2one();
+	
+	//@ pure
+    public static One2AnyChannel one2any();
+    
+	//@ pure
+    public static Any2OneChannel any2one();
+    
+	//@ pure
+    public static Any2AnyChannel any2any();
+	
+	//@ requires size > 0;
+	//@ ensures \forall int i; 0 <= \result.length; \result[i] != null;
+	//@ ensures \result.length == size;
+	//@ pure
+	public static /*@ non_null @*/ One2AnyChannel[] one2anyArray(int size);
+	
+	//@ pure
+	public static /*@ non_null @*/ AltingChannelInput[] getInputArray(One2OneChannel[] c);
+	
+	//@ ensures \result.length > 0;
+	//@ ensures \forall int i; 0 <= \result.length; \result[i] != null;
+	//@ ensures \result.length == c.length;
+	//@ pure
+	public static /*@ non_null @*/ SharedChannelInput[] getInputArray(One2AnyChannel[] c);
+	
+	//@ pure
+    public static /*@ non_null @*/ ChannelOutput[] getOutputArray(One2OneChannel[] c);
+	
+	//@ ensures \result.length > 0;
+	//@ ensures \forall int i; 0 <= \result.length; \result[i] != null;
+	//@ ensures \result.length == c.length;
+	//@ pure
+    public static /*@ non_null @*/ ChannelOutput[] getOutputArray(One2AnyChannel[] c);
+	
+}

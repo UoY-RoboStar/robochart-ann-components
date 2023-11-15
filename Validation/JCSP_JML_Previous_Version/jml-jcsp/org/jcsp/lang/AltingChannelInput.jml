@@ -1,0 +1,7 @@
+package org.jcsp.lang;
+
+public abstract class AltingChannelInput extends Guard implements ChannelInput
+{
+	//@ pure
+    public abstract boolean pending();
+}

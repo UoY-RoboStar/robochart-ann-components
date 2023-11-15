@@ -10,6 +10,10 @@ The `Segway_Case_Study` directory contains files relevant to the Segway case stu
  - A directory `Segway_Proofs` that contains CSP files for proving properties about the automatically generated CSP semantics from the 
    `SegwayComparison` project, and those semantics with an ANN process added manually. 
 
-The `Supporting Proofs` directory contains CSPM documents establishing proofs required for our verification strategy. 
+The `Supporting Proofs` directory contains additional files supporting our verification strategy:
+- CSPM documents supporting 
+- An implementation of the ANN semantics in Isabelle/UTP. 
+- Files to use Marabou to prove that an ANN component (`AnglePIDANN`) conforms to a controller (`AnglePID_C`). 
 
-The `Validation` directory contains a Java implementation of our CSP semantics, written using the JCSP library. 
+The `Validation` directory contains a Java implementation of our CSP semantics, written using the JCSP library. The directory `JCSP_JML_Previous_Version` contains 
+an old version of our JCSP implementation with Java Modelling Language (JML) annotations. 

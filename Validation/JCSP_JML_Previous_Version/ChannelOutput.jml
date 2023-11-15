@@ -1,0 +1,6 @@
+import org.jcsp.lang.Poisonable;
+
+public interface ChannelOutput extends Poisonable {
+	//@ pure
+	public void write(Object object);
+}
