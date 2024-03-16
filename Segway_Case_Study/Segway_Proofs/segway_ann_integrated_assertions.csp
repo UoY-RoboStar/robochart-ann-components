@@ -180,11 +180,16 @@ assert P_Segway_P3_AnglePID_C_ANN :[divergence-free]
 --Cyclicity checks -- 
 
 --Set input events: 
-Input_Channels = { Segway_P3_AnglePID_C::anewError.in ,  Segway_P3_AnglePID_C::adiff.in } 
-Output_Channels = { Segway_P3_AnglePID_C::angleOutputE.out } 
 
-Choose(CS) = ||| c: CS @ c?x -> SKIP
-Cycle = Choose(Input_Channels) ; Choose(Output_Channels) ; Cycle
+Cycle = 
+	let 
+	Input_Channels = { Segway_P3_AnglePID_C::anewError.in ,  Segway_P3_AnglePID_C::adiff.in } 
+	Output_Channels = { Segway_P3_AnglePID_C::angleOutputE.out } 
+	Choose(CS) = ||| c: CS @ c?x -> SKIP
+	C = Choose(Input_Channels) ; Choose(Output_Channels) ; C
+
+	within
+	C
 
 
 assert Cycle :[deadlock-free]	

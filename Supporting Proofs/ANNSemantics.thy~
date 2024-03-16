@@ -53,9 +53,7 @@ definition outsize :: "nat" where
 "outsize = 1"
 
 definition layerstructure :: "nat list" where
-"layerstructure = [1, 1]"
-
-
+"layerstructure = [1,1]"
 
 definition layerNo :: "nat"  where
 "layerNo = 2"
@@ -63,12 +61,12 @@ definition layerNo :: "nat"  where
 definition maxSize :: "nat" where
 "maxSize = 1"
 
-(*TODO: update, List datatype appears to have changed from 2021*)
 definition weights :: "real list list list" where
 "weights = [[[1.22838,0.132874]], [[0.744636]]]"
 
 definition biases :: "real list list" where 
 "biases = [[0.125424], [-0.107753]]"
+
 
 (*The actual definitions, and showing they are equal to the reactive contracts work*)
 (*Original signature is: layerI \<Rightarrow> nodeI \<Rightarrow> annindex \<Rightarrow>, *)

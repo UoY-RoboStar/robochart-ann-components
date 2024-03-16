@@ -1,0 +1,19 @@
+Representing ANN constants as a Schema? 
+
+─
+  Value == ℤ
+└
+Constants
+╷
+  insize : ℕ
+  outsize : ℕ
+  maxSize : ℕ
+  layerstructure : seq ℕ
+  weights : seq seq seq Value
+  biases : seq seq Value
+└
+
+
+
+
+
