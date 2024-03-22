@@ -29,7 +29,7 @@
 └
 
 ┌ ANNParameters
-  insize : ℤ
+  insize : ℤ 
   outsize : ℤ
   layerstructure : SeqExp
   weights : SeqExp
@@ -42,7 +42,7 @@
   modifier : VariableModifier
   vars : ℙ Variable
  |
-   # vars > 0
+   # vars > 0 
 └
 
 ┌ Interface
