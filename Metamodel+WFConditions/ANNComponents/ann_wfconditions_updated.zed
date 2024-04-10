@@ -1,0 +1,54 @@
+﻿\begin{zsection}	 \SECTION spec \parents~standard\_toolkit
+\end{zsection}
+
+
+We just assume we have a context, then we can run allEvents on this context. 
+\begin{zed}[ Context, CSExp, Channel, CircusProgram ]
+\end{zed}
+
+\begin{zed}ActivationFunction ::= RELU | LINEAR | NOTSPECIFIED
+\end{zed}
+
+
+Type synomym for ANNs. 
+\begin{zed}
+Value == \arithmos
+\end{zed}
+
+Sequence of values, if 1d, then it is layerstructure, 2d or 3d, biases or layer structure. 
+\begin{zed}
+SeqExp ::= null\_ seq | list \ldata \seq \nat \rdata | matrix \ldata \seq \seq Value \rdata | tensor \ldata \seq \seq \seq Value \rdata
+\end{zed}
+
+
+\begin{axdef}
+  relu : Value \fun Value %
+  \where %
+  \forall x : Value @ \\%
+  \t1 %
+  (x < 0 \implies (x,0) \in relu) \land \\% 
+  \t1 %
+  (x \geq 0 \implies (x,x) \in relu)
+\end{axdef}
+
+\begin{schema}{ANNParameters}
+\\
+ layerstructure : SeqExp \\
+ weights : SeqExp \\
+ biases : SeqExp \\
+ activationfunction : ActivationFunction \\
+ inputContext : Context \\
+ outputContext : Context \\
+\end{schema}
+
+To match the meta-model better. 
+\begin{schema}{ANN} 
+   annparameters : ANNParameters
+\end{schema} 
+
+\begin{schema}{ANNController}
+\\
+ANN
+\end{schema}
+Test axiom, for the meta-language functions. 
+

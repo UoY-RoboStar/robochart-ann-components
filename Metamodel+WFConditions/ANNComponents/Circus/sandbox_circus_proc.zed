@@ -1,0 +1,45 @@
+\begin{zsection}
+  \SECTION sandbox_circus_proc \parents circus\_toolkit
+\end{zsection}
+
+\begin{circus}
+  \circchannel testChan: \nat \\
+  \circchannel testChan2: \nat \\
+  \circchannel sync 
+\end{circus}
+
+Replicated parallel test. 
+\begin{circus}
+  \circprocess P \circdef \ \circbegin \\%
+    
+    R \circdef x : \nat \circspot \\%
+    sync \then testChan.x \then \Skip \\%
+    
+    
+    Q \circdef \\%
+    \lpar  \lchanset sync \rchanset \rpar x : 1 \upto 5 \circspot R(x) \\%
+    
+    Rename \circdef \\%
+    (Q) \lcircrename testChan := testChan2 \rcircrename
+    
+    \circspot Rename \\
+  \circend
+\end{circus}
+
+Problem with | symbol in binary parallel composition:
+
+\begin{circus}
+  \circprocess P \circdef \ \circbegin \\%
+    
+    R \circdef x : \nat \circspot \\%
+    sync \then testChan.x \then \Skip \\%
+    
+    S \circdef \Skip \\%
+    
+    Q \circdef y : \nat \circspot \\%
+    R(1) \lpar  \emptyset \rpar S \\%
+    
+    
+    \circspot \Skip \\
+  \circend
+\end{circus}

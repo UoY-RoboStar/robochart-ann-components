@@ -1,0 +1,177 @@
+\documentclass{article}
+\usepackage{czt}
+
+\input{roboworld}
+
+\begin{document}
+\begin{zsection}
+  \SECTION roboworld\_2d\_toolkit \parents circus\_toolkit
+\end{zsection}
+
+%%Zword \circbool \boolean
+
+\section{Real numbers}
+
+%%Zword \real real
+\begin{axdef}
+	\real : \power \arithmos
+\end{axdef}
+
+%%Zinword \decimalpoint decimalpoint
+\begin{zed}
+  \function 100 \leftassoc ( \varg \decimalpoint \varg )
+\end{zed}
+\begin{axdef}
+	\varg \decimalpoint \varg : \num \cross \num \fun \real
+\end{axdef}
+
+%%Zinword \realdiv realdiv
+\begin{zed}
+  \function 40 \leftassoc ( \varg \realdiv \varg )
+\end{zed}
+\begin{axdef}
+	\varg \realdiv \varg : \real \cross \real \fun \real
+\end{axdef}
+
+\begin{axdef}
+	sqrt : \arithmos \fun \arithmos \\
+	sin : \arithmos \fun \arithmos \\
+	cos : \arithmos \fun \arithmos \\
+	tan : \arithmos \fun \arithmos \\
+	arctan : \arithmos \fun \arithmos \\
+	abs : \arithmos \fun \arithmos
+\end{axdef}
+
+\begin{axdef}
+	pi : \real
+\end{axdef}
+
+\section{Derivatives syntax}
+
+%%Zpreword \derivative derivative
+\begin{gendef}[A]
+	\derivative : A \fun A
+\end{gendef}
+
+\section{Vectors}
+
+%%Zinword \vecminus vecminus
+\begin{zed}
+  \function 30 \leftassoc ( \varg \vecminus \varg )
+\end{zed}
+\begin{axdef}
+	\varg \vecminus \varg : (real \cross \real) \cross (\real \cross \real) \fun (\real \cross \real)
+\where
+	\forall x1, y1, x2, y2 : \real @ \\
+	\t1 (x1, y1) \vecminus (x2, y2) = (x1 - x2, y1 - y2)
+\end{axdef}
+
+%%Zinword \vecplus vecplus
+\begin{zed}
+  \function 30 \leftassoc ( \varg \vecplus \varg )
+\end{zed}
+\begin{axdef}
+	\varg \vecplus \varg : (real \cross \real) \cross (\real \cross \real) \fun (\real \cross \real)
+\where
+	\forall x1, y1, x2, y2 : \real @ \\
+	\t1 (x1, y1) \vecplus (x2, y2) = (x1 + x2, y1 + y2)
+\end{axdef}
+
+%%Zinword \vecdotprod vecdotprod
+\begin{zed}
+  \function 40 \leftassoc ( \varg \vecdotprod \varg )
+\end{zed}
+\begin{axdef}
+	\varg \vecdotprod \varg : (real \cross \real) \cross (\real \cross \real) \fun \real
+\where
+	\forall x1, y1, x2, y2 : \real @
+	\t1 (x1, y1) \vecdotprod (x2, y2) = x1 * x2 + y1 * y2
+\end{axdef}
+
+%%Zinword \scalarmult scalarmult
+\begin{zed}
+  \function 40 \leftassoc ( \varg \scalarmult \varg )
+\end{zed}
+\begin{axdef}
+	\varg \scalarmult \varg : \real \cross (\real \cross \real) \fun (\real \cross \real)
+\where
+	\forall k, x, y : \real @
+	\t1 k \scalarmult (x, y) = (k * x, k * y)
+\end{axdef}
+
+%%Zinword \scalardiv scalardiv
+\begin{zed}
+  \function 40 \leftassoc ( \varg \scalardiv \varg )
+\end{zed}
+\begin{axdef}
+	\varg \scalardiv \varg : (\real \cross \real) \cross \real \fun (\real \cross \real)
+\where
+	\forall k, x, y, z : \real @
+	\t1 (x, y) \scalardiv k = (x \realdiv k, y \realdiv k)
+\end{axdef}
+
+\begin{axdef}
+	norm : \real \cross \real \fun \real
+\end{axdef}
+
+\section{Locations functions}
+
+\begin{axdef}
+	boxLocs : (\real \cross \real) \fun (\real) \fun \real \fun \real \fun \power (\real \cross \real)
+\where
+	\forall xpos, ypos, yaw, xwidth, ywidth : \real @ \\
+	\t1 boxLocs~(xpos, ypos)~yaw~xwidth~ywidth = \{ \} % TODO
+\end{axdef}
+
+\begin{axdef}
+	squareLocs : (\real \cross \real) \fun (\real) \fun \real \fun \real \fun \power (\real \cross \real)
+\where
+	\forall xpos, ypos, yaw, xwidth, ywidth : \real @ \\
+	\t1 boxLocs~(xpos, ypos)~yaw~xwidth~ywidth = \{ \} % TODO
+\end{axdef}
+
+\begin{axdef}
+	circleLocs : (\real \cross \real) \fun (\real) \fun \real \fun \power (\real \cross \real)
+\where
+	\forall xpos, ypos, yaw, radius : \real @ \\
+	\t1 circleLocs~(xpos, ypos)~(yaw)~radius = \{ x, y : \real | (x-xpos)*(x-xpos) + (y-ypos)*(y-ypos) \leq radius*radius \}
+\end{axdef}
+
+\begin{zed}
+  \relation ( \varg on \varg )
+\end{zed}
+\begin{axdef}
+	\varg on \varg : \power (\real \cross \real) \rel \power (\real \cross \real)
+\end{axdef}
+
+\section{Orientation functions}
+
+\begin{axdef}
+	towards : (\real \cross \real) \fun (\real \cross \real) \fun (\real \cross \real)
+\where
+	\forall base, target : (\real \cross \real) @ \\
+	\t1 towards~base~target = (target \vecminus base) \scalardiv norm~(target \vecminus base)
+\end{axdef}
+\begin{axdef}
+	orientationToVector : \real \fun (\real \cross \real)
+\where
+	\forall yaw : \real @ \\
+	\t1 orientationToVector~(yaw) = \\
+	\t2 (cos~yaw, sin~yaw)
+\end{axdef}
+\begin{axdef}
+	vectorToOrientation : (\real \cross \real) \fun \real 
+\where
+	\forall x, y: \real @ \\
+	\t1 ((x > 0 \land y > 0) \implies vectorToOrientation~(x, y) = arctan(y \realdiv x)) \land \\
+	\t1 ((x = 0 \land y > 0) \implies vectorToOrientation~(x, y) = pi \realdiv 2) \land \\
+	\t1 ((x < 0 \land y > 0) \implies vectorToOrientation~(x, y) = arctan(y \realdiv x) + pi) \land \\
+	\t1 ((x \geq 0 \land y = 0) \implies vectorToOrientation~(x, y) = 0) \land \\
+	\t1 ((x < 0 \land y = 0) \implies vectorToOrientation~(x, y) = pi) \land \\
+	\t1 ((x > 0 \land y < 0) \implies vectorToOrientation~(x, y) = arctan(y \realdiv x)) \land \\
+	\t1 ((x = 0 \land y < 0) \implies vectorToOrientation~(x, y) = \negate (pi \realdiv 2)) \land \\
+	\t1 ((x < 0 \land y < 0) \implies vectorToOrientation~(x, y) = arctan(y \realdiv x) - pi) \\
+\end{axdef}
+
+
+\end{document}

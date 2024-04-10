@@ -1,0 +1,299 @@
+\documentclass{article}
+\usepackage{circus}
+
+\input{roboworld}
+
+\begin{document}
+\begin{zsection}
+  \SECTION roboworld\_3d\_toolkit \parents circus\_toolkit
+\end{zsection}
+
+%%Zword \circbool \boolean
+
+\section{Real numbers}
+
+%%Zword \real real
+\begin{axdef}
+	\real : \power \arithmos
+\end{axdef}
+
+%%Zinword \decimalpoint decimalpoint
+\begin{zed}
+  \function 100 \leftassoc ( \varg \decimalpoint \varg )
+\end{zed}
+\begin{axdef}
+	\varg \decimalpoint \varg : \num \cross \num \fun \real
+\end{axdef}
+
+%%Zinword \realdiv realdiv
+\begin{zed}
+  \function 40 \leftassoc ( \varg \realdiv \varg )
+\end{zed}
+\begin{axdef}
+	\varg \realdiv \varg : \real \cross \real \fun \real
+\end{axdef}
+
+\begin{axdef}
+	sqrt : \arithmos \fun \arithmos \\
+	sin : \arithmos \fun \arithmos \\
+	cos : \arithmos \fun \arithmos \\
+	abs : \arithmos \fun \arithmos
+\end{axdef}
+
+\section{Vectors}
+
+\begin{axdef}
+	norm : \real \cross \real \cross \real \fun \real
+\end{axdef}
+
+\begin{axdef}
+	norm2 : \real \cross \real \fun \real
+\end{axdef}
+
+%%Zinword \vecminus vecminus
+\begin{zed}
+  \function 30 \leftassoc ( \varg \vecminus \varg )
+\end{zed}
+\begin{axdef}
+	\varg \vecminus \varg : (real \cross \real \cross \real) \cross (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real)
+\where
+	\forall x1, y1, z1, x2, y2, z2 : \real @ \\
+	\t1 (x1, y1, z1) \vecminus (x2, y2, z2) = (x1 - x2, y1 - y2, z1 - z2)
+\end{axdef}
+
+
+%%Zinword \vecdotprod vecdotprod
+\begin{zed}
+  \function 40 \leftassoc ( \varg \vecdotprod \varg )
+\end{zed}
+\begin{axdef}
+	\varg \vecdotprod \varg : (real \cross \real \cross \real) \cross (\real \cross \real \cross \real) \fun \real
+\where
+	\forall x1, y1, z1, x2, y2, z2 : \real @
+	\t1 (x1, y1, z1) \vecdotprod (x2, y2, z2) = x1 * x2 + y1 * y2 + z1 * z2
+\end{axdef}
+
+%%Zinword \veccrossprod veccrossprod
+\begin{zed}
+  \function 40 \leftassoc ( \varg \veccrossprod \varg )
+\end{zed}
+\begin{axdef}
+	\varg \veccrossprod \varg : (real \cross \real \cross \real) \cross (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real)
+\where
+	\forall x1, y1, z1, x2, y2, z2 : \real @
+	\t1 (x1, y1, z1) \veccrossprod (x2, y2, z2) = (y1*z2 - y2*z1, x2*z1 - x1*z2, x1*y2 - x2*y1)
+\end{axdef}
+
+%%Zinword \scalarmult scalarmult
+\begin{zed}
+  \function 40 \leftassoc ( \varg \scalarmult \varg )
+\end{zed}
+\begin{axdef}
+	\varg \scalarmult \varg : \real \cross (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real)
+\where
+	\forall k, x, y, z : \real @
+	\t1 k \scalarmult (x, y, z) = (k * x, k * y, k * z)
+\end{axdef}
+
+%%Zinword \scalardiv scalardiv
+\begin{zed}
+  \function 40 \leftassoc ( \varg \scalardiv \varg )
+\end{zed}
+\begin{axdef}
+	\varg \scalardiv \varg : (\real \cross \real \cross \real) \cross \real \fun (\real \cross \real \cross \real)
+\where
+	\forall k, x, y, z : \real @
+	\t1 (x, y, z) \scalardiv k = (x \realdiv k, y \realdiv k, z \realdiv k)
+\end{axdef}
+
+\section{Derivatives syntax}
+
+%%Zpreword \derivative derivative
+\begin{gendef}[A]
+	\derivative : A \fun A
+\end{gendef}
+
+\section{Locations functions}
+
+\begin{axdef}
+	boxLocs : (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real) \fun \real \fun \real \fun \real \fun \power (\real \cross \real \cross \real)
+\where
+	\forall xpos, ypos, zpos, yaw, pitch, roll, xwidth, ywidth, zwidth : \real @ \\
+	\t1 boxLocs~(xpos, ypos, zpos)~(yaw, pitch, roll)~xwidth~ywidth~zwidth = \{ \} % TODO
+\end{axdef}
+
+\begin{axdef}
+	sphereLocs : (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real) \fun \real \fun \power (\real \cross \real \cross \real)
+\where
+	\forall xpos, ypos, zpos, yaw, pitch, roll, radius : \real @ \\
+	\t1 sphereLocs~(xpos, ypos, zpos)~(yaw, pitch, roll)~radius = \{ \} % TODO
+\end{axdef}
+
+\begin{axdef}
+	cylinderLocs : (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real) \fun \real \fun \real \fun \power (\real \cross \real \cross \real)
+\where
+	\forall xpos, ypos, zpos, yaw, pitch, roll, radius, depth : \real @ \\
+	\t1 cylinderLocs~(xpos, ypos, zpos)~(yaw, pitch, roll)~radius~depth = \{ \} % TODO
+\end{axdef}
+
+\begin{zed}
+  \relation ( \varg on \varg )
+\end{zed}
+\begin{axdef}
+	\varg on \varg : \power (\real \cross \real \cross \real) \rel \power (\real \cross \real \cross \real)
+\end{axdef}
+
+\begin{axdef}
+	under : \power (\real \cross \real \cross \real) \fun \power (\real \cross \real \cross \real)
+\where
+	\forall locs : \power (\real \cross \real \cross \real) @
+	\t1 under~locs = \bigcup \{ x, y, z : \real | (x, y, z) \in locs @ \\
+	\t2 \{ z2 : \real | z2 \leq z @ (x, y, z2) \} \}
+\end{axdef}
+
+\section{Orientation functions}
+
+\begin{axdef}
+	towards : (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real)
+\where
+	\forall base, target : \real \cross \real \cross \real @ \\
+	\t1 towards~base~target = (target \vecminus base) \scalardiv norm~(target \vecminus base)
+\end{axdef}
+
+\begin{axdef}
+	orientationToVector : (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real)
+\where
+	\forall yaw, pitch, roll : \real @ \\
+	\t1 orientationToVector~(yaw, pitch, roll) = \\
+	\t2 (cos~yaw * cos~pitch, cos~yaw * sin~pitch, \negate sin~pitch)
+\end{axdef}
+
+\section{Gradients}
+
+\begin{axdef}
+	line3d : (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real) \fun \power (\real \cross \real \cross \real)
+\where
+	\forall x1, y1, z1, x2, y2, z2 : \real @ \\
+	\t1 line3d~(x1,y1,z1)~(x2,y2,z2) = \{ t : 0\decimalpoint0 \upto 1\decimalpoint0 @ \\
+	\t2 (x1 + t*(x2-x1), y1 + t*(y2-y1), z1 + t*(z2-z1)) \} 
+\end{axdef}
+\begin{axdef}
+	heightsToMesh : \real \fun ((\real \cross \real) \pfun \real) \fun \power (\real \cross \real \cross \real)
+\where
+	\forall meshStep : \real; heights : (\real \cross \real) \pfun \real @ \\
+	% pick a square to work on 
+	\t1 heightsToMesh~meshStep~heights = \bigcup \{ x, y : \nat | \\
+	\t2 (meshStep * x, meshStep * y) \in \dom heights \\
+	\t2 {} \land (meshStep * x, meshStep * (y+1)) \in \dom heights \\
+	\t2 {} \land (meshStep * (x+1), meshStep * y) \in \dom heights \\
+	\t2 {} \land (meshStep * (x+1), meshStep * (y+1)) \in \dom heights  @ \\
+	\t3 \LET point2d1 == (meshStep * x, meshStep * y) @ \\
+	\t3 \LET point2d2 == (meshStep * x, meshStep * (y+1)) @ \\
+	\t3 \LET point2d3 == (meshStep * (x+1), meshStep * y) @ \\
+	\t3 \LET point2d4 == (meshStep * (x+1), meshStep * (x+1)) @ \\
+	\t3 \LET point3d1 == (point2d1.1, point2d1.2, heights~point2d1) @ \\
+	\t3 \LET point3d2 == (point2d2.1, point2d2.2, heights~point2d2) @ \\
+	\t3 \LET point3d3 == (point2d3.1, point2d3.2, heights~point2d3) @ \\
+	\t3 \LET point3d4 == (point2d4.1, point2d4.2, heights~point2d4) @ \\
+	\t3 \LET dividingLine == line3d~point3d2~point3d3 @ \\
+	\t3 \LET triangle1 == \bigcup \{ p2 : dividingLine @ line3d~point3d1~p2 \} @ \\
+	\t3 \LET triangle2 == \bigcup \{ p2 : dividingLine @ line3d~point3d4~p2 \} @ \\
+	\t3 triangle1 \cup triangle2 \}
+\end{axdef}
+\begin{axdef}
+	slope3d : (\real \cross \real \cross \real) \fun (\real \cross \real \cross \real) \fun \real
+\where
+	\forall x1, y1, z1, x2, y2, z2 : \real @ \\
+	\t1 slope3d~(x1,y1,z1)~(x2,y2,z2) = abs~((z2 - z1) \realdiv norm2~(x2-x1,y2-y1))
+\end{axdef}
+%\begin{axdef}
+%	heightsToGradients : ((\real \cross \real) \pfun \real) \fun (\real \cross \real \fun real)
+%\where
+%	\forall heights : (\real \cross \real) \pfun \real @ \\
+%	% pick a square to work on 
+%	\t1 heightsToGradients~heights = \bigcup \{ x, y : \nat | \\
+%	\t2 (meshStep * x, meshStep * y) \in \dom heights \\
+%	\t2 {} \land (meshStep * x, meshStep * (y+1)) \in \dom heights \\
+%	\t2 {} \land (meshStep * (x+1), meshStep * y) \in \dom heights \\
+%	\t2 {} \land (meshStep * (x+1), meshStep * (y+1)) \in \dom heights  @ \\
+%	\t3 \LET point2d1 == (meshStep * x, meshStep * y) @ \\
+%	\t3 \LET point2d2 == (meshStep * x, meshStep * (y+1)) @ \\
+%	\t3 \LET point2d3 == (meshStep * (x+1), meshStep * y) @ \\
+%	\t3 \LET point2d4 == (meshStep * (x+1), meshStep * (x+1)) @ \\
+%	\t3 \LET point3d1 == (point2d1.1, point2d1.2, heights~point2d1) @ \\
+%	\t3 \LET point3d2 == (point2d2.1, point2d2.2, heights~point2d2) @ \\
+%	\t3 \LET point3d3 == (point2d3.1, point2d3.2, heights~point2d3) @ \\
+%	\t3 \LET point3d4 == (point2d4.1, point2d4.2, heights~point2d4) @ \\
+%	\t3 \LET dividingLine == line3d~point3d2~point3d3 @ \\
+%	\t3 \LET triangle1Gradients == \bigcup \{ p2 : dividingLine @ \\
+%	\t4 \{p : line3d~point3d1~p2 @ (p.1, p.2) \mapsto slope3d~point3d1~p2\} \} @ \\
+%	\t3 \LET triangle2Gradients == \bigcup \{ p2 : dividingLine @ \\
+%	\t4 \{p : line3d~point3d1~p2 @ (p.1, p.2) \mapsto slope3d~point3d4~p2\} \} @ \\
+%	% the edges of the squares will agree on gradients, so just need to remove dividing line
+%	\t3 \LET triangle1InnerGradients == \\
+%	\t4 \{ p : dividingLine @ (p.1, p.2) \} \ndres triangle1Gradients @ \\
+%	\t3 \LET triangle2InnerGradients == \\
+%	\t4 \{ p : dividingLine @ (p.1, p.2) \} \ndres triangle2Gradients @ \\
+%	% take gradient along the dividing line
+%	\t3 \LET dividingLineGradients == \\
+%	\t4 \{ p : dividingLine @ (p.1, p.2) \mapsto slope3d~point3d2~point3d3 \} @ \\
+%	\t3 triangle1InnerGradients \cup dividingLineGradients \cup triangle2InnerGradients \}
+%\end{axdef}
+\begin{axdef}
+	locations2d : \power (\real \cross \real \cross \real) \fun \power (\real \cross \real)
+\where
+	\forall locations3d : \power (\real \cross \real \cross \real) @ \\
+	\t1 locations2d~locations3d = \{ l : locations3d @ (l.1, l.2) \}
+\end{axdef}
+
+\begin{zed}
+  \relation ( \varg divides \varg )
+\end{zed}
+\begin{axdef}
+	\varg divides \varg : \real \rel \real
+\where
+	\forall d, x : \real @ \exists k : \nat @ d*k = x
+\end{axdef}
+
+\begin{axdef}
+	groundGradient : ((\real \cross \real) \fun \real) \fun (\real \cross \real) \fun (\real \cross \real) \fun \real
+\where
+	\forall heights : (\real \cross \real) \fun \real; x1, y1, x2, y2 : \real @ \\
+	\t1 groundGradient~heights~(x1,y1)~(x2,y2) = \\
+	\t2 slope3d~(x1, y1, heights~(x1, y1))~(x2, y2, heights~(x2, y2))
+\end{axdef}
+\begin{axdef}
+	groundGradientsUnder : ((\real \cross \real) \fun \real) \fun \power (\real \cross \real \cross \real) \fun \power \real
+\where
+	\forall heights : (\real \cross \real) \fun \real; locs : \power (\real \cross \real \cross \real) @ \\
+	\t1 groundGradientsUnder~heights~locs = \\
+	\t2 \{ loc1, loc2 : \dom heights \cap locations2d~locs | loc1 \neq loc2 @ \\
+	\t3 groundGradient~heights~loc1~loc2 \}
+\end{axdef}
+\begin{axdef}
+	heightsToNormals : \real \fun ((\real \cross \real) \fun \real) \fun ((\real \cross \real) \fun (\real \cross \real \cross \real))
+\where
+	\forall meshStep : \real; heights : (\real \cross \real) \pfun \real @ \\
+	% pick a square to work on 
+	\t1 heightsToNormals~meshStep~heights = \bigcup \{ x, y : \nat | \\
+	\t2 (meshStep * x, meshStep * y) \in \dom heights \\
+	\t2 {} \land (meshStep * x, meshStep * (y+1)) \in \dom heights \\
+	\t2 {} \land (meshStep * (x+1), meshStep * y) \in \dom heights \\
+	\t2 {} \land (meshStep * (x+1), meshStep * (y+1)) \in \dom heights  @ \\
+	\t3 \LET point2d1 == (meshStep * x, meshStep * y) @ \\
+	\t3 \LET point2d2 == (meshStep * x, meshStep * (y+1)) @ \\
+	\t3 \LET point2d3 == (meshStep * (x+1), meshStep * y) @ \\
+	\t3 \LET point2d4 == (meshStep * (x+1), meshStep * (x+1)) @ \\
+	\t3 \LET point3d1 == (point2d1.1, point2d1.2, heights~point2d1) @ \\
+	\t3 \LET point3d2 == (point2d2.1, point2d2.2, heights~point2d2) @ \\
+	\t3 \LET point3d3 == (point2d3.1, point2d3.2, heights~point2d3) @ \\
+	\t3 \LET point3d4 == (point2d4.1, point2d4.2, heights~point2d4) @ \\
+	\t3 \LET dividingLine == line3d~point3d2~point3d3 @ \\
+	\t3 \LET triangle1 == \bigcup \{ p2 : dividingLine @ line3d~point3d1~p2 \} @ \\
+	\t3 \LET triangle2 == \bigcup \{ p2 : dividingLine @ line3d~point3d4~p2 \} @ \\
+	\t3 \LET triangle1normal == (point3d2 \vecminus point3d1) \veccrossprod (point3d3 \vecminus point3d1) @
+	\t3 \LET triangle2normal == (point3d3 \vecminus point3d4) \veccrossprod (point3d2 \vecminus point3d4) @
+	\emptyset \}
+\end{axdef}
+
+\end{document}

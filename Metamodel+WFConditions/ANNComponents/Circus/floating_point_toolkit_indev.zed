@@ -1,0 +1,77 @@
+\begin{zsection}
+  \SECTION real\_toolkit \parents standard\_toolkit
+\end{zsection}
+
+Real number type decalration: 
+
+%%Zchar \real U+211D
+\begin{axdef}
+\real : \power \arithmos
+\end{axdef}
+
+Testing: 
+
+Defining the real number type, as a type of \arithmos. 
+
+We want to define the scientific form, and the input with the dot notation, and those are just for reals: 
+Has: 
+
+16,777,216 because its 2^24 in decimal, the highest the significand can go up to, highest number the signficand can represent. 
+
+\begin{axdef}
+SF : \power \nat
+\where
+SF = 0..16777216
+\end{axdef}
+
+Radix, the base, is 10, so we have Ex as notation for x10^x, as with standard scientific notation. 
+
+Exponent, 
+
+emax for 32-bit is 127, 
+emin = 1 - emax
+
+\begin{axdef}
+Ex : \power \num
+\where
+Ex = \negate 126..127
+\end{axdef}
+
+Sign, 
+
+\begin{axdef}
+Sign : \power \num
+\where
+Sign = \{ \negate 1, 1 \}
+\end{axdef}
+
+\begin{zed}
+Test == 1..10
+\end{zed}
+
+Significand type, is the natural numbers, it is the precondition, is within that set. 
+0x1D404
+%%Zchar \mathbf{E} U+1D404 
+\begin{axdef}
+SForm : \power ((\num \cross \nat \cross \num) \cross \real)
+\where
+\forall s : Sign ; e : Ex ; sf : SF @ \exists_1 v : \real @ ((s,e,sf),v) \in SForm
+\end{axdef}
+Exists one, each has a unique real number representation, yes. 
+
+
+To avoid intrducing names, try to condense all of this, into local definitions. 
+
+An axiom, to test this: 
+* is UNDECLARED, because no imports, defined fully by the axioms above. 
+\begin{axdef}
+x, y, z, r : \arithmos \\
+sign : \num \\
+exponent : \num \\
+significand : \nat \\
+b : Test
+\where
+r = SForm(sign, exponent, significand)
+\end{axdef}
+
+Define syntax, 
