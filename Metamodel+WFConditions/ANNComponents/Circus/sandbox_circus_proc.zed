@@ -37,7 +37,7 @@ Problem with | symbol in binary parallel composition:
     S \circdef \Skip \\%
     
     Q \circdef y : \nat \circspot \\%
-    R(1) \lpar  \emptyset \rpar S \\%
+    R(1) \lpar  \emptyset  \rpar S \\%
     
     
     \circspot \Skip \\

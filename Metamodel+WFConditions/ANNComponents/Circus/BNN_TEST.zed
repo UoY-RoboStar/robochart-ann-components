@@ -5,19 +5,37 @@
 
 
 \begin{zsection}
-  \SECTION AnglePIDANN \parents roboworld\_2d\_toolkit 
+  \SECTION BNN\_TEST \parents circus\_toolkit
 \end{zsection}
 
-
+In this case, Value is of the type Nat. 
 \begin{zed}
-  Value ~~==~~ \real
+  Value ~~==~~ \nat
 \end{zed}
+layerNo, is 3, size of each layer, 3, 1, and 3. 
+input size is 6. 
 
+Channels, layerRes0-
 \begin{circus}
   \circchannel layerRes01: Value \\
   \circchannel layerRes02: Value \\
+  \circchannel layerRes03: Value \\
+  \circchannel layerRes04: Value \\
+  \circchannel layerRes05: Value \\
+  \circchannel layerRes06: Value \\
+  
+  
   \circchannel layerRes11: Value \\
+  \circchannel layerRes12: Value \\
+  \circchannel layerRes13: Value \\
+  
   \circchannel layerRes21: Value \\
+  
+  \circchannel layerRes31: Value \\
+  \circchannel layerRes32: Value \\
+  \circchannel layerRes33: Value \\
+  
+  
   \circchannel nodeOut111: Value \\
   \circchannel nodeOut112: Value \\
   \circchannel nodeOut211: Value \\
@@ -25,45 +43,63 @@
 \end{circus}
 
 \begin{circus}
-  \circchannel adiff\_in : \real \\
-  \circchannel anewError\_in : \real \\
-  \circchannel angleOutputE\_out : \real \\
+  \circchannel in1 : Value \\
+  \circchannel in2 : Value \\
+  \circchannel in3 : Value \\
+  \circchannel in4 : Value \\
+  \circchannel in5 : Value \\
+  \circchannel in6 : Value \\
+  \circchannel out1 : Value \\
+  \circchannel out2 : Value \\
+  \circchannel out3 : Value \\
 \end{circus}
 
 \begin{circus}
   \circchannelset ANNHiddenEvts == \lchanset layerRes11 \rchanset
 \end{circus}
 
+Need a different activation function, sign function, very similar, main difference is we define it 
+from both types, the difference is, it only returns 0 or 1. 
 
 \begin{axdef}
-  relu : Value \fun Value %
+  sign : Value \fun Value %
   \where %
   \forall x : Value @ \\%
   \t1 %
-  (x < 0 \implies (x,0) \in relu) \land \\% 
-  (x \geq 0 \implies (x,x) \in relu)
+  (x = 0 \implies (x,0) \in sign) \land \\% 
+  (x > 0 \implies (x,1) \in sign)
 \end{axdef}
 
 
 \begin{circus}
-  \circprocess\ AnglePIDANN \circdef \ \circbegin \\%
+  \circprocess\ BNN\_TEST \circdef \ \circbegin \\%
       Collator \circdef l, n, i : \nat; sum : Value \circspot \\
-      \lcircguard l = 1 \land n = 1 \land i = 0 \rcircguard \circguard layerRes11~!(relu(sum + ( 0 \decimalpoint 125424 ))) \then \Skip \\%
+      \lcircguard l = 1 \land n = 1 \land i = 0 \rcircguard \circguard layerRes11~!(sign(sum + ( 0 ))) \then \Skip \\%
       \extchoice
       \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut111~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
       \extchoice
-      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard nodeOut112~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard layerRes11~!(sign(sum + ( 0 ))) \then \Skip \\%
       \extchoice
-      \lcircguard l = 2 \land n = 1 \land i = 0 \rcircguard \circguard layerRes21~!(relu(sum + ( \negate 0 \decimalpoint 107753 ))) \then \Skip \\%
+      \lcircguard l = 1 \land n = 1 \land i = 3 \rcircguard \circguard nodeOut111~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 1 \land i = 4 \rcircguard \circguard layerRes11~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 1 \land i = 5 \rcircguard \circguard nodeOut111~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 1 \land i = 6 \rcircguard \circguard nodeOut111~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      
+      \extchoice
+      
+      \lcircguard l = 2 \land n = 1 \land i = 0 \rcircguard \circguard layerRes21~!(sign(sum + ( 0  ))) \then \Skip \\%
       \extchoice
       \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut211~?x \then Collator(l, n, (i-1), (sum+x)) \\%
       
       NodeIn \circdef l, n, i : \nat \circspot \\%
-      \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut111~!(x * (1 \decimalpoint 22838)) \then \Skip \\%
+      \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut111~!(x * (1)) \then \Skip \\%
       \extchoice \\%
-      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard layerRes01~?x \then nodeOut112~!(x * (0 \decimalpoint 132874)) \then \Skip \\%
+      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard layerRes01~?x \then nodeOut112~!(x * (0 )) \then \Skip \\%
       \extchoice \\%
-      \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard layerRes11~?x \then nodeOut211~!(x * (0 \decimalpoint 744636)) \then \Skip \\%
+      \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard layerRes11~?x \then nodeOut211~!(x * (0 )) \then \Skip \\%
       
     
       Node \circdef l, n, inpSize : \nat \circspot \\%
