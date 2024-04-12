@@ -61,7 +61,7 @@
       NodeIn \circdef l, n, i : \nat \circspot \\%
       \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut111~!(x * (1 \decimalpoint 22838)) \then \Skip \\%
       \extchoice \\%
-      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard layerRes01~?x \then nodeOut112~!(x * (0 \decimalpoint 132874)) \then \Skip \\%
+      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard layerRes02~?x \then nodeOut112~!(x * (0 \decimalpoint 132874)) \then \Skip \\%
       \extchoice \\%
       \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard layerRes11~?x \then nodeOut211~!(x * (0 \decimalpoint 744636)) \then \Skip \\%
       
@@ -70,13 +70,13 @@
         \lcircguard l = 1 \land n = 1 \rcircguard \circguard
         ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
         \lpar | \lchanset nodeOut111, nodeOut112 \rchanset | \rpar \\%
-        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut111, nodeOut112, nodeOut211 \rchanset \\   
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut111, nodeOut112 \rchanset \\   
         ) \\
         \extchoice \\
         \lcircguard l = 2 \land n = 1 \rcircguard \circguard
         ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
         \lpar | \lchanset nodeOut211 \rchanset | \rpar \\%
-        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut111, nodeOut112, nodeOut211 \rchanset \\   
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut211 \rchanset \\   
         ) \\%
         
       HiddenLayer \circdef l, s, inpSize : \nat \circspot \\%
@@ -86,13 +86,13 @@
       HiddenLayer(1, 1, 2) \\%
       
       OutputLayer \circdef \\%
-      (\lpar \lchanset layerRes11 \rchanset \rpar i : 1 \upto 1 \circspot Node(2, 1, 1)) \\%
+      (\lpar \lchanset layerRes11 \rchanset \rpar i : 1 \upto 1 \circspot Node(2, i, 1)) \\%
       
       ANN \circdef \\%
-      (((HiddenLayers \lpar | \lchanset layerRes11 \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN) \circinterrupt endc \then \Skip\\%
+      ((HiddenLayers \lpar | \lchanset layerRes11 \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
       
       ANNRenamed \circdef \\%
-      (ANN) \lcircrename layerRes01, layerRes02, layerRes21 := adiff\_in, anewError\_in, angleOutputE\_out \rcircrename \\%
+      (ANN) \lcircrename layerRes01, layerRes02, layerRes21 := anewError\_in, adiff\_in, angleOutputE\_out \rcircrename \circinterrupt endc \then \Skip \\%
       
     \circspot ANNRenamed \\%
   \circend

@@ -16,6 +16,7 @@ layerNo, is 3, size of each layer, 3, 1, and 3.
 input size is 6. 
 
 Channels, layerRes0-
+There will be a huge amount of nodeOut channels. 
 \begin{circus}
   \circchannel layerRes01: Value \\
   \circchannel layerRes02: Value \\
@@ -23,7 +24,6 @@ Channels, layerRes0-
   \circchannel layerRes04: Value \\
   \circchannel layerRes05: Value \\
   \circchannel layerRes06: Value \\
-  
   
   \circchannel layerRes11: Value \\
   \circchannel layerRes12: Value \\
@@ -38,6 +38,11 @@ Channels, layerRes0-
   
   \circchannel nodeOut111: Value \\
   \circchannel nodeOut112: Value \\
+  \circchannel nodeOut113: Value \\
+  \circchannel nodeOut114: Value \\
+  \circchannel nodeOut115: Value \\
+  \circchannel nodeOut116: Value \\
+  
   \circchannel nodeOut211: Value \\
   \circchannel\ endc \\
 \end{circus}
