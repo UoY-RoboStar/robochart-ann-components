@@ -1,0 +1,234 @@
+\documentclass{article}
+\usepackage{czt}
+
+\begin{document}
+
+
+\begin{zsection}
+  \SECTION AnglePIDANN2 \parents roboworld\_2d\_toolkit 
+\end{zsection}
+
+
+\begin{zed}
+  Value ~~==~~ \nat
+\end{zed}
+
+\begin{circus}
+  \circchannel layerRes01: Value \\
+  \circchannel layerRes02: Value \\
+  
+  \circchannel layerRes11: Value \\
+  \circchannel layerRes12: Value \\
+  \circchannel layerRes13: Value \\
+  
+  \circchannel layerRes21: Value \\
+  
+  \circchannel layerRes31: Value \\
+  
+  \circchannel layerRes41: Value \\
+  \circchannel layerRes42: Value \\
+ 
+  
+  \circchannel nodeOut111: Value \\
+  \circchannel nodeOut112: Value \\
+  
+  \circchannel nodeOut121: Value \\
+  \circchannel nodeOut122: Value \\
+  
+  \circchannel nodeOut131: Value \\
+  \circchannel nodeOut132: Value \\
+  
+  
+  \circchannel nodeOut211: Value \\
+  \circchannel nodeOut212: Value \\
+  \circchannel nodeOut213: Value \\
+  
+  \circchannel nodeOut311: Value \\
+  
+  \circchannel nodeOut411: Value \\
+  \circchannel nodeOut421: Value \\
+  
+  
+  \circchannel\ endc \\
+\end{circus}
+
+Just changing the types of the input and output. 
+\begin{circus}
+  \circchannel adiff\_in : Value \\
+  \circchannel anewError\_in : Value \\
+  \circchannel angleOutputE\_out : Value \\
+\end{circus}
+
+\begin{circus}
+  \circchannelset ANNHiddenEvts == \lchanset layerRes11, layerRes12, layerRes13, layerRes21, layerRes31 \rchanset
+\end{circus}
+
+
+\begin{axdef}
+  sign : Value \fun Value %
+  \where %
+  \forall x : Value @ \\%
+  \t1 %
+  (x < 0 \implies (x,0) \in sign) \land \\% 
+  (x \geq 0 \implies (x,1) \in sign)
+\end{axdef}
+
+
+\begin{circus}
+  \circprocess\ AnglePIDANN2 \circdef \ \circbegin \\%
+      Collator \circdef l, n, i : \nat; sum : Value \circspot \\
+      \lcircguard l = 1 \land n = 1 \land i = 0 \rcircguard \circguard layerRes11~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut111~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard nodeOut112~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 2 \land i = 0 \rcircguard \circguard layerRes12~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 2 \land i = 1 \rcircguard \circguard nodeOut121~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 2 \land i = 2 \rcircguard \circguard nodeOut122~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 3 \land i = 0 \rcircguard \circguard layerRes13~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 3 \land i = 1 \rcircguard \circguard nodeOut131~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 3 \land i = 2 \rcircguard \circguard nodeOut132~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      
+      
+      \lcircguard l = 2 \land n = 1 \land i = 0 \rcircguard \circguard layerRes21~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut211~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 2 \land n = 1 \land i = 2 \rcircguard \circguard nodeOut212~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 2 \land n = 1 \land i = 3 \rcircguard \circguard nodeOut213~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      
+      \lcircguard l = 3 \land n = 1 \land i = 0 \rcircguard \circguard layerRes31~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 3 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut311~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      
+      \lcircguard l = 4 \land n = 1 \land i = 0 \rcircguard \circguard layerRes41~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 4 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut411~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 4 \land n = 2 \land i = 0 \rcircguard \circguard layerRes42~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 4 \land n = 2 \land i = 1 \rcircguard \circguard nodeOut421~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      
+      
+      NodeIn \circdef l, n, i : \nat \circspot \\%
+      \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut111~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard layerRes02~?x \then nodeOut112~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      \lcircguard l = 1 \land n = 2 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut121~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      \lcircguard l = 1 \land n = 2 \land i = 2 \rcircguard \circguard layerRes02~?x \then nodeOut122~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      \lcircguard l = 1 \land n = 3 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut131~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      \lcircguard l = 1 \land n = 3 \land i = 2 \rcircguard \circguard layerRes02~?x \then nodeOut132~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      
+      \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard layerRes11~?x \then nodeOut211~!(x * ( 1 )) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 2 \land n = 1 \land i = 2 \rcircguard \circguard layerRes12~?x \then nodeOut212~!(x * ( 1 )) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 2 \land n = 1 \land i = 3 \rcircguard \circguard layerRes13~?x \then nodeOut213~!(x * ( 1 )) \then \Skip \\%
+      \extchoice
+      
+      \lcircguard l = 3 \land n = 1 \land i = 1 \rcircguard \circguard layerRes21~?x \then nodeOut311~!(x * ( 1 )) \then \Skip \\%
+      \extchoice
+      
+      \lcircguard l = 4 \land n = 1 \land i = 1 \rcircguard \circguard layerRes31~?x \then nodeOut411~!(x * ( 1 )) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 4 \land n = 2 \land i = 1 \rcircguard \circguard layerRes31~?x \then nodeOut421~!(x * ( 1 )) \then \Skip \\%
+      
+    
+      Node \circdef l, n, inpSize : \nat \circspot \\%
+        \lcircguard l = 1 \land n = 1 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut111, nodeOut112 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut111, nodeOut112 \rchanset \\   
+        ) \\
+        \extchoice \\
+        
+        \lcircguard l = 1 \land n = 2 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut121, nodeOut122 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut121, nodeOut122 \rchanset \\   
+        ) \\
+        \extchoice \\
+        
+        \lcircguard l = 1 \land n = 3 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut131, nodeOut132 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut131, nodeOut132 \rchanset \\   
+        ) \\
+        \extchoice \\
+        
+        \lcircguard l = 2 \land n = 1 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut211, nodeOut212, nodeOut213 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut211, nodeOut212, nodeOut213 \rchanset \\   
+        ) \\
+        \extchoice
+        
+        \lcircguard l = 3 \land n = 1 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut311 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut311 \rchanset \\   
+        ) \\
+        \extchoice
+        
+         \lcircguard l = 4 \land n = 1 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut411 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut411 \rchanset \\   
+        ) \\
+        \extchoice
+        
+         \lcircguard l = 4 \land n = 2 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut421 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut421 \rchanset \\   
+        ) \\
+        
+        
+      HiddenLayer \circdef l, s, inpSize : \nat \circspot \\%
+      \lcircguard l = 1 \rcircguard \circguard
+      (\lpar \lchanset layerRes01, layerRes02 \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize)) \\%
+      \extchoice 
+      
+      \lcircguard l = 2 \rcircguard \circguard
+      (\lpar \lchanset layerRes11, layerRes12, layerRes13 \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize)) \\%
+      \extchoice 
+      
+      \lcircguard l = 3 \rcircguard \circguard
+      (\lpar \lchanset layerRes21 \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize)) \\%
+      
+      
+      HiddenLayers \circdef \\%
+      (((HiddenLayer(1, 3, 2)) \lpar | \lchanset layerRes11, layerRes12, layerRes13 \rchanset | \rpar HiddenLayer(2, 1, 3))  \\%
+      \t1 %
+      \lpar | \lchanset layerRes21 \rchanset | \rpar HiddenLayer(3,1,1)) \\%
+      
+      OutputLayer \circdef \\%
+      (\lpar \lchanset layerRes31 \rchanset \rpar i : 1 \upto 2 \circspot Node(4, i, 1)) \\%
+      
+      ANN \circdef \\%
+      ((HiddenLayers \lpar | \lchanset layerRes31 \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
+      
+      ANNRenamed \circdef \\%
+      (ANN) \lcircrename layerRes01, layerRes02, layerRes41 := anewError\_in, adiff\_in, angleOutputE\_out \rcircrename \circinterrupt endc \then \Skip \\%
+      
+    \circspot ANNRenamed \\%
+  \circend
+\end{circus}    
+
+
+\end{document}

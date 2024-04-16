@@ -1,0 +1,458 @@
+
+--ANN Channels--
+channel layerRes:{0..layerNo}.{1..maxSize}.Value
+channel nodeOut:{1..layerNo}.{1..maxSize}.{1..maxSize}.Value
+channel end
+		
+--SEMANTIC CONSTANTS--
+Value = {0..1}
+insize = 2
+outsize = 2
+layerstructure = <3, 1, 1, 2> 
+layerNo = #layerstructure 
+maxSize = 3
+		
+weights = < < <1,1>, <1,1>, <1,1> >, < <1,1,1> >, < <1> >, < <1>, <1> > >
+biases = < <0, 0, 0>, <0>, <0>, <0, 0> >
+
+ANNHiddenEvts = diff(Events, {| layerRes.0, layerRes.layerNo, end |})
+
+--CIRCUS SEMANTICS SPECIFIC--
+--Channels: 
+channel layerRes01: Value 
+channel layerRes02: Value 
+
+channel layerRes11: Value 
+channel layerRes12: Value
+channel layerRes13: Value
+
+channel layerRes21: Value
+
+channel layerRes31: Value 
+
+channel layerRes41: Value 
+channel layerRes42: Value  
+
+channel nodeOut111: Value 
+channel nodeOut112: Value 
+
+channel nodeOut121: Value 
+channel nodeOut122: Value 
+  
+channel nodeOut131: Value 
+channel nodeOut132: Value 
+  
+channel nodeOut211: Value 
+channel nodeOut212: Value 
+channel nodeOut213: Value 
+ 
+channel nodeOut311: Value 
+  
+channel nodeOut411: Value 
+channel nodeOut421: Value 
+
+channel endc 
+
+--Different way of defining ANNHiddenEvts
+ANNHiddenEvts_C = {| layerRes11, layerRes12, layerRes13, layerRes21, layerRes31 |}
+
+-- PROCESSES --
+NodeIn(layer, node, index) = layerRes.(layer - 1).index?x -> nodeOut.layer.node.index.(x * extract_weights(layer, node, index)) -> SKIP
+
+Node(layer, node, inputSize) = (||| i:{1..inputSize} @ NodeIn(layer, node, i)) [| {| nodeOut.layer.node |} |] Collator(layer, node, inputSize) \ {| nodeOut |} 
+
+HiddenLayer(layer, size, inputSize) = [| {| layerRes.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
+
+HiddenLayers = || i : {1..(layerNo-1)} @ [ {| layerRes.(i-1), layerRes.i |} ] HiddenLayer(i, layerSize(i), layerSize(i-1))  
+
+Collator(layer, node, index) = let
+	C(layer, node, 0, sum) = layerRes.layer.node.sign(sum + extract_biases(layer, node)) -> SKIP
+	C(layer, node, index, sum) = nodeOut.layer.node.index?n -> 
+										C(layer, node, (index-1), (sum+n))
+	within 
+		C(layer, node, index, 0)
+
+OutputLayer = [| {| layerRes.(layerNo-1) |} |] i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1)) \ {| nodeOut |}
+
+--Still have the inner parallel composition, for the thesis proofs. 
+ANN = ((HiddenLayers [| {| layerRes.(layerNo-1) |} |] OutputLayer) \ ANNHiddenEvts) ; ANN 
+
+
+--Channels, no indexed channels, so we can write it in circus
+channel anewError_in : Value
+channel adiff_in : Value
+channel angleOutputE_out : Value
+
+ANNRenamed = ANN[[layerRes.0.1 <- anewError_in, layerRes.0.2 <- adiff_in, layerRes.4.1 <- angleOutputE_out]] /\ end -> SKIP
+
+
+--RENAMED CIRCUS PROCESSES --
+
+-- CIRCUS PROCESSES --
+--By _C to show circus --
+--All weights 1, and all biases 0, whenever a bias or weight appears, we will use these constants: 
+CIRC_WEIGHT = 1
+CIRC_BIAS = 0
+
+Collator_C(l, n, i, sum) = (l == 1 and n == 1 and i == 0) & layerRes11!(sign(sum + CIRC_BIAS)) -> SKIP []
+	 		(l == 1 and n == 1 and i == 1) & nodeOut111?x -> Collator_C(l, n, (i-1), (sum+x)) []
+	 		(l == 1 and n == 1 and i == 2) & nodeOut112?x -> Collator_C(l, n, (i-1), (sum+x)) []
+			(l == 1 and n == 2 and i == 0) & layerRes12!(sign(sum + CIRC_BIAS)) -> SKIP []
+	 		(l == 1 and n == 2 and i == 1) & nodeOut121?x -> Collator_C(l, n, (i-1), (sum+x)) []
+	 		(l == 1 and n == 2 and i == 2) & nodeOut122?x -> Collator_C(l, n, (i-1), (sum+x)) []
+			(l == 1 and n == 3 and i == 0) & layerRes13!(sign(sum + CIRC_BIAS)) -> SKIP []
+	 		(l == 1 and n == 3 and i == 1) & nodeOut131?x -> Collator_C(l, n, (i-1), (sum+x)) []
+	 		(l == 1 and n == 3 and i == 2) & nodeOut132?x -> Collator_C(l, n, (i-1), (sum+x)) []
+			
+	 		(l == 2 and n == 1 and i == 0) & layerRes21!(sign(sum + CIRC_BIAS)) -> SKIP []
+	 		(l == 2 and n == 1 and i == 1) & nodeOut211?x -> Collator_C(l, n, (i-1), (sum+x)) []
+			(l == 2 and n == 1 and i == 2) & nodeOut212?x -> Collator_C(l, n, (i-1), (sum+x)) []
+			(l == 2 and n == 1 and i == 3) & nodeOut213?x -> Collator_C(l, n, (i-1), (sum+x)) [] 
+			
+			(l == 3 and n == 1 and i == 0) & layerRes31!(sign(sum + CIRC_BIAS)) -> SKIP []
+	 		(l == 3 and n == 1 and i == 1) & nodeOut311?x -> Collator_C(l, n, (i-1), (sum+x)) []
+			
+			(l == 4 and n == 1 and i == 0) & layerRes41!(sign(sum + CIRC_BIAS)) -> SKIP []
+	 		(l == 4 and n == 1 and i == 1) & nodeOut411?x -> Collator_C(l, n, (i-1), (sum+x)) []
+			(l == 4 and n == 2 and i == 0) & layerRes42!(sign(sum + CIRC_BIAS)) -> SKIP []
+	 		(l == 4 and n == 2 and i == 1) & nodeOut421?x -> Collator_C(l, n, (i-1), (sum+x))
+			
+
+Collator_C_Renamed(l, n, i, sum) = Collator_C(l, n, i, sum)[[
+	layerRes01 <- layerRes.0.1,
+	layerRes02 <- layerRes.0.2,
+	layerRes11 <- layerRes.1.1, 
+	layerRes12 <- layerRes.1.2, 
+	layerRes13 <- layerRes.1.3, 
+	layerRes21 <- layerRes.2.1, 
+	layerRes31 <- layerRes.3.1,
+	layerRes41 <- layerRes.4.1,
+	layerRes42 <- layerRes.4.2,
+	
+	nodeOut111 <- nodeOut.1.1.1, 
+	nodeOut112 <- nodeOut.1.1.2, 
+	nodeOut121 <- nodeOut.1.2.1, 
+	nodeOut122 <- nodeOut.1.2.2, 
+	nodeOut131 <- nodeOut.1.3.1, 
+	nodeOut132 <- nodeOut.1.3.2, 
+	
+	nodeOut211 <- nodeOut.2.1.1,
+	nodeOut212 <- nodeOut.2.1.2,
+	nodeOut213 <- nodeOut.2.1.3,
+	
+	nodeOut311 <- nodeOut.3.1.1,
+	
+	nodeOut411 <- nodeOut.4.1.1,
+	nodeOut421 <- nodeOut.4.2.1]]
+
+--Collator Checks, checking the two collator processes: 
+assert Collator_C_Renamed(1,1,1,0) [T= Collator(1,1,1)
+assert Collator(1,1,1) [T= Collator_C_Renamed(1,1,1,0)
+
+assert Collator_C_Renamed(1,2,1,0) [T= Collator(1,2,1)
+assert Collator(1,2,1) [T= Collator_C_Renamed(1,2,1,0)
+
+assert Collator_C_Renamed(2,1,1,0) [T= Collator(2,1,1)
+assert Collator(2,1,1) [T= Collator_C_Renamed(2,1,1,0)
+
+
+NodeIn_C(l, n, i) = 
+			(l == 1 and n == 1 and i == 1) & layerRes01?x -> nodeOut111!(x * CIRC_WEIGHT) -> SKIP []
+		    (l == 1 and n == 1 and i == 2) & layerRes02?x -> nodeOut112!(x * CIRC_WEIGHT) -> SKIP []
+			(l == 1 and n == 2 and i == 1) & layerRes01?x -> nodeOut121!(x * CIRC_WEIGHT) -> SKIP []
+		    (l == 1 and n == 2 and i == 2) & layerRes02?x -> nodeOut122!(x * CIRC_WEIGHT) -> SKIP []
+			(l == 1 and n == 3 and i == 1) & layerRes01?x -> nodeOut131!(x * CIRC_WEIGHT) -> SKIP []
+		    (l == 1 and n == 3 and i == 2) & layerRes02?x -> nodeOut132!(x * CIRC_WEIGHT) -> SKIP []
+			
+		    (l == 2 and n == 1 and i == 1) & layerRes11?x -> nodeOut211!(x * CIRC_WEIGHT) -> SKIP []
+			(l == 2 and n == 1 and i == 2) & layerRes12?x -> nodeOut212!(x * CIRC_WEIGHT) -> SKIP []
+			(l == 2 and n == 1 and i == 3) & layerRes13?x -> nodeOut213!(x * CIRC_WEIGHT) -> SKIP []
+			
+			(l == 3 and n == 1 and i == 1) & layerRes21?x -> nodeOut311!(x * CIRC_WEIGHT) -> SKIP []
+			
+			(l == 4 and n == 1 and i == 1) & layerRes31?x -> nodeOut411!(x * CIRC_WEIGHT) -> SKIP []
+			(l == 4 and n == 2 and i == 1) & layerRes31?x -> nodeOut421!(x * CIRC_WEIGHT) -> SKIP
+
+
+NodeIn_C_Renamed(l, n, i) = NodeIn_C(l, n, i)[[
+	layerRes01 <- layerRes.0.1,
+	layerRes02 <- layerRes.0.2,
+	layerRes11 <- layerRes.1.1, 
+	layerRes12 <- layerRes.1.2, 
+	layerRes13 <- layerRes.1.3, 
+	layerRes21 <- layerRes.2.1, 
+	layerRes31 <- layerRes.3.1,
+	layerRes41 <- layerRes.4.1,
+	layerRes42 <- layerRes.4.2,
+	
+	nodeOut111 <- nodeOut.1.1.1, 
+	nodeOut112 <- nodeOut.1.1.2, 
+	nodeOut121 <- nodeOut.1.2.1, 
+	nodeOut122 <- nodeOut.1.2.2, 
+	nodeOut131 <- nodeOut.1.3.1, 
+	nodeOut132 <- nodeOut.1.3.2, 
+	
+	nodeOut211 <- nodeOut.2.1.1,
+	nodeOut212 <- nodeOut.2.1.2,
+	nodeOut213 <- nodeOut.2.1.3,
+	
+	nodeOut311 <- nodeOut.3.1.1,
+	
+	nodeOut411 <- nodeOut.4.1.1,
+	nodeOut421 <- nodeOut.4.2.1]]
+
+
+assert NodeIn_C_Renamed(1,1,1) [T= NodeIn(1,1,1)
+assert NodeIn(1,1,1) [T= NodeIn_C_Renamed(1,1,1)
+
+assert NodeIn_C_Renamed(1,1,2) [T= NodeIn(1,1,2)
+assert NodeIn(1,1,2) [T= NodeIn_C_Renamed(1,1,2)
+
+assert NodeIn_C_Renamed(2,1,1) [T= NodeIn(2,1,1)
+assert NodeIn(2,1,1) [T= NodeIn_C_Renamed(2,1,1)
+
+
+Node_C(l, n, inpSize) = 
+	(l == 1 and n == 1) & 
+		((||| i : {1..inpSize} @ NodeIn_C(l, n, i)) 
+		[| {| nodeOut111, nodeOut112 |} |] 
+		Collator_C(l, n, inpSize, 0) \ {| nodeOut111, nodeOut112 |})
+		[]
+		
+	(l == 1 and n == 2) & 
+		((||| i : {1..inpSize} @ NodeIn_C(l, n, i)) 
+		[| {| nodeOut121, nodeOut122 |} |] 
+		Collator_C(l, n, inpSize, 0) \ {| nodeOut121, nodeOut122 |})
+		[]
+	(l == 1 and n == 3) & 
+		((||| i : {1..inpSize} @ NodeIn_C(l, n, i)) 
+		[| {| nodeOut131, nodeOut132 |} |] 
+		Collator_C(l, n, inpSize, 0) \ {| nodeOut131, nodeOut132 |})
+		[]
+		
+	(l == 2 and n == 1) &
+		((||| i : {1..inpSize} @ NodeIn_C(l, n, i)) 
+		[| {| nodeOut211, nodeOut212, nodeOut213 |} |] 
+		Collator_C(l, n, inpSize, 0) \ {| nodeOut211, nodeOut212, nodeOut213 |})
+		[]
+		
+	(l == 3 and n == 1) &
+		((||| i : {1..inpSize} @ NodeIn_C(l, n, i)) 
+		[| {| nodeOut311 |} |] 
+		Collator_C(l, n, inpSize, 0) \ {| nodeOut311 |})
+		[]
+	
+	(l == 4 and n == 1) &
+		((||| i : {1..inpSize} @ NodeIn_C(l, n, i)) 
+		[| {| nodeOut411 |} |] 
+		Collator_C(l, n, inpSize, 0) \ {| nodeOut411 |})
+		[]
+		
+	(l == 4 and n == 2) &
+		((||| i : {1..inpSize} @ NodeIn_C(l, n, i)) 
+		[| {| nodeOut421 |} |] 
+		Collator_C(l, n, inpSize, 0) \ {| nodeOut421 |})
+	
+	
+	
+
+Node_C_Renamed(l, n, inpSize) = Node_C(l, n, inpSize)[[
+	layerRes01 <- layerRes.0.1,
+	layerRes02 <- layerRes.0.2,
+	layerRes11 <- layerRes.1.1, 
+	layerRes12 <- layerRes.1.2, 
+	layerRes13 <- layerRes.1.3, 
+	layerRes21 <- layerRes.2.1, 
+	layerRes31 <- layerRes.3.1,
+	layerRes41 <- layerRes.4.1,
+	layerRes42 <- layerRes.4.2,
+	
+	nodeOut111 <- nodeOut.1.1.1, 
+	nodeOut112 <- nodeOut.1.1.2, 
+	nodeOut121 <- nodeOut.1.2.1, 
+	nodeOut122 <- nodeOut.1.2.2, 
+	nodeOut131 <- nodeOut.1.3.1, 
+	nodeOut132 <- nodeOut.1.3.2, 
+	
+	nodeOut211 <- nodeOut.2.1.1,
+	nodeOut212 <- nodeOut.2.1.2,
+	nodeOut213 <- nodeOut.2.1.3,
+	
+	nodeOut311 <- nodeOut.3.1.1,
+	
+	nodeOut411 <- nodeOut.4.1.1,
+	nodeOut421 <- nodeOut.4.2.1]]
+
+assert Node_C_Renamed(1,1,2) [T= Node(1,1,2)
+assert Node(1,1,2) [T= Node_C_Renamed(1,1,2)
+
+assert Node_C_Renamed(2,1,1) [T= Node(2, 1, 1)
+assert Node(2,1,1) [T= Node_C_Renamed(2, 1, 1)
+
+HiddenLayer_C(l, s, inpSize) = 
+	(l == 1) & 
+	([| {| layerRes01, layerRes02 |} |] i: {1..s} @ Node_C(l, i, inpSize)) []
+	
+	(l == 2) & 
+	([| {| layerRes11, layerRes12, layerRes13 |} |] i: {1..s} @ Node_C(l, i, inpSize)) []
+	
+	(l == 3) & 
+	([| {| layerRes21 |} |] i: {1..s} @ Node_C(l, i, inpSize))
+
+HiddenLayer_C_Renamed(l, n, inpSize) = HiddenLayer_C(l, n, inpSize)[[
+	layerRes01 <- layerRes.0.1,
+	layerRes02 <- layerRes.0.2,
+	layerRes11 <- layerRes.1.1, 
+	layerRes12 <- layerRes.1.2, 
+	layerRes13 <- layerRes.1.3, 
+	layerRes21 <- layerRes.2.1, 
+	layerRes31 <- layerRes.3.1,
+	layerRes41 <- layerRes.4.1,
+	layerRes42 <- layerRes.4.2,
+	
+	nodeOut111 <- nodeOut.1.1.1, 
+	nodeOut112 <- nodeOut.1.1.2, 
+	nodeOut121 <- nodeOut.1.2.1, 
+	nodeOut122 <- nodeOut.1.2.2, 
+	nodeOut131 <- nodeOut.1.3.1, 
+	nodeOut132 <- nodeOut.1.3.2, 
+	
+	nodeOut211 <- nodeOut.2.1.1,
+	nodeOut212 <- nodeOut.2.1.2,
+	nodeOut213 <- nodeOut.2.1.3,
+	
+	nodeOut311 <- nodeOut.3.1.1,
+	
+	nodeOut411 <- nodeOut.4.1.1,
+	nodeOut421 <- nodeOut.4.2.1]]
+	
+assert HiddenLayer_C_Renamed(1,1,2) [T= HiddenLayer(1,1,2)
+assert HiddenLayer(1,1,2) [T= HiddenLayer_C_Renamed(1,1,2)
+
+HiddenLayers_C = (((HiddenLayer_C(1,3,2)) [| {| layerRes11, layerRes12, layerRes13 |} |] HiddenLayer_C(2,1,3)) [| {| layerRes21 |} |] HiddenLayer_C(3,1,1))
+HiddenLayers_C_Renamed = HiddenLayers_C[[
+	layerRes01 <- layerRes.0.1,
+	layerRes02 <- layerRes.0.2,
+	layerRes11 <- layerRes.1.1, 
+	layerRes12 <- layerRes.1.2, 
+	layerRes13 <- layerRes.1.3, 
+	layerRes21 <- layerRes.2.1, 
+	layerRes31 <- layerRes.3.1,
+	layerRes41 <- layerRes.4.1,
+	layerRes42 <- layerRes.4.2,
+	
+	nodeOut111 <- nodeOut.1.1.1, 
+	nodeOut112 <- nodeOut.1.1.2, 
+	nodeOut121 <- nodeOut.1.2.1, 
+	nodeOut122 <- nodeOut.1.2.2, 
+	nodeOut131 <- nodeOut.1.3.1, 
+	nodeOut132 <- nodeOut.1.3.2, 
+	
+	nodeOut211 <- nodeOut.2.1.1,
+	nodeOut212 <- nodeOut.2.1.2,
+	nodeOut213 <- nodeOut.2.1.3,
+	
+	nodeOut311 <- nodeOut.3.1.1,
+	
+	nodeOut411 <- nodeOut.4.1.1,
+	nodeOut421 <- nodeOut.4.2.1]]
+	
+
+assert HiddenLayers_C_Renamed [T= HiddenLayers
+assert HiddenLayers [T= HiddenLayers_C_Renamed
+
+
+OutputLayer_C = [| {| layerRes31 |} |] i: {1..2} @ Node_C(4,i,1)
+
+OutputLayer_C_Renamed = OutputLayer_C[[
+	layerRes01 <- layerRes.0.1,
+	layerRes02 <- layerRes.0.2,
+	layerRes11 <- layerRes.1.1, 
+	layerRes12 <- layerRes.1.2, 
+	layerRes13 <- layerRes.1.3, 
+	layerRes21 <- layerRes.2.1, 
+	layerRes31 <- layerRes.3.1,
+	layerRes41 <- layerRes.4.1,
+	layerRes42 <- layerRes.4.2,
+	
+	nodeOut111 <- nodeOut.1.1.1, 
+	nodeOut112 <- nodeOut.1.1.2, 
+	nodeOut121 <- nodeOut.1.2.1, 
+	nodeOut122 <- nodeOut.1.2.2, 
+	nodeOut131 <- nodeOut.1.3.1, 
+	nodeOut132 <- nodeOut.1.3.2, 
+	
+	nodeOut211 <- nodeOut.2.1.1,
+	nodeOut212 <- nodeOut.2.1.2,
+	nodeOut213 <- nodeOut.2.1.3,
+	
+	nodeOut311 <- nodeOut.3.1.1,
+	
+	nodeOut411 <- nodeOut.4.1.1,
+	nodeOut421 <- nodeOut.4.2.1]]
+	
+assert OutputLayer_C_Renamed [T= OutputLayer
+assert OutputLayer [T= OutputLayer_C_Renamed
+
+ANN_C = ((HiddenLayers_C [| {| layerRes31 |} |] OutputLayer_C) \ ANNHiddenEvts_C) ; ANN_C
+
+ANN_C_Renamed = ANN_C[[
+	layerRes01 <- layerRes.0.1,
+	layerRes02 <- layerRes.0.2,
+	layerRes11 <- layerRes.1.1, 
+	layerRes12 <- layerRes.1.2, 
+	layerRes13 <- layerRes.1.3, 
+	layerRes21 <- layerRes.2.1, 
+	layerRes31 <- layerRes.3.1,
+	layerRes41 <- layerRes.4.1,
+	layerRes42 <- layerRes.4.2,
+	
+	nodeOut111 <- nodeOut.1.1.1, 
+	nodeOut112 <- nodeOut.1.1.2, 
+	nodeOut121 <- nodeOut.1.2.1, 
+	nodeOut122 <- nodeOut.1.2.2, 
+	nodeOut131 <- nodeOut.1.3.1, 
+	nodeOut132 <- nodeOut.1.3.2, 
+	
+	nodeOut211 <- nodeOut.2.1.1,
+	nodeOut212 <- nodeOut.2.1.2,
+	nodeOut213 <- nodeOut.2.1.3,
+	
+	nodeOut311 <- nodeOut.3.1.1,
+	
+	nodeOut411 <- nodeOut.4.1.1,
+	nodeOut421 <- nodeOut.4.2.1]]
+
+
+assert ANN_C_Renamed [T= ANN
+assert ANN [T= ANN_C_Renamed
+
+--need to add the layerres42 renaming explicitly, because maps to no external output event. 
+ANNRenamed_C = ANN_C[[layerRes01 <- anewError_in, layerRes02 <- adiff_in, layerRes41 <- angleOutputE_out, layerRes42 <- layerRes.4.2]] /\ end -> SKIP
+
+assert ANNRenamed_C [T= ANNRenamed
+assert ANNRenamed [T= ANNRenamed_C
+
+
+
+--relu activation function.
+sign(x) = if (x > 0) then 1 else 0
+
+
+-- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --
+
+extract_sequence(1, sequence) = head(sequence)
+extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
+
+layerSize(0) = insize
+layerSize(layer) = extract_sequence(layer, layerstructure)
+
+--Extract single weights value
+extract_weights(layer, node, index) = extract_sequence(index, 
+					(extract_sequence(node, 
+						(extract_sequence(layer, weights)))))
+--Extract weights of node
+extract_weights_node(layer, node) = extract_sequence(node, 
+							(extract_sequence(layer, weights)))
+extract_biases(layer, node) = (extract_sequence(node, 
+											(extract_sequence(layer, biases))))
