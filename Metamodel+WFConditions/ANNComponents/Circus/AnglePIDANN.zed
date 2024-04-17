@@ -86,7 +86,7 @@
       HiddenLayer(1, 1, 2) \\%
       
       OutputLayer \circdef \\%
-      (\lpar \lchanset layerRes11 \rchanset \rpar i : 1 \upto 1 \circspot Node(2, i, 1)) \\%
+      \lpar \lchanset layerRes11 \rchanset \rpar i : 1 \upto 1 \circspot Node(2, i, 1) \\%
       
       ANN \circdef \\%
       ((HiddenLayers \lpar | \lchanset layerRes11 \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
