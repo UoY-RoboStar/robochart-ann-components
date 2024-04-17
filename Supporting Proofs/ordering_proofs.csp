@@ -193,7 +193,7 @@ Collator(layer, node, index) = let
 	within 
 		C(layer, node, index, 0)
 
-OutputLayer = [| {| layerRes.(layerNo-1) |} |] i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1)) \ {| nodeOut |}
+OutputLayer = [| {| layerRes.(layerNo-1) |} |] i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1))
 
 ANN = ( (HiddenLayers [| {| layerRes.(layerNo-1) |} |] OutputLayer) \ ANNHiddenEvts ) [|{|end|}|>SKIP
 

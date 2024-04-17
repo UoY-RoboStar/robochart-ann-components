@@ -26,7 +26,7 @@ channel layerRes21: Value
 channel nodeOut111: Value 
 channel nodeOut112: Value 
 channel nodeOut211: Value 
-channel endc 
+channel terminate 
 
 --Different way of defining ANNHiddenEvts
 ANNHiddenEvts_C = {| layerRes11 |}
@@ -51,7 +51,7 @@ Collator(layer, node, index) = let
 	within 
 		C(layer, node, index, 0)
 
-OutputLayer = [| {| layerRes.(layerNo-1) |} |] i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1)) \ {| nodeOut |}
+OutputLayer = [| {| layerRes.(layerNo-1) |} |] i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1))
 
 --Still have the inner parallel composition, for the thesis proofs. 
 ANN = ((HiddenLayers [| {| layerRes.(layerNo-1) |} |] OutputLayer) \ ANNHiddenEvts) ; ANN 
@@ -62,7 +62,7 @@ channel anewError_in : Value
 channel adiff_in : Value
 channel angleOutputE_out : Value
 
-ANNRenamed = ANN[[layerRes.0.1 <- anewError_in, layerRes.0.2 <- adiff_in, layerRes.2.1 <- angleOutputE_out]] /\ end -> SKIP
+ANNRenamed = ANN[[layerRes.0.1 <- anewError_in, layerRes.0.2 <- adiff_in, layerRes.2.1 <- angleOutputE_out]] /\ terminate -> SKIP
 
 
 --RENAMED CIRCUS PROCESSES --
@@ -154,7 +154,7 @@ ANN_C_Renamed = ANN_C[[layerRes01 <- layerRes.0.1, layerRes02 <- layerRes.0.2, l
 assert ANN_C_Renamed [T= ANN
 assert ANN [T= ANN_C_Renamed
 
-ANNRenamed_C = ANN_C[[layerRes01 <- anewError_in, layerRes02 <- adiff_in, layerRes21 <- angleOutputE_out]] /\ end -> SKIP
+ANNRenamed_C = ANN_C[[layerRes01 <- anewError_in, layerRes02 <- adiff_in, layerRes21 <- angleOutputE_out]] /\ terminate -> SKIP
 
 assert ANNRenamed_C [T= ANNRenamed
 assert ANNRenamed [T= ANNRenamed_C

@@ -21,7 +21,7 @@
   \circchannel nodeOut111: Value \\
   \circchannel nodeOut112: Value \\
   \circchannel nodeOut211: Value \\
-  \circchannel\ endc \\
+  \circchannel\ terminate \\
 \end{circus}
 
 \begin{circus}
@@ -92,7 +92,7 @@
       ((HiddenLayers \lpar | \lchanset layerRes11 \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
       
       ANNRenamed \circdef \\%
-      (ANN) \lcircrename layerRes01, layerRes02, layerRes21 := anewError\_in, adiff\_in, angleOutputE\_out \rcircrename \circinterrupt endc \then \Skip \\%
+      (ANN) \lcircrename layerRes01, layerRes02, layerRes21 := anewError\_in, adiff\_in, angleOutputE\_out \rcircrename \circinterrupt terminate \then \Skip \\%
       
     \circspot ANNRenamed \\%
   \circend

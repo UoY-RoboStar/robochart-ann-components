@@ -49,7 +49,7 @@
   \circchannel nodeOut421: Value \\
   
   
-  \circchannel\ endc \\
+  \circchannel\ terminate \\
 \end{circus}
 
 Just changing the types of the input and output. 
@@ -224,7 +224,7 @@ Just changing the types of the input and output.
       ((HiddenLayers \lpar | \lchanset layerRes31 \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
       
       ANNRenamed \circdef \\%
-      (ANN) \lcircrename layerRes01, layerRes02, layerRes41 := anewError\_in, adiff\_in, angleOutputE\_out \rcircrename \circinterrupt endc \then \Skip \\%
+      (ANN) \lcircrename layerRes01, layerRes02, layerRes41 := anewError\_in, adiff\_in, angleOutputE\_out \rcircrename \circinterrupt terminate \then \Skip \\%
       
     \circspot ANNRenamed \\%
   \circend

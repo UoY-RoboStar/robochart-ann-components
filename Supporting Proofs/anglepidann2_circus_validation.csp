@@ -51,7 +51,7 @@ channel nodeOut311: Value
 channel nodeOut411: Value 
 channel nodeOut421: Value 
 
-channel endc 
+channel terminate 
 
 --Different way of defining ANNHiddenEvts
 ANNHiddenEvts_C = {| layerRes11, layerRes12, layerRes13, layerRes21, layerRes31 |}
@@ -72,7 +72,7 @@ Collator(layer, node, index) = let
 	within 
 		C(layer, node, index, 0)
 
-OutputLayer = [| {| layerRes.(layerNo-1) |} |] i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1)) \ {| nodeOut |}
+OutputLayer = [| {| layerRes.(layerNo-1) |} |] i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1))
 
 --Still have the inner parallel composition, for the thesis proofs. 
 ANN = ((HiddenLayers [| {| layerRes.(layerNo-1) |} |] OutputLayer) \ ANNHiddenEvts) ; ANN 
@@ -83,7 +83,8 @@ channel anewError_in : Value
 channel adiff_in : Value
 channel angleOutputE_out : Value
 
-ANNRenamed = ANN[[layerRes.0.1 <- anewError_in, layerRes.0.2 <- adiff_in, layerRes.4.1 <- angleOutputE_out]] /\ end -> SKIP
+--NOTE: renaming end to terminate, as end is a reserved word in Circus, and the CSPM semantics originally defined using terminate. 
+ANNRenamed = (ANN[[layerRes.0.1 <- anewError_in, layerRes.0.2 <- adiff_in, layerRes.4.1 <- angleOutputE_out]] /\ end -> SKIP) [[end <- terminate]]
 
 
 --RENAMED CIRCUS PROCESSES --
@@ -428,7 +429,7 @@ assert ANN_C_Renamed [T= ANN
 assert ANN [T= ANN_C_Renamed
 
 --need to add the layerres42 renaming explicitly, because maps to no external output event. 
-ANNRenamed_C = ANN_C[[layerRes01 <- anewError_in, layerRes02 <- adiff_in, layerRes41 <- angleOutputE_out, layerRes42 <- layerRes.4.2]] /\ end -> SKIP
+ANNRenamed_C = ANN_C[[layerRes01 <- anewError_in, layerRes02 <- adiff_in, layerRes41 <- angleOutputE_out, layerRes42 <- layerRes.4.2]] /\ terminate -> SKIP
 
 assert ANNRenamed_C [T= ANNRenamed
 assert ANNRenamed [T= ANNRenamed_C
