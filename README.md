@@ -2,7 +2,11 @@
 
 This project contains several software artefacts related to the in-development RoboChart components that are implemented by artificial neural networks (ANN components).
 
-The `Metamodel+WFConditions` directory contains a modelling project, `ANNComponents`, that presents the RoboChart metamodel with ANN (artificial neural network) components integrated, and the well-formedness conditions of the ANN components formalised in Z. It also contains a `Circus` directory with in-development versions of the Circus ANN semantics.
+The `Metamodel+WFConditions` directory contains a modelling project, `ANNComponents`, that presents CZT specification files relevant to the ANN components in RoboChart. 
+It contains: 
+- A directory `Metamodel` that contains the RoboChart metamodel with ANN components integrated. This directory also contains a Z specification of the ANNController class, used to define the denotational semantic rules. 
+- A directory `ANN_WF_Conditions_Z` that contains the well-formedness conditions of the ANN components formalised in Z.
+- A directory `Circus` that contains in-development versions of the Circus profile of the ANN semantics.
 
 The `Segway_Case_Study` directory contains files relevant to the Segway case study. It contains: 
  - A `RoboChart` directory, that contains a RoboChart project `SegwayComparison` containinng all four versions of the Segway RoboChart model, 

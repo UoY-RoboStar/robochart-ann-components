@@ -2,7 +2,7 @@
 \end{zsection}
 
 
-We just assume we have a context, then we can run allEvents on this context. 
+We just assume we have a context, then we can run the allEvents metalanguage function on this context. 
 \begin{zed}[ Context, CSExp, Channel, CircusProgram ]
 \end{zed}
 
@@ -50,5 +50,3 @@ To match the meta-model better.
 \\
 ANN
 \end{schema}
-Test axiom, for the meta-language functions. 
-
