@@ -5,7 +5,7 @@
 
 \begin{document}
 \begin{zsection}
-  \SECTION roboworld\_2d\_toolkit \parents circus\_toolkit
+  \SECTION roboworld\_2d\_toolkit\_withval \parents circus\_toolkit
 \end{zsection}
 
 %%Zword \circbool \boolean
@@ -172,6 +172,12 @@
 	\t1 ((x = 0 \land y < 0) \implies vectorToOrientation~(x, y) = \negate (pi \realdiv 2)) \land \\
 	\t1 ((x < 0 \land y < 0) \implies vectorToOrientation~(x, y) = arctan(y \realdiv x) - pi) \\
 \end{axdef}
+
+
+
+\begin{zed}
+  Value ~~==~~ \real
+\end{zed}
 
 
 \end{document}

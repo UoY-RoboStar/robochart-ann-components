@@ -1,0 +1,17 @@
+\documentclass{article}
+\usepackage{czt}
+
+\begin{document}
+
+
+\begin{zsection}
+  \SECTION Real_Number \parents roboworld\_2d\_toolkit 
+\end{zsection}
+
+\begin{axdef}
+x : \real
+\where
+x = 0 \decimalpoint 5
+\end{axdef}
+
+\end{document}

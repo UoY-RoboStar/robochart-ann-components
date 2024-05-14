@@ -5,13 +5,8 @@
 
 
 \begin{zsection}
-  \SECTION AnglePIDANN \parents roboworld\_2d\_toolkit 
+  \SECTION AnglePIDANN \parents roboworld\_2d\_toolkit\_withval
 \end{zsection}
-
-
-\begin{zed}
-  Value ~~==~~ \real
-\end{zed}
 
 \begin{circus}
   \circchannel layerRes01: Value \\
@@ -42,6 +37,12 @@
   \t1 %
   (x < 0 \implies (x,0) \in relu) \land \\% 
   (x \geq 0 \implies (x,x) \in relu)
+\end{axdef}
+
+\begin{axdef}
+  x : \real
+  \where %
+  x = 1 \decimalpoint 25
 \end{axdef}
 
 
