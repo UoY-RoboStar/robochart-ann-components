@@ -39,13 +39,6 @@
   (x \geq 0 \implies (x,x) \in relu)
 \end{axdef}
 
-\begin{axdef}
-  x : \real
-  \where %
-  x = 1 \decimalpoint 25
-\end{axdef}
-
-
 \begin{circus}
   \circprocess\ AnglePIDANN \circdef \ \circbegin \\%
       Collator \circdef l, n, i : \nat; sum : Value \circspot \\

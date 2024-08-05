@@ -3,7 +3,6 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="robochart" nsURI="http://www.robocalc.circus/RoboChart" nsPrefix="robochart">
   <eAnnotations source="http://www.eclipse.org/OCL/Import">
     <details key="ecore" value="http://www.eclipse.org/emf/2002/Ecore"/>
-    <details key="robochart" value="robochart_original.ecore#/"/>
   </eAnnotations>
   <eClassifiers xsi:type="ecore:EClass" name="BasicPackage">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -403,7 +402,7 @@
       <details key="documentation" value="Controllers"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ControllerDef" eSuperTypes="#//Context #//GeneralController">
+  <eClassifiers xsi:type="ecore:EClass" name="ControllerDef" eSuperTypes="#//GeneralController">
     <eStructuralFeatures xsi:type="ecore:EReference" name="machines" ordered="false"
         upperBound="-1" eType="#//StateMachine" containment="true">
       <eAnnotations source="http://www.eclipse.org/OCL/Collection">
@@ -835,39 +834,38 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GeneralController" eSuperTypes="#//Controller #//Context"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GeneralOperation" eSuperTypes="#//Operation #//OperationSig"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ANN" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="annparameters" lowerBound="1"
+        eType="#//ANNParameters" containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ANNParameters">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="insize" lowerBound="1"
-        eType="#//IntegerExp" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="outsize" lowerBound="1"
-        eType="#//IntegerExp" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="activationfunction" lowerBound="1"
+        eType="#//ActivationFunction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="layerstructure" eType="#//SeqExp"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="weights" eType="#//SeqExp"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="biases" eType="#//SeqExp"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="activationfunction" lowerBound="1"
-        eType="#//ActivationFunction"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="filename" eType="#//StringExp"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inputContext" lowerBound="1"
+        eType="#//Context" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outputContext" lowerBound="1"
+        eType="#//Context" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ANNController" eSuperTypes="#//ANN #//GeneralController"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ANNOperation" eSuperTypes="#//ANN #//GeneralOperation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rInterfaces" upperBound="-1"
+        eType="#//Interface"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ActivationFunction">
+    <eLiterals name="NOTSPECIFIED"/>
     <eLiterals name="RELU"/>
     <eLiterals name="LINEAR"/>
-    <eLiterals name="NOTSPECIFIED" literal=""/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ANN" abstract="true">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="annparameters" lowerBound="1"
-        eType="#//ANNParameters" containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="GeneralController" abstract="true" eSuperTypes="#//Controller"/>
-  <eClassifiers xsi:type="ecore:EClass" name="GeneralOperation" abstract="true" eSuperTypes="#//Operation #//OperationSig"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ANNController" eSuperTypes="#//GeneralController #//ANN">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="events" ordered="false"
-        upperBound="-1" eType="#//Event" containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ANNOperation" eSuperTypes="#//ANN #//GeneralOperation">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="rInterface" unique="false"
-        lowerBound="1" eType="#//Interface"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InputContext" eSuperTypes="#//Context"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OutputContext" eSuperTypes="#//Context"/>
 </ecore:EPackage>
