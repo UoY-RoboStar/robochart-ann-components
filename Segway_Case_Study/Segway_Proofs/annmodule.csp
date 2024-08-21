@@ -1,0 +1,87 @@
+--This is the manually generated AnglePIDANN controller, copied from the file 'cspgen_integrated_annsemantics/defs/Segway_P3_AnglePID_C.csp'. 
+--ANN Specific: --	
+			--ANN Channels--
+			channel layerRes:{0..layerNo}.{1..maxSize}.Value
+			channel nodeOut:{1..layerNo}.{1..maxSize}.{1..maxSize}.Value
+		
+			
+			--SEMANTIC CONSTANTS--
+		
+			insize = 2
+			outsize = 1
+			layerstructure = <1, 1> 
+			layerNo = #layerstructure 
+			maxSize = 2
+		
+			weights = < < <1,1> >, < <1> > >
+			biases = < <0>, <0> >
+			
+			--Normalisation constants
+			offset = 2
+			
+			--Discretised positive version of core_real
+			Value = {0 .. 6}
+			
+			
+			--HELPER FUNCTIONS--
+			
+			extract_sequence(1, sequence) = head(sequence)
+			extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
+			layerSize(0) = insize
+			layerSize(layer) = extract_sequence(layer, layerstructure)
+			
+			extract_weights(layer, node, index) = extract_sequence(index, 
+													(extract_sequence(node, 
+														(extract_sequence(layer, weights)))))
+		
+			extract_biases(layer, node) = (extract_sequence(node, 
+														(extract_sequence(layer, biases))))
+			
+			--Normalisation Process Definitions --
+			
+			norm(x) = x + offset
+			denorm(x) = x - (2 * offset)
+		
+			NormInput = anewError.in?currAngle -> adiff.in?currGyroX -> Filter(currAngle, currGyroX)
+		
+			--Input filter, needed for discretised type handling of core_real.
+			Filter(currAngle, currGyroX) = ((currAngle + currGyroX) > 2 or (currAngle + currGyroX) < -2) & layerRes.0.1.(norm(currAngle)) -> layerRes.0.2.(norm(0)) -> SKIP
+										[] 
+										((currAngle + currGyroX) <= 2 and (currAngle + currGyroX) >= -2) & layerRes.0.1.(norm(currAngle)) -> layerRes.0.2.(norm(currGyroX)) -> SKIP 
+		
+			DeNormOutput = layerRes.2.1?ann_out -> (denorm(ann_out) >= -2 and denorm(ann_out) <= 2) & angleOutputE.out.denorm(ann_out) -> SKIP 
+			
+			ANNHiddenEvts = diff(Events, {| layerRes.0, layerRes.2, terminate |})
+		
+			HiddenLayers = || i : {1..(layerNo-1)} @ [ {| layerRes.(i-1), layerRes.i |} ] HiddenLayer(i, layerSize(i), layerSize(i-1))  
+		
+			HiddenLayer(layer, size, inputSize) = [| {| layerRes.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
+		
+			Node(layer, node, inputSize) = (||| i:{1..inputSize} @ NodeIn(layer, node, i)) [| {| nodeOut.layer.node |} |] Collator(layer, node, inputSize) \ {| nodeOut |}
+		
+			NodeIn(layer, node, index) = layerRes.(layer - 1).index?x -> nodeOut.layer.node.index.(x * extract_weights(layer, node, index)) -> SKIP
+		
+			--relu is the ReLU activation function.
+			relu(x) = if (x >= 0) then x else 0
+			--needs to check within bounds, sum is not part of a process, needs to be a guard that within bounds, will it always be? 
+			--max input, is 4, 2, 6 is highest, 
+			Collator(layer, node, index) = 
+			let
+				C(layer, node, 0, sum) = relu(sum + extract_biases(layer, node)) <= 6 and relu(sum + extract_biases(layer, node)) >= 0 & 
+										layerRes.layer.node.relu(sum + extract_biases(layer, node)) -> SKIP
+				C(layer, node, index, sum) = nodeOut.layer.node.index?n -> C(layer, node, (index-1), (sum+n))
+			within 
+				C(layer, node, index, 0)
+		
+			OutputLayer = [| {| layerRes.(layerNo-1) |} |] i: {1..layerSize(layerNo)} @ Node(layerNo, i, layerSize(layerNo-1))
+		
+			--This is complete semantic function ANN. We can apply renaming here. 
+			ANN = (( (HiddenLayers [| {| layerRes.(layerNo-1) |} |] OutputLayer) \ ANNHiddenEvts ) [|{|terminate|}|>SKIP)  
+			
+			--This is the process involving the normalisation process, NormInput, and the denormalisation process, DeNormOutput
+			Full = ( ( (NormInput [| {| layerRes.0 |} |] ANN) [| {| layerRes.layerNo |} |] DeNormOutput ) \ {| layerRes |} ) ; Full
+			
+			-- O version (optimised) ANN semantics replaces these.
+			O__(id__,
+			const_Segway_P3_AnglePID_C_stm_ref0_P,
+			const_Segway_P3_AnglePID_C_stm_ref0_D) = Full
