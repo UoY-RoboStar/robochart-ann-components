@@ -12,7 +12,7 @@ The `Segway_Case_Study` directory contains files relevant to the Segway case stu
  - A `RoboChart` directory, that contains a RoboChart project `SegwayComparison` containinng all four versions of the Segway RoboChart model, 
    for the purpose of comparing their CSP semantics. 
  - A directory `Segway_Proofs` that contains CSP files for proving properties about the automatically generated CSP semantics from the 
-   `SegwayComparison` project, and those semantics with an ANN process added manually. 
+   `SegwayComparison` project, and those semantics with an ANN process added manually. This includes showing that the ANN semantics are cyclic. 
 
 The `Supporting Proofs` directory contains additional files supporting our verification strategy:
 - CSPM documents supporting 
