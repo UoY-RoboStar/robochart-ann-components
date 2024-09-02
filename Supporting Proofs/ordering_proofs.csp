@@ -84,7 +84,6 @@ assert ANN_Fixed [FD= SANN
 assert SANN [FD= ANN_Fixed 
 
 
-
 --Binary ANN constants (Binarised Segway with core_real) -- 
 Value = {0,1}
 insize = 6
