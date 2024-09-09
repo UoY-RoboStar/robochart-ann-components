@@ -1,0 +1,1192 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The Legrand Orange Book
+% Structural Definitions File
+% Version 2.0 (9/2/15)
+%
+% Original author:
+% Mathias Legrand (legrand.mathias@gmail.com) with modifications by:
+% Vel (vel@latextemplates.com)
+% 
+% This file has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	VARIOUS REQUIRED PACKAGES AND CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm,headsep=10pt,a4paper]{geometry} % Page margins
+%\usepackage[top=3cm,bottom=3cm,left=3.2cm,right=3.2cm,headsep=10pt,letterpaper]{geometry} % Page margins
+
+\usepackage{graphicx} % Required for including pictures
+\graphicspath{{Pictures/}} % Specifies the directory where pictures are stored
+
+\usepackage{lipsum} % Inserts dummy text
+
+\usepackage{tikz} % Required for drawing custom shapes
+
+\usepackage[english]{babel} % English language/hyphenation
+
+\usepackage[shortlabels]{enumitem} % Customize lists
+\setlist{nolistsep} % Reduce spacing between bullet points and numbered lists
+
+\usepackage{booktabs} % Required for nicer horizontal rules in tables
+
+\usepackage{xcolor} % Required for specifying colors by name
+%\definecolor{maincolour}{RGB}{243,102,25} % Define the orange color used for highlighting throughout the book
+\definecolor{maincolour}{RGB}{43,102,225} % Define the blue color used for highlighting throughout the book
+
+%----------------------------------------------------------------------------------------
+%	FONTS
+%----------------------------------------------------------------------------------------
+
+\usepackage{avant} % Use the Avantgarde font for headings
+%\usepackage{times} % Use the Times font for headings
+\usepackage{mathptmx} % Use the Adobe Times Roman as the default text font together with math symbols from the Sym­bol, Chancery and Com­puter Modern fonts
+
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage[utf8]{inputenc} % Required for including letters with accents
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY AND INDEX
+%----------------------------------------------------------------------------------------
+
+\usepackage{csquotes}
+\usepackage[style=numeric,citestyle=numeric,sorting=nyt,sortcites=true,autopunct=true,autolang=hyphen,hyperref=true,abbreviate=false,backref=true,backend=biber,defernumbers=true]{biblatex}
+\addbibresource{bibliography.bib} % BibTeX bibliography file
+\addbibresource{espfor.bib}
+%\addbibresource{robochart.bib}
+\addbibresource{publications.bib} % BibTeX bibliography file
+\defbibheading{bibempty}{}
+
+\usepackage{calc} % For simpler calculation - used for spacing the index letter headings correctly
+\usepackage{makeidx} % Required to make an index
+\makeindex % Tells LaTeX to create the files required for indexing
+
+%----------------------------------------------------------------------------------------
+%	MAIN TABLE OF CONTENTS
+%----------------------------------------------------------------------------------------
+
+%\cftsetindents{chapter}{0em}{3em}
+%\cftsetindents{section}{0em}{3em}
+%\cftsetindents{subsection}{0em}{3em}
+%\cftsetindents{subsubsection}{0em}{3em}
+
+%\renewcommand{\cftpartfont}{\addvspace{20pt}\centering\large\bfseries}
+
+%\cftpagenumbersoff{part}
+
+\usepackage{titletoc} % Required for manipulating the table of contents
+\usepackage[titles]{tocloft}
+\contentsmargin{0cm} % Removes the default margin
+%
+% Part text styling
+\titlecontents{part}[0cm]
+{\addvspace{20pt}\centering\large\bfseries}
+{}
+{}
+{}
+%
+% Chapter text styling
+\titlecontents{chapter}[1.25cm] % Indentation
+{\addvspace{12pt}\large\sffamily\bfseries} % Spacing and font options for chapters
+{\color{maincolour!60}\contentslabel[\Large\thecontentslabel]{1.25cm}\color{maincolour}} % Chapter number
+{\color{maincolour}}  
+{\color{maincolour!60}\normalsize\;\titlerule*[.5pc]{.}\;\thecontentspage} % Page number
+
+% Section text styling
+\titlecontents{section}[1.25cm] % Indentation
+{\addvspace{3pt}\sffamily\bfseries} % Spacing and font options for sections
+{\contentslabel[\thecontentslabel]{1.25cm}} % Section number
+{}
+{\hfill\color{black}\thecontentspage} % Page number
+[]
+
+% Subsection text styling
+\titlecontents{subsection}[1.25cm] % Indentation
+{\addvspace{3pt}\sffamily\small} % Spacing and font options for subsections
+{\contentslabel[\thecontentslabel]{1.25cm}} % Subsection number
+{}
+{\ \titlerule*[.5pc]{.}\;\thecontentspage} % Page number
+[]
+
+% List of figures
+\titlecontents{figure}[0em]
+{\addvspace{-5pt}\sffamily}
+{\thecontentslabel\hspace*{1em}}
+{}
+{\ \titlerule*[.5pc]{.}\;\thecontentspage}
+[]
+
+% List of tables
+\titlecontents{table}[0em]
+{\addvspace{-5pt}\sffamily}
+{\thecontentslabel\hspace*{1em}}
+{}
+{\ \titlerule*[.5pc]{.}\;\thecontentspage}
+[]
+
+
+%----------------------------------------------------------------------------------------
+%	MINI TABLE OF CONTENTS IN PART HEADS
+%----------------------------------------------------------------------------------------
+
+% Chapter text styling
+\titlecontents{lchapter}[0em] % Indenting
+{\addvspace{15pt}\large\sffamily\bfseries} % Spacing and font options for chapters
+{\color{maincolour}\contentslabel[\Large\thecontentslabel]{1.25cm}\color{maincolour}} % Chapter number
+{}  
+{\color{maincolour}\normalsize\sffamily\bfseries\;\titlerule*[.5pc]{.}\;\thecontentspage} % Page number
+
+% Section text styling
+\titlecontents{lsection}[0em] % Indenting
+{\sffamily\small} % Spacing and font options for sections
+{\contentslabel[\thecontentslabel]{1.25cm}} % Section number
+{}
+{}
+
+% Subsection text styling
+\titlecontents{lsubsection}[.5em] % Indentation
+{\normalfont\footnotesize\sffamily} % Font settings
+{}
+{}
+{}
+
+%----------------------------------------------------------------------------------------
+%	PAGE HEADERS
+%----------------------------------------------------------------------------------------
+
+\usepackage{fancyhdr} % Required for header and footer configuration
+
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\sffamily\normalsize\bfseries\chaptername\ \thechapter.\ #1}{}} % Chapter text font settings
+\renewcommand{\sectionmark}[1]{\markright{\sffamily\normalsize\thesection\hspace{5pt}#1}{}} % Section text font settings
+\fancyhf{} \fancyhead[LE,RO]{\sffamily\normalsize\thepage} % Font setting for the page number in the header
+\fancyhead[LO]{\rightmark} % Print the nearest section name on the left side of odd pages
+\fancyhead[RE]{\leftmark} % Print the current chapter name on the right side of even pages
+\renewcommand{\headrulewidth}{0.5pt} % Width of the rule under the header
+\addtolength{\headheight}{2.5pt} % Increase the spacing around the header slightly
+\renewcommand{\footrulewidth}{0pt} % Removes the rule in the footer
+\fancypagestyle{plain}{\fancyhead{}\renewcommand{\headrulewidth}{0pt}} % Style for when a plain pagestyle is specified
+
+% Removes the header from odd empty pages at the end of chapters
+\makeatletter
+\renewcommand{\cleardoublepage}{
+\clearpage\ifodd\c@page\else
+\hbox{}
+\vspace*{\fill}
+\thispagestyle{empty}
+\newpage
+\fi}
+
+%----------------------------------------------------------------------------------------
+%	THEOREM STYLES
+%----------------------------------------------------------------------------------------
+
+\usepackage{amsmath,amsfonts,amssymb,amsthm} % For math equations, theorems, symbols, etc
+
+\newcommand{\intoo}[2]{\mathopen{]}#1\,;#2\mathclose{[}}
+\newcommand{\ud}{\mathop{\mathrm{{}d}}\mathopen{}}
+\newcommand{\intff}[2]{\mathopen{[}#1\,;#2\mathclose{]}}
+\newtheorem{notation}{Notation}[chapter]
+
+% Boxed/framed environments
+
+\newtheoremstyle{rulebox}% % Theorem style name
+{0pt}% Space above
+{0pt}% Space below
+{\normalfont}% % Body font
+{}% Indent amount
+{\small\bf\sffamily\color{maincolour}}% % Theorem head font
+{\;}% Punctuation after theorem head
+{0.25em}% Space after theorem head
+%{\small\sffamily\color{maincolour}#3\vspace{0.5cm}\\}
+{\small\sffamily\color{maincolour}\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}.% Theorem text (e.g. Theorem 2.1)
+	\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries\color{black}\nobreakspace#3\\}}
+
+\newtheoremstyle{syntaxbox}% % Theorem style name
+{0pt}% Space above
+{0pt}% Space below
+{\normalfont}% % Body font
+{}% Indent amount
+{\small\bf\sffamily\color{maincolour}}% % Theorem head font
+{\;}% Punctuation after theorem head
+{0.25em}% Space after theorem head
+%{\small\sffamily\color{maincolour}#3\vspace{0.5cm}\\}
+{\small\sffamily\color{maincolour}\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}% Theorem text (e.g. Theorem 2.1)
+\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries\color{black}---\nobreakspace#3.\\}}
+
+%\newtheoremstyle{tablebox}% % Theorem style name
+%{0pt}% Space above
+%{0pt}% Space below
+%{\normalfont}% % Body font
+%{}% Indent amount
+%{\small\bf\sffamily\color{maincolour}}% % Theorem head font
+%{\;}% Punctuation after theorem head
+%{0.25em}% Space after theorem head
+%%{\small\sffamily\color{maincolour}#3\vspace{0.5cm}\\}
+%{\small\sffamily\color{maincolour}\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}% Theorem text (e.g. Theorem 2.1)
+%	\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries\color{black}---\nobreakspace#3.\\}}
+
+\newtheoremstyle{maincolournumbox}% % Theorem style name
+{0pt}% Space above
+{0pt}% Space below
+{\normalfont}% % Body font
+{}% Indent amount
+{\small\bf\sffamily\color{maincolour}}% % Theorem head font
+{\;}% Punctuation after theorem head
+{0.25em}% Space after theorem head
+{\small\sffamily\color{maincolour}\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}% Theorem text (e.g. Theorem 2.1)
+\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries\color{black}---\nobreakspace#3.}} % Optional theorem note
+\renewcommand{\qedsymbol}{$\blacksquare$}% Optional qed square
+
+\newtheoremstyle{blacknumex}% Theorem style name
+{5pt}% Space above
+{5pt}% Space below
+{\normalfont}% Body font
+{} % Indent amount
+{\small\bf\sffamily}% Theorem head font
+{\;}% Punctuation after theorem head
+{0.25em}% Space after theorem head
+{\small\sffamily{\tiny\ensuremath{\blacksquare}}\nobreakspace\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}% Theorem text (e.g. Theorem 2.1)
+\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries---\nobreakspace#3.}}% Optional theorem note
+
+\newtheoremstyle{blacknumbox} % Theorem style name
+{0pt}% Space above
+{0pt}% Space below
+{\normalfont}% Body font
+{}% Indent amount
+{\small\bf\sffamily}% Theorem head font
+{\;}% Punctuation after theorem head
+{0.25em}% Space after theorem head
+{\small\sffamily\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}% Theorem text (e.g. Theorem 2.1)
+\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries---\nobreakspace#3.}}% Optional theorem note
+
+% Non-boxed/non-framed environments
+\newtheoremstyle{maincolournum}% % Theorem style name
+{5pt}% Space above
+{5pt}% Space below
+{\normalfont}% % Body font
+{}% Indent amount
+{\small\bf\sffamily\color{maincolour}}% % Theorem head font
+{\;}% Punctuation after theorem head
+{0.25em}% Space after theorem head
+{\small\sffamily\color{maincolour}\thmname{#1}\nobreakspace\thmnumber{\@ifnotempty{#1}{}\@upn{#2}}% Theorem text (e.g. Theorem 2.1)
+\thmnote{\nobreakspace\the\thm@notefont\sffamily\bfseries\color{black}---\nobreakspace#3.}} % Optional theorem note
+\renewcommand{\qedsymbol}{$\blacksquare$}% Optional qed square
+\makeatother
+
+% Defines the theorem text style for each type of theorem to one of the three styles above
+\newcounter{dummy} 
+\numberwithin{dummy}{section}
+
+\newcounter{syntax}
+\numberwithin{syntax}{section}
+
+\theoremstyle{syntaxbox}
+\newtheorem{syntaxT}{Syntax}
+\newtheorem{syntaxTT}[syntax]{Syntax}
+\newtheorem*{syntaxT*}{Syntax}
+
+\theoremstyle{rulebox}
+\newtheorem{ruleT}{Rule}
+\newtheorem*{ruleT*}{Rule}
+
+
+%\theoremstyle{tablebox}
+%\newtheorem{tableT}{Table}[chapter]
+%\newtheorem*{tableT*}{Table}
+
+
+\theoremstyle{maincolournumbox}
+\newtheorem{theoremeT}[dummy]{Theorem}
+\newtheorem{problem}{Problem}[chapter]
+\newtheorem{exercise}{Exercise}[chapter]
+\newtheorem{exerciseT}{Exercise}[chapter]
+\theoremstyle{blacknumex}
+\newtheorem{exampleT}{Example}[chapter]
+\theoremstyle{blacknumbox}
+\newtheorem{vocabulary}{Vocabulary}[chapter]
+\newtheorem{definitionT}{Definition}[section]
+\newtheorem{corollaryT}[dummy]{Corollary}
+\theoremstyle{maincolournum}
+\newtheorem{proposition}[dummy]{Proposition}
+
+%----------------------------------------------------------------------------------------
+%	DEFINITION OF COLORED BOXES
+%----------------------------------------------------------------------------------------
+
+\RequirePackage[framemethod=default]{mdframed} % Required for creating the theorem, definition, exercise and corollary boxes
+
+\newlength{\mytopskip}
+\setlength{\mytopskip}{\topskip+5pt}
+
+% table
+\newmdenv[skipabove=\baselineskip,
+skipbelow=7pt,
+backgroundcolor=black!5,
+linecolor=maincolour,linewidth=0.8pt,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=5pt,
+%innertopmargin=\mytopskip,
+leftmargin=0cm,
+rightmargin=0cm,
+nobreak=true,
+innerbottommargin=5pt]{tblBox}
+
+% Rule box
+\newmdenv[skipabove=\baselineskip,
+skipbelow=7pt,
+backgroundcolor=black!5,
+linecolor=maincolour,linewidth=0.8pt,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+%innertopmargin=5pt,
+innertopmargin=\mytopskip,
+leftmargin=0cm,
+rightmargin=0cm,
+nobreak=true,
+innerbottommargin=5pt]{rBox}
+
+% Syntax box
+\newmdenv[skipabove=\baselineskip,
+skipbelow=7pt,
+backgroundcolor=black!5,
+linecolor=maincolour,linewidth=0.8pt,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+%innertopmargin=5pt,
+innertopmargin=\mytopskip,
+leftmargin=0cm,
+rightmargin=0cm,
+nobreak=true,
+innerbottommargin=5pt]{sBox}
+
+% Theorem box
+\newmdenv[skipabove=7pt,
+skipbelow=7pt,
+backgroundcolor=black!5,
+linecolor=maincolour,linewidth=0.8pt,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=5pt,
+leftmargin=0cm,
+rightmargin=0cm,
+innerbottommargin=5pt]{tBox}
+
+% Exercise box	  
+\newmdenv[skipabove=7pt,
+skipbelow=7pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+backgroundcolor=maincolour!10,
+linecolor=maincolour,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=5pt,
+innerbottommargin=5pt,
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=4pt]{eBox}
+
+% Definition box
+\newmdenv[skipabove=7pt,
+skipbelow=0pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+linecolor=maincolour,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=15pt,
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=4pt,
+innerbottommargin=0pt]{dBox}	
+
+% Corollary box
+\newmdenv[skipabove=7pt,
+skipbelow=7pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+linecolor=gray,
+backgroundcolor=black!5,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=5pt,
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=4pt,
+innerbottommargin=5pt]{cBox}
+
+% Example box
+\newmdenv[skipabove=\baselineskip,
+skipbelow=7pt,
+backgroundcolor=black!5,
+linecolor=maincolour,linewidth=0.8pt,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+%innertopmargin=5pt,
+innertopmargin=\mytopskip,
+leftmargin=0cm,
+rightmargin=0cm,
+nobreak=true,
+innerbottommargin=5pt]{xBox}
+
+% Creates an environment for each type of theorem and assigns it a theorem text style from the "Theorem Styles" section above and a colored box from above
+
+\newcounter{tblcnt}[chapter]
+
+\newenvironment{syntax}{\begin{sBox}\begin{syntaxT}}{\end{syntaxT}\end{sBox}}
+\newenvironment{psyntax}{\begin{sBox}\begin{syntaxTT}}{\end{syntaxTT}\end{sBox}}
+\newenvironment{syntax*}{\begin{sBox}\begin{syntaxT*}}{\end{syntaxT*}\end{sBox}}
+
+\newenvironment{TRuleAux}{\begin{rBox}\begin{ruleT}}{\end{ruleT}\end{rBox}}
+\newenvironment{TRuleAux*}{\begin{rBox}\begin{ruleT*}}{\end{ruleT*}\end{rBox}}
+
+\renewcommand{\thetblcnt}{\arabic{chapter}.\arabic{tblcnt}}
+\newenvironment{tablebox}[1]{
+	\begin{tblBox}
+		\refstepcounter{tblcnt}
+		\newcommand{\tbltitle}{
+			{\footnotesize\sffamily\color{maincolour}Table\nobreakspace \arabic{chapter}.\arabic{tblcnt}% Theorem text (e.g. Theorem 2.1)
+			\nobreakspace\sffamily\bfseries: \nobreakspace#1.}
+		}
+}
+{	\\
+	\centering\tbltitle
+	\end{tblBox}
+}
+\newcommand{\tblheader}[1]{\textbf{\textcolor{maincolour}{#1}}}
+%\newenvironment{tablebox*}{\begin{tblBox}\begin{tableT*}}{\end{tableT*}\end{tblBox}}
+
+\newenvironment{theorem}{\begin{tBox}\begin{theoremeT}}{\end{theoremeT}\end{tBox}}
+\newenvironment{exerciseBox}{\begin{eBox}\begin{exerciseT}}{\hfill{\color{maincolour}\tiny\ensuremath{\blacksquare}}\end{exerciseT}\end{eBox}}				  
+\newenvironment{definition}{\begin{dBox}\begin{definitionT}}{\end{definitionT}\end{dBox}}	
+%\newenvironment{example}{\begin{exampleT}}{\hfill{\tiny\ensuremath{\blacksquare}}\end{exampleT}}
+\newenvironment{example}{\begin{xBox}\begin{exampleT}}{\hfill{\tiny\ensuremath{\blacksquare}}\end{exampleT}\end{xBox}}
+\newenvironment{corollary}{\begin{cBox}\begin{corollaryT}}{\end{corollaryT}\end{cBox}}	
+
+%----------------------------------------------------------------------------------------
+%	REMARK ENVIRONMENT
+%----------------------------------------------------------------------------------------
+
+\newenvironment{remark}{\par\vspace{10pt}\small % Vertical white space above the remark and smaller font size
+\begin{list}{}{
+\leftmargin=35pt % Indentation on the left
+\rightmargin=25pt}\item\ignorespaces % Indentation on the right
+\makebox[-2.5pt]{\begin{tikzpicture}[overlay]
+\node[draw=maincolour!60,line width=1pt,circle,fill=maincolour!25,font=\sffamily\bfseries,inner sep=2pt,outer sep=0pt] at (-15pt,0pt){\textcolor{maincolour}{R}};\end{tikzpicture}} % Orange R in a circle
+\advance\baselineskip -1pt}{\end{list}\vskip5pt} % Tighter line spacing and white space after remark
+
+%----------------------------------------------------------------------------------------
+%	SECTION NUMBERING IN THE MARGIN
+%----------------------------------------------------------------------------------------
+
+\makeatletter
+\renewcommand{\@seccntformat}[1]{\llap{\textcolor{maincolour}{\csname the#1\endcsname}\hspace{1em}}}                    
+\renewcommand{\section}{\@startsection{section}{1}{\z@}
+{-4ex \@plus -1ex \@minus -.4ex}
+{1ex \@plus.2ex }
+{\normalfont\large\sffamily\bfseries}}
+\renewcommand{\subsection}{\@startsection {subsection}{2}{\z@}
+{-3ex \@plus -0.1ex \@minus -.4ex}
+{0.5ex \@plus.2ex }
+{\normalfont\sffamily\bfseries}}
+\renewcommand{\subsubsection}{\@startsection {subsubsection}{3}{\z@}
+{-2ex \@plus -0.1ex \@minus -.2ex}
+{.2ex \@plus.2ex }
+{\normalfont\small\sffamily\bfseries}}                        
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}
+{-2ex \@plus-.2ex \@minus .2ex}
+{.1ex}
+{\normalfont\small\sffamily\bfseries}}
+
+%----------------------------------------------------------------------------------------
+%	PART HEADINGS
+%----------------------------------------------------------------------------------------
+
+% numbered part in the table of contents
+\newcommand{\@mypartnumtocformat}[2]{%
+\setlength\fboxsep{0pt}%
+\noindent\colorbox{maincolour!20}{\strut\parbox[c][.7cm]{\ecart}{\color{maincolour!70}\Large\sffamily\bfseries\centering#1}}\hskip\esp\colorbox{maincolour!40}{\strut\parbox[c][.7cm]{\linewidth-\ecart-\esp}{\Large\sffamily\centering#2}}}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% unnumbered part in the table of contents
+\newcommand{\@myparttocformat}[1]{%
+\setlength\fboxsep{0pt}%
+\noindent\colorbox{maincolour!40}{\strut\parbox[c][.7cm]{\linewidth}{\Large\sffamily\centering#1}}}%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newlength\esp
+\setlength\esp{4pt}
+\newlength\ecart
+\setlength\ecart{1.2cm-\esp}
+\newcommand{\thepartimage}{}%
+\newcommand{\partimage}[1]{\renewcommand{\thepartimage}{#1}}%
+\def\@part[#1]#2{%
+\ifnum \c@secnumdepth >-2\relax%
+\refstepcounter{part}%
+\addcontentsline{toc}{part}{\texorpdfstring{\protect\@mypartnumtocformat{\thepart}{#1}}{\partname~\thepart\ ---\ #1}}
+\else%
+\addcontentsline{toc}{part}{\texorpdfstring{\protect\@myparttocformat{#1}}{#1}}%
+\fi%
+\startcontents%
+\markboth{}{}%
+{\thispagestyle{empty}%
+\begin{tikzpicture}[remember picture,overlay]%
+\node at (current page.north west){\begin{tikzpicture}[remember picture,overlay]%	
+\fill[maincolour!20](0cm,0cm) rectangle (\paperwidth,-\paperheight);
+\node[anchor=north] at (4cm,-3.25cm){\color{maincolour!40}\fontsize{220}{100}\sffamily\bfseries\@Roman\c@part}; 
+\node[anchor=south east] at (\paperwidth-1cm,-\paperheight+1cm){\parbox[t][][t]{8.5cm}{
+\printcontents{l}{0}{\setcounter{tocdepth}{1}}%
+}};
+\node[anchor=north east] at (\paperwidth-1.5cm,-3.25cm){\parbox[t][][t]{15cm}{\strut\raggedleft\color{white}\fontsize{30}{30}\sffamily\bfseries#2}};
+\end{tikzpicture}};
+\end{tikzpicture}}%
+\@endpart}
+\def\@spart#1{%
+\startcontents%
+\phantomsection
+{\thispagestyle{empty}%
+\begin{tikzpicture}[remember picture,overlay]%
+\node at (current page.north west){\begin{tikzpicture}[remember picture,overlay]%	
+\fill[maincolour!20](0cm,0cm) rectangle (\paperwidth,-\paperheight);
+\node[anchor=north east] at (\paperwidth-1.5cm,-3.25cm){\parbox[t][][t]{15cm}{\strut\raggedleft\color{white}\fontsize{30}{30}\sffamily\bfseries#1}};
+\end{tikzpicture}};
+\end{tikzpicture}}
+\addcontentsline{toc}{part}{\texorpdfstring{%
+\setlength\fboxsep{0pt}%
+\noindent\protect\colorbox{maincolour!40}{\strut\protect\parbox[c][.7cm]{\linewidth}{\Large\sffamily\protect\centering #1\quad\mbox{}}}}{#1}}%
+\@endpart}
+\def\@endpart{\vfil\newpage
+\if@twoside
+\if@openright
+\null
+\thispagestyle{empty}%
+\newpage
+\fi
+\fi
+\if@tempswa
+\twocolumn
+\fi}
+
+%----------------------------------------------------------------------------------------
+%	CHAPTER HEADINGS - IMAGES
+%----------------------------------------------------------------------------------------
+
+% A switch to conditionally include a picture, implemented by  Christian Hupfer
+\newif\ifusechaptercolour
+\usechaptercolourtrue
+\newcommand{\thechaptercolour}{}%
+\newcommand{\chaptercolour}[1]{\ifusechaptercolour\renewcommand{\thechaptercolour}{#1}\fi}%
+\def\@makechapterhead#1{%
+{\parindent \z@ \raggedright \normalfont
+\ifnum \c@secnumdepth >\m@ne
+\if@mainmatter
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.north west)
+{\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=north west,inner sep=0pt] at (0,0) {
+%	\ifusechaptercolour\includegraphics[width=\paperwidth]{\thechaptercolour}\fi
+	\begin{tikzpicture}
+		\fill[\thechaptercolour] (0,0) rectangle (\paperwidth,0.5\paperwidth);
+	\end{tikzpicture}
+};
+\draw[anchor=west] (\Gm@lmargin,-9cm) node [line width=2pt,rounded corners=15pt,draw=maincolour,fill=white,fill opacity=0.5,inner sep=15pt]{\strut\makebox[22cm]{}};
+\draw[anchor=west] (\Gm@lmargin+.3cm,-9.1cm) node {\huge\sffamily\bfseries\color{black}\thechapter. #1\strut};
+\end{tikzpicture}};
+\end{tikzpicture}
+\else
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.north west)
+{\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=north west,inner sep=0pt] at (0,0) {
+	%\ifusechaptercolour\includegraphics[width=\paperwidth]{\thechaptercolour}\fi
+	\begin{tikzpicture}
+		\fill[\thechaptercolour] (0,0) rectangle (\paperwidth,0.5\paperwidth);
+	\end{tikzpicture}
+
+};
+\draw[anchor=west] (\Gm@lmargin,-9cm) node [line width=2pt,rounded corners=15pt,draw=maincolour,fill=white,fill opacity=0.5,inner sep=15pt]{\strut\makebox[22cm]{}};
+\draw[anchor=west] (\Gm@lmargin+.3cm,-9.1cm) node {\huge\sffamily\bfseries\color{black}#1\strut};
+\end{tikzpicture}};
+\end{tikzpicture}
+\fi\fi\par\vspace*{270\p@}}}
+
+%-------------------------------------------
+
+\def\@makeschapterhead#1{%
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.north west)
+{\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=north west,inner sep=0pt] at (0,0) {
+%	\ifusechaptercolour\includegraphics[width=\paperwidth]{\thechaptercolour}\fi
+	\begin{tikzpicture}
+		\fill[\thechaptercolour] (0,0) rectangle (\paperwidth,0.5\paperwidth);
+	\end{tikzpicture}
+
+};
+\draw[anchor=west] (\Gm@lmargin,-9cm) node [line width=2pt,rounded corners=15pt,draw=maincolour,fill=white,fill opacity=0.5,inner sep=15pt]{\strut\makebox[22cm]{}};
+\draw[anchor=west] (\Gm@lmargin+.3cm,-9cm) node {\huge\sffamily\bfseries\color{black}#1\strut};
+\end{tikzpicture}};
+\end{tikzpicture}
+\par\vspace*{270\p@}}
+\makeatother
+
+%%----------------------------------------------------------------------------------------
+%%	CHAPTER HEADINGS - COLOUR
+%%----------------------------------------------------------------------------------------
+%
+%% A switch to conditionally include a picture, implemented by  Christian Hupfer
+%\newif\ifusechaptercolour
+%\usechaptercolourtrue
+%\newcommand{\thechaptercolour}{}%
+%\newcommand{\chaptercolour}[1]{\ifusechaptercolour\renewcommand{\thechaptercolour}{#1}\fi}%
+%\def\@makechapterhead#1{%
+%	{\parindent \z@ \raggedright \normalfont
+%		\ifnum \c@secnumdepth >\m@ne
+%		\if@mainmatter
+%		\begin{tikzpicture}[remember picture,overlay]
+%		\node at (current page.north west)
+%		{\begin{tikzpicture}[remember picture,overlay]
+%			\node[anchor=north west,inner sep=0pt] at (0,0) {
+%				%\ifusechaptercolour\includegraphics[width=\paperwidth]{\thechaptercolour}\fi
+%				\begin{tikzpicture}
+%				\fill[blue!40!white] (0,0) rectangle (\paperwidth,0.5\paperwidth);
+%				\end{tikzpicture}
+%			};
+%			\draw[anchor=west] (\Gm@lmargin,-9cm) node [line width=2pt,rounded corners=15pt,draw=maincolour,fill=white,fill opacity=0.5,inner sep=15pt]{\strut\makebox[22cm]{}};
+%			\draw[anchor=west] (\Gm@lmargin+.3cm,-9cm) node {\huge\sffamily\bfseries\color{black}\thechapter. #1\strut};
+%	\end{tikzpicture}};
+%\end{tikzpicture}
+%\else
+%\begin{tikzpicture}[remember picture,overlay]
+%\node at (current page.north west)
+%{\begin{tikzpicture}[remember picture,overlay]
+%	\node[anchor=north west,inner sep=0pt] at (0,0) {\ifusechaptercolour\includegraphics[width=\paperwidth]{\thechaptercolour}\fi};
+%	\draw[anchor=west] (\Gm@lmargin,-9cm) node [line width=2pt,rounded corners=15pt,draw=maincolour,fill=white,fill opacity=0.5,inner sep=15pt]{\strut\makebox[22cm]{}};
+%	\draw[anchor=west] (\Gm@lmargin+.3cm,-9cm) node {\huge\sffamily\bfseries\color{black}#1\strut};
+%	\end{tikzpicture}};
+%\end{tikzpicture}
+%\fi\fi\par\vspace*{270\p@}}}
+%
+%%-------------------------------------------
+%
+%\def\@makeschapterhead#1{%
+%\begin{tikzpicture}[remember picture,overlay]
+%\node at (current page.north west)
+%{\begin{tikzpicture}[remember picture,overlay]
+%\node[anchor=north west,inner sep=0pt] at (0,0) {\ifusechaptercolour\includegraphics[width=\paperwidth]{\thechaptercolour}\fi};
+%\draw[anchor=west] (\Gm@lmargin,-9cm) node [line width=2pt,rounded corners=15pt,draw=maincolour,fill=white,fill opacity=0.5,inner sep=15pt]{\strut\makebox[22cm]{}};
+%\draw[anchor=west] (\Gm@lmargin+.3cm,-9cm) node {\huge\sffamily\bfseries\color{black}#1\strut};
+%\end{tikzpicture}};
+%\end{tikzpicture}
+%\par\vspace*{270\p@}}
+%\makeatother
+
+%----------------------------------------------------------------------------------------
+%	HYPERLINKS IN THE DOCUMENTS
+%----------------------------------------------------------------------------------------
+
+\usepackage{hyperref}
+\hypersetup{hidelinks,colorlinks=false,breaklinks=true,urlcolor= maincolour,bookmarksopen=false,pdftitle={Title},pdfauthor={Author}}
+\usepackage{bookmark}
+\bookmarksetup{
+open,
+numbered,
+addtohook={%
+\ifnum\bookmarkget{level}=0 % chapter
+\bookmarksetup{bold}%
+\fi
+\ifnum\bookmarkget{level}=-1 % part
+\bookmarksetup{color=maincolour,bold}%
+\fi
+}
+}
+
+
+%----------------------------------------------------------------------------------------
+% TABLES
+%----------------------------------------------------------------------------------------
+
+%\usepackage{shortvrb}
+%\MakeShortVerb{\|}
+\usepackage{tabularx}
+\usepackage{longtable}
+\setlist{nolistsep}
+\usepackage{colortbl}
+\newcommand\Tstrut{\rule{0pt}{3ex}}         % = `top' strut
+%\newcolumntype{|}{!{\color{maincolour}\vrule width 0.8pt}}
+\arrayrulecolor{maincolour}
+%\renewcommand{\familydefault}{\sfdefault}
+%\renewcommand{\arraystretch}{1.5}
+
+%----------------------------------------------------------------------------------------
+% RULES
+%----------------------------------------------------------------------------------------
+
+\newcommand{\listrulesname}{List of rules}
+\newlistof{rules}{env}{\listrulesname}
+
+%% Chapter text styling
+%\titlecontents{envsection}[0em] % Indenting
+%{\addvspace{15pt}\large\sffamily\bfseries} % Spacing and font options for chapters
+%{\color{maincolour}\contentslabel[\Large\thecontentslabel]{1.25cm}\color{red}} % Chapter number
+%{}  
+%{\color{red}\normalsize\sffamily\bfseries\;\titlerule*[.5pc]{.}\;\thecontentspage} % Page number
+
+\newenvironment{TRule}[3][]{
+	\begin{TRuleAux}[#1]\footnotesize
+		\refstepcounter{tRule}
+		\linkdest{rule:\thechapter:\thetRule}
+		\index[rules]{#3|linktorule{rule:\thechapter:\thetRule}}
+		\addcontentsline{env}{subsection}{\protect\numberline{\thetRule}~#1}% 
+		%\noindent\textbf{Rule~\thetRule.~#1\vspace{-.5cm}
+		\vspace{-0.8cm}%
+			{\setlength{\zedindent}{0pt}\[#2\]}\vspace{-1cm}\\
+%		\specialrule{0.8pt}{0em}{0em}\vspace{-0.3cm}%
+		\vspace{-0.4cm}%
+		\setlength{\zedindent}{0pt}%\footnotesize
+		\begin{displaymath}
+		%{\setlength{\zedindent}{0pt}\footnotesize
+		%	\begin{displaymath}
+	}{\end{displaymath}\end{TRuleAux}}
+%\newenvironment{TRule*}{\begin{tRule*}\footnotesize\vspace{.2cm}}{\vspace{.2cm}\end{tRule*}}
+
+%----------------------------------------------------------------------------------------
+% PREAMBLE TO MAIN FILE
+%----------------------------------------------------------------------------------------
+
+\usepackage{eso-pic}
+%\usepackage{exercise}
+\usepackage{exsheets}
+\usepackage[export]{adjustbox}
+
+\DeclareInstance{exsheets-heading}{mylist}{default}{
+	runin = true ,
+	points-pre-code = ( ,
+	points-post-code = )\space ,
+	join =
+	{
+		main[r,vc]title[r,vc](0pt,0pt) ;
+		main[r,vc]number[l,vc](.333em,0pt) ;
+		main[r,vc]points[l,vc](1em,0pt)
+	}
+}
+
+%\DeclareInstance{exsheets-heading}{mylist}{default}{
+%	runin = true ,
+%	attach = {
+%		main[l,vc]number[r,vc](-0.6em,0pt) ;
+%		main[r,vc]points[l,vc](\linewidth+\marginparsep,0pt)
+%	}
+%}
+
+%\DeclareInstance{exsheets-heading}{mylist}{default}{
+%	runin = true ,
+%	attach = {
+%		main[l,vc]number[l,vc](-3em,0pt) ; % 3em = indent of question body
+%		main[r,vc]points[l,vc](\linewidth+\marginparsep,0pt)
+%	}
+%}
+
+\SetupExSheets{
+	headings = mylist , % use the new headings instance
+	%	headings-format = \normalfont ,
+	counter-format = ch.qu. ,
+	counter-within = chapter
+}
+
+\usepackage{setspace}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+	\noindent\keywordname\enspace\ignorespaces#1}
+
+%% NOTE (Pedro): Added this manually, even though I suppose the circus package
+%% 				 should be used instead?
+
+\makeatletter
+\DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
+\DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
+\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+\DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
+\DeclareOldFontCommand{\sl}{\normalfont\slshape}{\@nomath\sl}
+\DeclareOldFontCommand{\sc}{\normalfont\scshape}{\@nomath\sc}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\widowpenalty=100000000
+%\clubpenalty=1000000
+
+\newcommand{\robochart}{{\sf \it RoboChart}}
+\newcommand{\Circus}{{\sf\slshape Circus}}
+\newcommand{\CircusTime}{{\sf\slshape Circus Time}}
+\newcommand{\RC}[1]{{\sf #1}}
+
+
+\onehalfspacing
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+%\setlength{\parindent}{0em}
+%\setlength{\parskip}{1em}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{listings}
+
+\lstdefinestyle{ocl}{
+	belowcaptionskip=1\baselineskip,
+	breaklines=true,
+	tabsize=2,
+	frame=N,
+	xleftmargin=\parindent,
+	language=ocl,
+	showstringspaces=false,
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle=\bfseries\color{black},%%\color{green!40!black},
+	commentstyle=\itshape\color{gray!40!black},
+	morecomment=[f][\itshape\color{gray}][0]{//},
+	identifierstyle=\color{blue},
+	stringstyle=\color{orange},
+	morekeywords={attribute,property,package,class,extends,import,abstract, ordered, composes, unique, enum, literal, serializable}, 
+}
+
+\lstset{style=ocl}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[zed,color]{csp}
+\usepackage{imakeidx}
+
+\onehalfspacing
+
+\newcommand{\lrename}{~[\![~}
+\newcommand{\rrename}{~]\!]~}
+
+%%%%% commands to add to index with links
+\newcommand{\BH}[3]{\large\textbf{\hyperlink{#1:#2}{#3\textsuperscript{#2}}}\normalsize}
+%\newcommand{\IN}[1]{\index{#1|BH}}
+
+\newcounter{test:test}
+\DeclareDocumentCommand{\foocmd}{ o o m }{
+	\stepcounter{test:test}
+	\arabic{test:test}
+	\IfNoValueF{#1}{#1~}\IfNoValueF{#2}{#2~}#3}
+
+% arguments: (1) comment, (2) rule name and (3) subtype
+\DeclareDocumentCommand{\createrule}{ o m o}{
+	\newcounter{\IfNoValueF{#3}{#3:}#2}
+	\expandafter\def\csname #2\IfValueT{#3}{#3}\endcsname{\stepcounter{\IfNoValueF{#3}{#3:}#2}
+		\hyperref[semantics:#2\IfValueT{#3}{:#3}]{#2}^{\arabic{\IfNoValueF{#3}{#3:}#2}
+			\linkdest{\IfNoValueF{#3}{#3:}#2:\arabic{\IfNoValueF{#3}{#3:}#2}}}
+		\index[usages]{#2
+			\IfValueTF{#1}{
+				\IfValueTF{#3}{(#1,#3)}{(#1)}
+			}{
+				\IfValueT{#3}{(#3)}
+			}|BH{\IfNoValueF{#3}{#3:}#2}{\arabic{\IfNoValueF{#3}{#3:}#2}}}}
+}
+
+% arguments: (1) comment, (2) rule name, (3) math symbol, and (4) subtype
+\DeclareDocumentCommand{\createrulealt}{ o m m o}{
+	\newcounter{\IfNoValueF{#4}{#4:}#2}
+	\expandafter\def\csname #2\IfValueT{#4}{#4}\endcsname{\stepcounter{\IfNoValueF{#4}{#4:}#2}
+		\hyperref[semantics:#2\IfValueT{#4}{:#4}]{#3}^{\arabic{\IfNoValueF{#4}{#4:}#2}
+			\linkdest{\IfNoValueF{#4}{#4:}#2:\arabic{\IfNoValueF{#4}{#4:}#2}}}
+		\index[usages]{#3
+			\IfValueTF{#1}{
+				\IfValueTF{#4}{(#1,#4)}{(#1)}
+			}{
+				\IfValueT{#4}{(#4)}
+			}|BH{\IfNoValueF{#4}{#4:}#2}{\arabic{\IfNoValueF{#4}{#4:}#2}}}}
+}
+
+%\newcommand{\createrule}[2][]{
+%	\newcounter{#2}
+%	\expandafter\def\csname #2\endcsname{\stepcounter{#2}
+%		\hyperref[semantics:#2]{#2}^{\arabic{#2}\linkdest{#2:\arabic{#2}}}\index[usages]{#2\ifx\relax#1\relax\else~(#1)\fi|BH{#2}{\arabic{#2}}}}
+%}
+\newenvironment{metalet}{\meta{let}\\\quad\begin{array}{l}}{\end{array}}
+\newenvironment{metain}{\meta{in}\\\quad\begin{array}{l}}{\end{array}}
+\newcommand{\hastype}{{\bf~~has~type~~}}
+
+% Definitions for \lchan and \rchan when used with an array, so that the symbol correctly
+% scales to account for the dynamic space. Ideally this would require a font symbol.
+\def\Lchanset{\left\{\mkern-3.5mu\left|}
+\def\Rchanset{\right|\mkern-3.5mu\right\}}
+
+\makeindex[title=Index of Semantic Rules, name=rules]
+\makeindex[title=Index of Calls to Semantic Rules, name=usages]
+\makeindex
+
+\hypersetup{
+	colorlinks,
+	linkcolor={blue!50!black},
+	citecolor={blue!50!black},
+	urlcolor={blue!80!black}
+}
+
+\DeclareFontFamily{U}{mathc}{}
+\DeclareFontShape{U}{mathc}{m}{it}%
+{<->s*[1.03] mathc10}{}
+\DeclareMathAlphabet{\mathscr}{U}{mathc}{m}{it}
+
+%\DeclareMathAlphabet{\mathcalligra}{T1}{calligra}{m}{n}
+
+\newcommand{\circblockbegin}{\left(\begin{array}{l}}
+	\newcommand{\circblockend}{\end{array}\right)}
+
+\newcommand{\meta}[1]{\mathsf{\color{GreyColor}\ubar{#1}}}
+
+\makeatletter\newcommand{\linkdest}[1]{\raisebox{\ht\strutbox}{\hypertarget{#1}{}}}\makeatother
+\newcommand{\linktorule}[2]{\hyperlink{#1}{#2}}
+
+\newcounter{usage}
+\newcounter{tRule}[chapter]
+
+\newcommand{\lsem}{\lbrack\!\lbrack}
+\newcommand{\rsem}{\rbrack\!\rbrack}
+
+\usepackage{mathtools} % DeclarePairedDelimiter to define \semL 
+
+\definecolor{ZedColor}{rgb}{0,0,0}
+%\definecolor{ZedColor}{rgb}{0,0,1} % blue
+
+\definecolor{MetaColor}{rgb}{1,0,0}
+\definecolor{GreyColor}{rgb}{0.5,0.5,0.5}
+\newcommand{\ubar}[1]{\mkern 1.5mu\underline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% defined rules
+\newcommand{\cspdef}{\widehat=}
+\newcommand{\csplet}{{\bf let~~}}
+\newcommand{\cspwithin}{{\bf within~~}}
+
+%\createrule{allSTMTransitions}
+\createrule{hiddenModuleChannels}
+\createrule{allTransitions}
+\createrule{transitionsFrom}
+\createrule[Module]{M}
+\createrule{modMemory}
+\createrule{constInit}
+\createrule{constInitSTM}
+\createrule{buildScope}
+\createrule{memoryChannels}
+\createrule{buffer}
+\createrule{singleBuffer}
+\createrule{composeControllers}
+\createrule{renamingController}
+\createrule{renCtrlEvts}
+\createrule[Controller]{C}
+\createrule{composeMachines}
+\createrule{ctrlMemory}
+\createrule{renamingMachine}
+\createrule{renStmEvts}
+\createrule{initialisation}
+\createrule{composeStates}
+\createrule{getsetChannels}
+\createrule{trigEvents}
+\createrule{stmMemory}
+\createrule{getsetLocalChannels}
+\createrule[State machine]{STM}
+\createrule{renameTriggerEvents}
+
+% Transitions
+\createrule[Transition]{T}
+\createrule[Transition]{T}[timed]
+
+\createrule[State]{S}
+\createrule{restrictedState}
+\createrule{flowEvents}
+\createrule{Trigger}
+\createrule{triggerForMemory}
+\createrule{triggerEvent}
+\createrule{Action}
+\createrule{flowTriggerEvents}
+\createrule{exitSubstates}
+\createrule{substatesTriggers}
+\createrule{compileTarget}
+\createrule{memoryTransition}
+%
+% @9/08/2021: Changed this into a normal command with no implicit cross-references, so as to enable mklatex fail when
+% 			  genuine problems arise with the report.
+%
+%\createrule[Expression]{Expr}
+\newcommand{\Expr}{Expr}
+
+% Statements
+\createrule{Statement}
+\createrule{StatementInContext}
+\createrule{readState}
+\createrule{readState}[timed]
+\createrule{usedVariables}
+
+\createrule{allLocalVariables}
+\createrule{requiredVariables}
+\createrule{allVariables}
+\createrule{allEvents}
+\createrule{allLocalConstants}
+\createrule{requiredConstants}
+\createrule{requiredOperations}
+\createrule{allConstants}
+\createrule{states}
+\createrule{reachableJunctions}
+\createrule[Junction]{J}
+\createrule{reachableTransitions}
+\createrule{Wait}
+
+% New rules below
+\createrule{introParamaters}
+\createrule{stateful}
+\createrule{timedStateful}
+
+% Memory
+\createrule{sharedMemory}
+\createrule{sharedConstant}
+\createrule{sharedVarMemory}
+\createrule{sharedConstMemory}
+\createrule{varMemory}
+\createrule{constMemory}
+\createrule{Constant}
+\createrule{Memory}
+
+% Node Containers
+\createrule{NC}
+\createrule{NC}[timed]
+\createrule{ncCoreBehaviour}
+\createrule{ncCoreBehaviour}[timed]
+\createrule{ncBehaviour}
+\createrule{composeNodes}
+\createrule{composeNodes}[timed]
+\createrule{composeTimedNodes}
+\createrule{nodeD}
+
+% Nodes
+\createrule{N}
+\createrule{N}[timed]
+
+% Transitions
+\createrule{transitions}
+\createrule{transitions}[timed]
+\createrule{tevent}
+\createrule{trigger}
+
+% Transition deadlines
+\createrule{stateDeadlines}
+\createrule{transitionDeadline}
+
+% Variable calculations
+\createrule{vars}
+
+% Read state (atomic)
+\createrule{readStateA}
+\createrule{readStateA}[timed]
+\createrule{readStateAtomic}
+\createrule{readStateAtomic}[timed]
+
+% Clocks
+\createrule{clock}[timed]
+\createrule{clocks}[timed]
+\createrule{clockResets}[timed]
+
+% share-CSP
+\createrule{set}
+\createrule{setC}
+\createrule{setL}
+\createrule{setLC}
+\createrule{setR}
+\createrule{setRC}
+
+\chaptercolour{blue!40!white} % Chapter heading image
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% reduce vertical space before and after a verbatim environment
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyvrb}
+\newlength{\fancyvrbtopsep}
+\newlength{\fancyvrbpartopsep}
+\makeatletter
+\FV@AddToHook{\FV@ListParameterHook}{\topsep=\fancyvrbtopsep\partopsep=\fancyvrbpartopsep}
+\makeatother
+\setlength{\fancyvrbtopsep}{0pt}
+\setlength{\fancyvrbpartopsep}{0pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+% PREAMBLE TO PROBABILISTIC CHAPTER
+%----------------------------------------------------------------------------------------
+
+%\def \varg      {\zbinop{\zkeyword{\_}}}
+\def \varg      {{{\_}}}
+
+\newcommand{\bmapsto}{\mkern -1mu{\rightsquigarrow}\mkern -1mu} 
+\newcommand{\MM}[1]{{\sffamily #1}}
+\newcommand{\err}[1]{\text{Error: {#1}}}
+
+% semL
+\DeclarePairedDelimiter{\sem}{\lsem}{\rsem}
+\newcommand{\semL}[2]{\sem{#1}_{\mathscr{#2}}}
+
+\newcommand{\lsemL}{\left\lbrack\!\!\left\lbrack}
+\newcommand{\rsemL}{\right\rbrack\!\!\right\rbrack}
+
+% back to math normal mode within a meta
+\newcommand{\normalinmeta}[1]{\mathnormal{\color{black}{#1}}}
+\newcommand{\mathttinmeta}[1]{\mathtt{\color{black}{#1}}}
+\newcommand{\prisminmath}[1]{\mathtt{\color{black}{#1}}}
+\newcommand{\metanobar}[1]{\mathsf{\color{GreyColor}{#1}}}
+% a new t column type will prevent italic font in an array
+\newcolumntype{t}{>{\mathsf\bgroup}l<{\egroup}}
+\newcommand{\metablockbegin}{\left(\begin{array}{t}}
+	
+	% enumitem to customise lists
+	\newlist{mylist}{enumerate}{1}%
+	\setlist[mylist,1]{wide = 0pt, leftmargin=*, labelindent=0pt, label=\arabic*)}
+	\setlist[enumerate]{wide = 0pt, leftmargin=*, labelindent=0pt}
+	\newlist{mydesc}{description}{1}%
+	\setlist[mydesc,1]{wide = 0pt, leftmargin=0pt, labelindent=0pt}
+	
+	% for lblot and rblot
+	%\DeclarePairedDelimiter{\blot}{\left\lfloor!\left\lfloor}{\right\rfloor!\right\rfloor}
+	%\newcommand{\newlblot}{\left\lfloor\!\left\lfloor}
+	%\newcommand{\newrblot}{\right\rfloor\!\right\rfloor}
+	%\newcommand{\blot}[2]{{\newlblot{#1}\newrblot}_{\mathscr{#2}}}
+	\newcommand{\newlblot}{\left\lfloor}
+	\newcommand{\newrblot}{\right\rfloor}
+	\newcommand{\blot}[2]{{\newlblot{#1}\newrblot}_{{#2}}}
+	
+%\MathSymbol{\typecolon}{\mathbin}  {symbols2}{"25}
+%\newcommand{\typecolon}{\mathbin{\lhd\mkern-9mu-}} 
+
+%\DeclareMathSymbol\typecolon{\mathbin}{AMSb}{"0223E}
+
+%\usepackage{czt}
+\def\typecolon{\raise 0.66ex\hbox{\oalign{\hfil$\scriptscriptstyle%
+	\mathrm{o}$\hfil\cr\hfil$\scriptscriptstyle\mathrm{o}$\hfil}}}%

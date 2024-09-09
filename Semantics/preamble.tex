@@ -1,0 +1,30 @@
+%Declarations, used for the real number circus theory. 
+\def \real {\mathbb{R}}
+\newcommand{\decimalpoint}{.}
+
+\newcommand{\ubar}[1]{\mkern 1.5mu\underline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
+\newcommand{\meta}[1]{\mathsf{\color{GreyColor}\ubar{#1}}}
+
+\newcommand{\lsem}{\lbrack\!\lbrack}
+\newcommand{\rsem}{\rbrack\!\rbrack}
+
+\DeclareFontFamily{U}{mathc}{}
+\DeclareFontShape{U}{mathc}{m}{it}%
+{<->s*[1.03] mathc10}{}
+\DeclareMathAlphabet{\mathscr}{U}{mathc}{m}{it}
+
+\newtheorem{ruleT}{Rule}
+\newcounter{tRule}%[section]
+\newenvironment{TRule}[2][]{
+  \begin{figure*}\centering
+    \begin{minipage}{.98\textwidth}
+	  \rule{\linewidth}{.1pt}
+	  \refstepcounter{tRule}
+	  \textbf{Rule~\thetRule.~#1\ {$#2$}}
+	  \\
+      \noindent\rule{\linewidth}{.1pt}
+	  \footnotesize
+	  \begin{displaymath}
+}
+{\end{displaymath}\medskip\noindent\rule{\linewidth}{.1pt}	\end{minipage}\end{figure*}}

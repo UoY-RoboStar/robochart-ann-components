@@ -1,0 +1,32 @@
+% LaTeX definitions for RoboWorld
+
+% definitions not in the standard Circus style
+\renewcommand{\circinterrupt}{\zbinop{\bigtriangleup}}
+
+\renewcommand{\circblockbegin}{\left(\begin{array}{l}}
+\renewcommand{\circblockend}{\end{array}\right)}
+
+\newcommand{\circtimedinterrupt}{\circinterrupt}
+\newcommand{\lcirctime}{_\bgroup}
+\newcommand{\rcirctime}{\egroup}
+
+% alternative boolean syntax - avoids conflict with ifthenelse package
+\newcommand{\circbool}{\mathbb{B}}
+
+% real numbers
+%Commented out as already defined.
+%\newcommand{\real}{\mathbb{R}}
+\newcommand{\decimalpoint}{.}
+\newcommand{\realdiv}{/}
+
+% vectors
+\newcommand{\vecminus}{-}
+\newcommand{\vecdotprod}{\cdot}
+\newcommand{\scalarmult}{*}
+\newcommand{\scalardiv}{/}
+
+% derivatives
+\newcommand{\derivative}[1]{\frac{\mathrm{d} #1}{\mathrm{d} t}}
+%\newcommand{\derivative}[1]{\dot{#1}}
+%\newcommand{\derivative}[1]{\partial#1}
+

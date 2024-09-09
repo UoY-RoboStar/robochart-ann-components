@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage{czt}
+\usepackage{circus}
+
+\begin{document}
+\begin{zsection}
+  \SECTION circspec \parents circus\_toolkit
+\end{zsection}
+
+\begin{circus}
+ \circchannel \ input, output : \nat
+\end{circus}
+
+
+\begin{circus}
+  \circprocess\ AChronometer \circdef \ \circbegin 
+\end{circus}
+
+\begin{zed}
+  RANGE == \nat
+\end{zed}
+
+\begin{circusaction}
+      \circstate \ AState == [ sec, m : RANGE ] \\%
+\end{circusaction}
+
+Main Action: 
+\begin{circusaction}
+\circspot Skip 
+\end{circusaction}
+
+\begin{circus}
+  \circend
+\end{circus}
+
+This specification describes ...
+
+
+
+\end{document}

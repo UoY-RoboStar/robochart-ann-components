@@ -1,0 +1,877 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{circus}
+
+\title{ANN Circus Rules}
+\author{Ziggy Attala}
+\date{March 2024}
+
+\input{preamble}
+
+\begin{document}
+
+\maketitle
+
+\section{Z Specification of ANNControllers}
+
+\begin{zsection}	 \SECTION spec \parents~standard\_toolkit
+\end{zsection}
+
+
+We just assume we have a context, then we can run the allEvents metalanguage function on this context. 
+\begin{zed}[ Context, CSExp, Channel, CircusProgram ]
+\end{zed}
+
+\begin{zed}ActivationFunction ::= RELU | LINEAR | NOTSPECIFIED
+\end{zed}
+
+
+Type synomym for ANNs. 
+\begin{zed}
+Value == \arithmos
+\end{zed}
+
+Sequence of values, if 1d, then it is layerstructure, 2d or 3d, biases or layer structure. 
+\begin{zed}
+SeqExp ::= null\_ seq | list \ldata \seq \nat \rdata | matrix \ldata \seq \seq Value \rdata | tensor \ldata \seq \seq \seq Value \rdata
+\end{zed}
+
+
+\begin{axdef}
+  relu : Value \fun Value %
+  \where %
+  \forall x : Value @ \\%
+  \t1 %
+  (x < 0 \implies (x,0) \in relu) \land \\% 
+  \t1 %
+  (x \geq 0 \implies (x,x) \in relu)
+\end{axdef}
+
+\begin{schema}{ANNParameters}
+\\
+ layerstructure : SeqExp \\
+ weights : SeqExp \\
+ biases : SeqExp \\
+ activationfunction : ActivationFunction \\
+ inputContext : Context \\
+ outputContext : Context \\
+\end{schema}
+
+To match the meta-model better. 
+\begin{schema}{ANN} 
+   annparameters : ANNParameters
+\end{schema} 
+
+\begin{schema}{ANNController}
+\\
+ANN
+\end{schema}
+
+\section{Semantic Rules}
+NOTES:
+\begin{itemize} 
+  \item We use $Value$ as a meta-language type, we define it in our Z Specification, but we also use it in our Circus program, they are different, in Circus, it is specialised to the real number type. We keep this, and not just $\real$, to support BNNs, or other types of ANNs, or other precisions of ANNs. 
+  \item $\lchanset$ and $\rchanset$ brackets, used in rule 16, for example, in the metalanguage, for us, it is in the target language, but how do we express, the set in between, it is all the elements, in the set in between, technically, one at a time. Syntax inspired by connevts from rule 14, in target language is brackets, and inside is the set, that returns a set of events. 
+  \item Previous rules used: Rule 4, defined on page 36, of the robochart reference manual, $allEvents(c : Context) : Set(Event)$. 
+  \item in TRule environment, latex, cannot make new lines, in second argument of environment, goes off edge in Rule 6, chansplit, metafunction declaration. Will fix, just noting. 
+  \item Just using c.name for name of process, what should it be, fully qualified name, to link to other semantic components, or will the process be renamed in circus? 
+  \item The only semantic rule we will have to implement, that is not here, in epsilon, is $allEvents$, Rule 4.
+  \item As the RC semantics, we assume the existence of $eventId(e: Event)$, unique identifiers for the name of the event. 
+  \item for all, needs to be in order, it is a set of events, needs to be ordered. the implementation is ordered, we need to have an order, defined by the user, replicated according to an ordering function. That can be implemented, assume existence of $order$ function, implemented by the implemetnation as a list. 
+  \item going to assume the existence of an $order(s : \power Event): \seq Event$ function, that returns a sequence of events, of the same size of the set of events, can be implemented by lists, in Eclipse, by ordered, containement lists. 
+\end{itemize} 
+
+\begin{TRule}[Semantics of ANNs \\]{ \meta{\lsem c : ANNController \rsem_{
+    \mathscr{ANN}} : Program =}}
+  \begin{array}[t]{l}
+    \meta{ANNChannelDecl(c)} \\%
+    \meta{ANNProc(c)} \\%
+  \end{array} \\%
+  \label{rule:ANNsemantics}
+\end{TRule} 
+
+\begin{TRule}[Function ANNChannelDecl \\]{\meta{ANNChannelDecl(c : ANNController) : Program =}}
+  \begin{array}[t]{l}
+    \meta{ANNChannels(c, layerNo(c), lastLayerS)} \\
+    \circchannel terminate \\%
+    \circchannelset ANNHiddenEvts == \lchanset \meta{hiddenEvts} \rchanset
+  \end{array} \\%
+  
+  \meta{\bf where} \\%
+  \begin{array}[t]{l}
+    \meta{hiddenEvts = \{ l, n : \nat | (0 < l < layerNo) \land n \in 1 \upto layerSize(l) \spot layerRes(l,n) \} } \\%
+     \meta{lastLayerS = last~ ((list \inv) c.annparameters.layerstructure)} \\%
+  \end{array} 
+  \label{rule:annchanneldecl}
+\end{TRule} 
+
+\begin{TRule}[Function ANNChannels \\]{\meta{ANNChannels(c : ANNController, l, n : \nat) : Program =}}
+  \begin{array}[t]{l}
+    \meta{\bf{if (l == 0) \land (n == 1)}} \\
+      
+    \meta{\bf{then}} \\
+    \t1 %
+    \begin{array}[t]{l}
+      \circchannel \meta{layerRes(l, n)}
+    \end{array} \\%
+    \meta{\bf{else}}  \\%
+    \t1 %
+    \begin{array}[t]{l}
+      \circchannel \meta{layerRes(1, n)} \\%
+      \meta{if(l \neq 0)} \\%
+      \t1 % 
+      \meta{NodeOutChannels(l, n, \# c.annparameters.layerstructure)} \\%
+      \meta{if (n > 1)} \\%
+      \t1 %
+      \begin{array}[t]{l}
+        \meta{ANNChannels(l, (n-1))}
+      \end{array}  \\
+      
+      \meta{else} \\
+      \t1 %
+      \begin{array}[t]{l}
+        \meta{ANNChannels((l-1), LStructure(c, (l-1))}
+      \end{array} \\
+    \end{array} \\
+    
+  \end{array} \\%
+  \label{rule:annchannels}
+\end{TRule} 
+
+
+\begin{TRule}[Function NodeOutChannels \\]{\meta{NodeOutChannels(l, n, i : \nat) : Program =}}
+  \begin{array}[t]{l}
+    \meta{\bf{if (i == 1)}} \\%
+    \meta{\bf{then}} \\
+    \t1 %
+    \begin{array}[t]{l}
+      \circchannel \meta{nodeOut(l, n, i)}
+    \end{array} \\%
+    \meta{\bf{else}}  \\%
+    \t1 %
+    \begin{array}[t]{l}
+      \circchannel \meta{nodeOut(1, n, i)} \\%
+      \meta{NodeOutChannels(l, n, (i-1))} \\%
+    \end{array} \\%
+    
+  \end{array} \\%
+  \label{rule:nodeoutchannels}
+\end{TRule} 
+
+
+\begin{TRule}[Function ANNProc \\]{\meta{ANNProc(c : ANNController) : ProcDecl =}}
+  \begin{array}[t]{l} 
+    \circprocess \meta{c.name} \circdef \\%
+    \t1 %
+    \begin{array}[t]{l}
+      \circbegin \\%
+      Collator \circdef l, n, i : \nat; sum : Value \circspot %
+      \begin{array}[t]{l}
+	    \meta{Collator(c)} \\%
+      \end{array} \\%
+      NodeIn \circdef l, n, i : \nat \circspot %
+      \begin{array}[t]{l}
+	    \meta{NodeIn(c)} \\%
+      \end{array} \\%
+      Node \circdef l, n, inpSize : \nat \circspot %
+      \begin{array}[t]{l}
+	    \meta{Node(c)} \\%
+      \end{array} \\%
+      HiddenLayer \circdef l, s, inpSize : \nat \circspot %
+      \begin{array}[t]{l} 
+        \meta{HiddenLayer(c)}
+      \end{array} \\%
+      HiddenLayers \circdef \meta{HiddenLayers(c, layerNo(c) - 1)} \\%
+      OutputLayer \circdef \meta{OutputLayer(c)} \\% 
+      ANN \circdef %
+      \begin{array}[t]{l}
+        ((HiddenLayers \lpar | \meta{IndexedLayerRes(layerNo(c)-1)} | \rpar OutputLayer) \\%
+         \circhide ANNHiddenEvts) \circseq ANN \\% 
+      \end{array} \\%
+      
+      ANNRenamed \circdef \meta{ANNRenamed(c)} \\%
+      
+      \circspot ANNRenamed \\%
+      
+      \circend \\
+    \end{array}
+    
+  \end{array} \\%
+        
+  \label{rule:annproc}
+\end{TRule} 
+
+\begin{TRule}[Function Collator \\]{\meta{Collator(c : ANNController) :\\%
+ CSPAction =}}
+  \begin{array}[t]{l} 
+    \meta{ \Extchoice l : 1 \upto layerNo(c); n : 1 \upto LStructure(c, l); i : 0 \upto LStructure(c, (l-1))} \\%
+    \t1 %
+    \begin{array}[t]{l}
+      
+      \meta{ @} %
+      \lcircguard l = \meta{l} \land n = \meta{n} \land i = \meta{i} \rcircguard \circguard \\%
+      \t1 %
+      \begin{array}[t]{l}
+        \meta{\bf{if (i == 0)}}  \\
+        \meta{\bf{then}} \\
+        \t1 %
+          \meta{layerRes(l,n)}!relu(sum + (\meta{bias(c, l, n)})) \then \Skip \\%
+    \meta{\bf{else}} \\%
+    \t1 %
+        \meta{nodeOut(l, n, i)}?x \then Collator(l, n, (i-1), (sum + x))
+      \end{array}
+    \end{array}
+  \end{array} \\%
+  \label{rule:collator}
+\end{TRule} 
+
+\begin{TRule}[Function NodeIn \\]{\meta{NodeIn(c : ANNController) :\\%
+ CSPAction =}}
+  \begin{array}[t]{l} 
+    \meta{ \Extchoice l : 1 \upto layerNo(c); n : 1 \upto LStructure(c, l); i : 1 \upto LStructure(c, (l-1))} \\%
+    \t1 %
+    \begin{array}[t]{l}
+      
+      \meta{ @} %
+      \lcircguard l = \meta{l} \land n = \meta{n} \land i = \meta{i} \rcircguard \circguard \\%
+      \t1 %
+      \meta{\meta{layerRes(l,n)}?x \then \meta{nodeOut(l, n, i)}!(x * \meta{weight(c, l, n, i)}) \then \Skip  }
+    \end{array}
+  \end{array} \\%
+  \label{rule:nodein}
+\end{TRule} 
+
+\begin{TRule}[Function Node \\]{\meta{Node(c : ANNController) : CSPAction =}}
+  \begin{array}[t]{l} 
+    \meta{ \Extchoice l : 1 \upto layerNo(c); n : 1 \upto LStructure(c, l) } \\%
+    \t1 %
+    \begin{array}[t]{l}
+      
+      \meta{ @} %
+      \lcircguard l = \meta{l} \land n = \meta{n} \rcircguard \circguard %
+      
+	  \begin{array}[t]{l} 
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset \meta{IndexedNodeOut(l, n)} \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset \meta{IndexedNodeOut(l, n)} \rchanset )
+      \end{array}
+      
+    \end{array}
+  \end{array} \\%
+  \label{rule:node}
+\end{TRule} 
+
+\begin{TRule}[Function HiddenLayer \\]{\meta{HiddenLayer(c : ANNController) : CSPAction =}}
+  \begin{array}[t]{l} 
+    \meta{ \Extchoice l : 1 \upto layerNo(c)} \\%
+    \t1 %
+    \begin{array}[t]{l}
+      
+      \meta{ @} %
+      \lcircguard l = \meta{l} \rcircguard \circguard %
+        (\lpar \lchanset \meta{IndexedLayerRes(l)} \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize))
+    \end{array}
+  \end{array} \\%
+  \label{rule:hiddenlayer}
+\end{TRule} 
+
+\begin{TRule}[Function HiddenLayers \\]{\meta{HiddenLayers(c : ANNController, l : \nat) : CSPAction =}}
+  \begin{array}[t]{l} 
+      \meta{\bf{if(l == 1)}} \\%
+      \meta{\bf{then}} \\%
+      \t1 %
+      \begin{array}[t]{l}
+        (HiddenLayer(\meta{l}, \meta{LStructure(l)}, \meta{LStructure(l-1)}))
+      \end{array} \\%
+      \meta{\bf{else}} \\%
+      \t1 %
+      \begin{array}[t]{l}
+        (\meta{HiddenLayers(c, (l-1))} \\%
+        \lpar | \lchanset \meta{IndexedLayerRes(c, l-1)} \rchanset | \rpar \\%
+        HiddenLayer(\meta{l}, \meta{LStructure(l)}, \meta{LStructure(l-1)})
+      \end{array}
+  \end{array} \\%
+  \label{rule:hiddenlayers}
+\end{TRule} 
+
+\begin{TRule}[Function OutputLayer \\]{\meta{OutputLayer(c : ANNController) : CSPAction =}}
+  \begin{array}[t]{l} 
+    \lpar \lchanset \meta{IndexedLayerRes(layerNo(c)-1)} \rchanset \rpar i : 1 \upto \meta{LStructure(layerNo(c))} \circspot \\%
+   \t1 Node(l, i, \meta{LStructure(layerNo(c)-1)}))
+  \end{array} \\%
+  \label{rule:outputlayer}
+\end{TRule} 
+
+\begin{TRule}[Function ANNRenamed \\]{\meta{ANNRenamed(c : ANNController) : CSPAction) = }} 
+  \begin{array}[t]{l}
+    (ANN) %
+        \begin{array}[t]{l}
+          \lcircrename \meta{orderedLayerRes} := \meta{eventList} \rcircrename %
+          \circinterrupt~ terminate \then \Skip \\%
+        \end{array} \\%
+  \end{array} \\%
+  \meta{\bf{where}}  \\%
+  \begin{array}[t]{l}
+    \meta{orderedLayerRes =} \\%
+    \t1 \meta{order(\{ l : \{0, layerNo(c)\} ; n : 1 \upto LStructure(c, l)} \meta{ @ layerRes(l,n)\})} \\%
+    \meta{eventList = order(allEvents(c.annparameters.inputContext)) \cat }\\%
+    \t1 \meta{order(allEvents(c.annparameters.outputContext)) }
+  \end{array}
+  \label{rule:annrenamed}
+\end{TRule}
+
+
+HELPER RULES: 
+
+\begin{TRule}[Function LStructure \\]{\meta{LStructure(c : ANNController, i : \nat) : \nat =}}
+  \begin{array}[t]{l}
+    \meta{\bf{if(i == 0)}} \\
+    \meta{\bf{then}} \\
+    \t1 %
+	  \meta{ \# allEvents(c.annparameters.inputContext) } \\
+    \meta{\bf{else}} \\
+    \t1 %
+      \meta{((list \inv) c.annparameters.layerstructure)~i}
+  \end{array} 
+  \label{rule:lstructure}
+\end{TRule} 
+
+
+\begin{TRule}[layerRes Channel \\]{\meta{layerRes(l : \nat, n : \nat) : CSExp =}}
+  \begin{array}[t]{l}
+    layerRes\meta{ln} : Value
+  \end{array} 
+  \label{rule:layerres}
+\end{TRule} 
+
+\begin{TRule}[Function IndexedLayerRes \\]{\meta{IndexedLayerRes(l : \nat) : CSExp =}}
+  \begin{array}[t]{l}
+    \lchanset \meta{\{ n : 1 \upto {LStructure(l)} @ layerRes(l, n)\}}
+    \rchanset 
+  \end{array} 
+  \label{rule:indexedlayerres}
+\end{TRule} 
+
+\begin{TRule}[nodeOut Channel \\]{\meta{nodeOut(l : \nat, n : \nat, i : \nat) : CSExp =}}
+  \begin{array}[t]{l}
+    nodeOut\meta{lni} : Value
+  \end{array} 
+  \label{rule:nodeout}
+\end{TRule} 
+
+\begin{TRule}[Function layerNo (number of layers) \\]{\meta{layerNo(c : ANNController) : \nat =}}
+  \begin{array}[t]{l}
+    \# ((list \inv)~c.annparameters.layerstructure)
+  \end{array} 
+  \label{rule:layerno}
+\end{TRule} 
+
+\begin{TRule}[Function weight \\]{\meta{weight(c : ANNController; l, n, i : \nat) : Value =}}
+  \begin{array}[t]{l}
+    ((tensor \inv)~c.annparameters.weights)~l~n~i
+  \end{array} 
+  \label{rule:weight}
+\end{TRule} 
+
+\begin{TRule}[Function bias \\]{\meta{bias(c : ANNController; l, n : \nat) : Value =}}
+  \begin{array}[t]{l}
+    ((matrix \inv)~c.annparameters.biases)~l~n
+  \end{array} 
+  \label{rule:bias}
+\end{TRule} 
+
+\begin{TRule}[Function AllNodeOut \\]{\meta{AllNodeOut(c : ANNController) : CSExp =}}
+  \begin{array}[t]{l}
+    \lchanset \meta{\{l : 1 \upto layerNo(c) ; n : 1 \upto LStructure(c, l) ; i : 1 \upto LStructure(c, (l-1)) @} \\
+    \t1 %
+    \meta{nodeOut(l,n,i) \}} \rchanset 
+  \end{array} \\%
+  \label{rule:allnodeout}
+\end{TRule} 
+
+\begin{TRule}[Function IndexedNodeOut \\]{\meta{IndexedNodeOut(c : ANNController, l, n : \nat) : CSExp =}}
+  \begin{array}[t]{l}
+    \lchanset \meta{ \{i : 1 \upto LStructure(c, l-1) @ nodeOut(l,n,i) \} } \rchanset
+  \end{array}
+  \label{rule:indexednodeout}
+\end{TRule} 
+
+\section{AnglePIDANN Circus Program}
+
+\subsection{Preliminary Material}
+
+\begin{figure}[t]
+\begin{zed}
+  Value ~~==~~ \real
+\end{zed}
+
+\begin{circus}
+  \circchannel layerRes01: Value \\
+  \circchannel layerRes02: Value \\
+  \circchannel layerRes11: Value \\
+  \circchannel layerRes21: Value \\
+  \circchannel nodeOut111: Value \\
+  \circchannel nodeOut112: Value \\
+  \circchannel nodeOut211: Value \\
+  \circchannel\ terminate \\
+\end{circus}
+
+\begin{circus}
+  \circchannel adiff\_in : \real \\
+  \circchannel anewError\_in : \real \\
+  \circchannel angleOutputE\_out : \real \\
+\end{circus}
+
+\begin{circus}
+  \circchannelset ANNHiddenEvts == \lchanset layerRes11 \rchanset
+\end{circus}
+
+\begin{axdef}
+  relu : Value \fun Value %
+  \where %
+  \forall x : Value @ \\%
+  \t1 %
+  (x < 0 \implies (x,0) \in relu) \land \\% 
+  (x \geq 0 \implies (x,x) \in relu)
+\end{axdef}
+
+  \caption{The preliminary Circus paragraphs, for the $AnglePIDANN$ example. }
+  \label{anglepidann-example-preliminaries}
+\end{figure} 
+
+\subsection{Process Definition} 
+
+\begin{figure}[p]
+  
+\begin{circus}
+  \circprocess\ AnglePIDANN \circdef \\%
+  \t1 %
+    \begin{array}[t]{l}
+      \circbegin \\%
+      Collator \circdef l, n, i : \nat; sum : Value \circspot \\%
+      \t1 %
+      \begin{array}[t]{l} 
+        \lcircguard l = 1 \land n = 1 \land i = 0 \rcircguard \circguard layerRes11~!(relu(sum + ( 0 \decimalpoint 125424 ))) \then \Skip \\
+        \extchoice~ \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut111~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+        \extchoice~ \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard nodeOut112~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+        \extchoice~ \lcircguard l = 2 \land n = 1 \land i = 0 \rcircguard \circguard layerRes21~!(relu(sum + ( \negate 0 \decimalpoint 107753 ))) \then \Skip \\%
+        \extchoice~ \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut211~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \end{array} \\%
+      
+      NodeIn \circdef l, n, i : \nat \circspot \\%
+      \t1 %
+      \begin{array}[t]{l}
+        \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut111~!(x * (1 \decimalpoint 22838)) \then  \Skip \\%
+        \extchoice~ \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard layerRes02~?x \then nodeOut112~!(x * (0 \decimalpoint 132874)) \then \Skip \\%
+        \extchoice~ \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard layerRes11~?x \then nodeOut211~!(x * (0 \decimalpoint 744636)) \then \Skip \\%
+      \end{array} \\%
+      
+    
+      Node \circdef l, n, inpSize : \nat \circspot \\%
+      \t1 %
+      \begin{array}[t]{l}
+        \lcircguard l = 1 \land n = 1 \rcircguard \circguard %
+        \begin{array}[t]{l}
+          ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+          \lpar | \lchanset nodeOut111, nodeOut112 \rchanset | \rpar \\%
+          Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut111, nodeOut112 \rchanset )
+        \end{array} \\%
+        \extchoice~\lcircguard l = 2 \land n = 1 \rcircguard \circguard %
+        \begin{array}[t]{l}
+          ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+          \lpar | \lchanset nodeOut211 \rchanset | \rpar \\%
+          Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut211 \rchanset) \\%
+        \end{array}
+      \end{array} \\%
+        
+      HiddenLayer \circdef l, s, inpSize : \nat \circspot \\%
+      \t1 %
+      (\lpar \lchanset layerRes01, layerRes02 \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize)) \\%
+        
+      HiddenLayers \circdef \\%
+      \t1 %
+      HiddenLayer(1, 1, 2) \\%
+      
+      OutputLayer \circdef \\%
+      \t1 %
+      \lpar \lchanset layerRes11 \rchanset \rpar i : 1 \upto 1 \circspot Node(2, i, 1) \\%
+      
+      ANN \circdef \\%
+      \t1 %
+      ((HiddenLayers \lpar | \lchanset layerRes11 \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
+      
+      ANNRenamed \circdef \\%
+      \t1 %
+      (ANN) %
+        \begin{array}[t]{l}
+          \lcircrename layerRes01, layerRes02, layerRes21 := \\%
+          \t1 anewError\_in, adiff\_in, angleOutputE\_out \rcircrename \\%
+          \circinterrupt~ terminate \then \Skip \\%
+        \end{array} \\%
+        \circspot ANNRenamed \\%
+        \circend
+      \end{array} \\%
+\end{circus}    
+
+  \caption{$AnglePIDANN$ example, in Circus} 
+  \label{fig:anglepidann_circus_example}
+\end{figure} 
+
+
+
+
+\section{Notes}
+
+Differences to the CSP semantics, where the Circus actions representing the CSP processes differ. We have proved, in FDR, for the $AnglePIDANN$ and $AnglePIDANN2$ examples, and for a binarised version of $AnglePIDANN$, that our Circus semantics are equivalent, in the traces model, to the CSP semantics.
+
+\begin{itemize} 
+\item channels are renamed, no longer use indexed channels, the indexed channel abstraction. There are multiple cases, on each process, with a guard and each process is chained together by external choice, such that only one process should not evaluate to $STOP$, the rest are $STOP \extchoice P$, which evaluates to $P$. 
+\item ANNHiddenEvts defined constructively, not all those events without the inputs and outputs. 
+
+\item We are not hiding all of node out, like we do in the original, because unnnecessary, and in the meta-language, we have to define it anyway, $\lchanset nodeOut.1.1 \rchanset$ we have to define anyway, so its cleaner, to define we synchronise on that, then hide just that. 
+\item parallel synchronisation, without the variable sets, needs $|$ characters, from the circus guide, it should not, but it does for us: $\lpar | \lchanset layerRes11 \rchanset | \rpar $. $\lpar layerRes11 \rpar$ does not compile, when it says this is valid syntax. 
+
+\item No longer using replicated alphabetsied parallel in $HiddenLayers$, we are now using multiple generalised parallel in $HiddenLayers$. 
+\end{itemize} 
+
+
+Issues or Questions: 
+\begin{itemize} 
+  \item Stateless, so we omit the state reserved word, allowed in CZT, but Marcel's BNF seem to imply it is always required. 
+  \item In this document, I am using the Circus latex style, not the csp or CZT, so we are using circinterrupt instead of interrupt for CSP interrupt, but both produce the same symbol. 
+  \item We use binarised parameters, and the $sign$ activation function instead of $relu$, for validation of our Circus programs. 
+  \item We use the roboworld 2d toolkit, we only really need the real type, and the decimal point definition, in CZT, but we do need this declaration, otherwise the process would be very ugly, but this is required as well as the standard circus toolkit, to write the circus programs in CZT. 
+\end{itemize} 
+
+\section{ANN Circus semantics in the Circus metamodel}
+
+\subsection{Important Classes in metamodel} 
+\begin{itemize}
+\item Term (abstract class, represents a term). 
+\item Para -> Term (abstract class, represents a paragraph). 
+\item Types of Para: AxPara, ActionPara, ChannelPara, ChannelSetPara, ConjPara, FreePara, GivenPara, NameSetPara, ProcessPara, etc.  
+\item Sect, is a Term, abstract class. 
+\item Concrete subclasses of Sect, ZSect, that is it, just ZSect. 
+\item ZSect -> Sect (Z section, has name: EString, paraList: ParaList, parents: Parent).
+\item ParaList, abstract class, list of paragraphs, ZParaList, paras, ZParaList is a concrete type of ParaList. 
+\item ZParaList, concrete ParaList, list of, paras: Para. 
+\item Para, 
+\item ConstDecl, has name: ZName, and expr: Expr
+\item Expresssions, Expr, types of expression: 
+\item Expr, is a term, an abstract class. 
+\item Concrete instantiations: BasicChannelSetExpr, BindExpr, CondExpr, NumExpr, RefExpr, SigmaExpr, SchExpr, RefExpr, 
+\item RefExpr
+\item SchTExt, ZSchText, schema text. 
+\item ZName, is word, id, operatorName, strokesLsit, strokesList, list of Z strokes used.
+\item word is the name of ZName, an EString. 
+\item id, 8571, just a number in CZT. real is 
+
+\end{itemize} 
+Notes from CZT API, https://czt.sourceforge.net/corejava/corejava-z/apidocs/index.html
+
+\begin{itemize}
+\item Stroke, is a Term, an abstract Stroke, 
+\item Stroke, ?, 
+
+\end{itemize} 
+
+
+This is the AST, 
+\subsection{Channel declarations, and the ReLU declaration}
+The CZT Circus AST, representation of our example, AST for our example: 
+
+\begin{itemize}
+  \item Horizontal Definition Paragraph ( 
+  \item Schema text "Value"
+  \item List of declarations "Value"
+  \item Constant declaration "Value" (has a name and a reference expression) [ConstDecl in EMF]
+  \item name, then a reference expression, has name, 
+  \item reference expression "real", [RefExpr in EMF]
+  \item reference expression, has a list of expressions, [expression list]. 
+  \item 
+  
+\end{itemize}
+
+Name of the constant declaration, is "Value", name of the reference expression, "real", list of expressions, no Z strokes, 
+
+\subsection{Mechanisation Notes (EOL)} 
+Mechanisation, in CZT Circus API, of the various BNF rules that we refer to, is: 
+
+\begin{itemize}
+  \item Program: multiple circus paragraphs, in CZT AST, this is: List of Paragraphs, in Tool, it is ZParaList, in Circus AST, you can put Circus and Z paragraphs in this, it is just a list of Paras, which can be either. 
+   
+  \item ProcessPara, is ProcDecl, potentially, defining a process paragraph. 
+  \item We are using, in EOL, no c : ANNController, that is the self, that is the context of the operation, all the semantics are operations on ANNController objects. 
+  \item CircusProcess, absrtact, of BasicProcess, with parameters, mainAction, ontheFlyParagraphs, paragraph lists, Axiom paragraphs, state para. State paragraph list. Them has local paragraphs. 
+  \item ProcessPara, has a CircusProcess, a namelist, a name, and if it is a basic process or not. 
+  \item The AnglePIDANN, overall, is a process pargraph, not a circusprocess, then the basic process, then basic process has a list of paragraphs. 
+  \item Then, each is an action paragraph, each CSP process, 
+  \item Treat the $Value == \real$, horizontal definition paragraph, as Part of the Toolkit, as imported in CZT. 
+  \item Not using explicit paragraph lists, generating a document with just using, the actual paragraphs. They aren't grouped in the CZT file anyway, it was grouped, in the metalanguge, in the BNF, more just to show, to describe what they are. 
+  \item We don't have a section, that would have a list of paragraphs, we just have the list of paragraphs, doesn't matter. Still automatically generates them. 
+  \item Do we need the explicit import? and Section header? in the M2M? Does that exist yet? 
+  \item Each channel is declared in its own channel paragraph, one channel paragraph per channel declaration.
+  \item layerRes and nodeOut are declared as STRINGS, not channels, as easier just to get the names, then call the functions to get the channel paragraphs, and declarations, from other places. 
+  \item Process Paragraph, top level, name "AnglePIDANN". Basic Process, then has list of paragraphs, aciton paragraphs, then horizontal definition paragraph. 
+  \item Axiomatic description paragraph relu. That can be in the toolkit as well. 
+  \item createProcessPara, needs a Z!CircusProcess, sets the circusprocess, to that, name: and is BasicProcess, isBasicProc, true, 
+  \item createParallelProcess, name, left, and right. $cs_name$, reference to channelset name, creates a channel set, with the reference expression, of $cs_name$. 
+  \item Can also, createParallelProcess, with $channel_names$ as a set, left, and right. 
+  \item createCallProcess, call expression, 
+  \item createBasicProcess, mainActionName, sets the main action. 
+  \item give a sequence of 
+  \item the basic process, paragraph lists, is the list. 
+  \item paragraphs, is the sequence. 
+  \item From a Z!Para, can create a basic process, with a main action name, this is a Z!BasicProcess. 
+  \item create action, createPrefixingAction, createAction1. 
+  \item mechanisation of process, top level: Process Paragraph, then has a name, the process paragraphs name is "AnglePIDANN", the name of the RC component. That is just the anglepidann.name, it does work. 
+  \item then has a basic process, then in this basic process, has a pargraph list, then it has ACTION PARAGRAPHS, then a main action, then a horizontal definition paragraph, default? 
+  \item Fang's mechanisation, find process paragraphs, then basic processes, and action paragraphs. 
+  \item createProcessPara(name: String, isBasicProc: Boolean), context of a CircusProcess, creates a ProcessPara. sets the name to name, and isBasicProcess, 
+  \item createCallProcess(), creates a Ref Expression, a process that calls a reference, a refernece expression. 
+  \item createParallelProcess, 
+  \item createActionPara(), Circus Action, returns an ActionPara, takes a CircusAction, creates an action paragraph. with the circus action = to self. 
+  \item createCircusAction, 
+  \item how the events are represented in memory, 
+  \item Events are not ordered, in EMF RoboChart models, based on when users, I saw that somewhere they were? But not in EOL itself, not ordered. 
+  \item ordered is FALSE on events, saw in representation, in parts of xtext code, not in EMF, not an ordered. 
+  \item ORDERING WORKS, NOT SURE WHY, SAYS UNORDERED, IN EMF, BUT IT SEEMS TO WORK, EVEN IN INTERFACES. MULTIPLE, ONE AT A TIME, SURELY. 
+\end{itemize} 
+
+\appendix 
+
+\section{AnglePIDANN2 Circus Program}
+
+Used to make an example with more than one hidden layer, and more than one layer per node. 
+
+\begin{figure}[p] 
+\begin{circus}
+  \circprocess\ AnglePIDANN2 \circdef \ \circbegin \\%
+      Collator \circdef l, n, i : \nat; sum : Value \circspot \\
+      \lcircguard l = 1 \land n = 1 \land i = 0 \rcircguard \circguard layerRes11~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut111~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard nodeOut112~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 2 \land i = 0 \rcircguard \circguard layerRes12~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 2 \land i = 1 \rcircguard \circguard nodeOut121~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 2 \land i = 2 \rcircguard \circguard nodeOut122~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 3 \land i = 0 \rcircguard \circguard layerRes13~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 3 \land i = 1 \rcircguard \circguard nodeOut131~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 1 \land n = 3 \land i = 2 \rcircguard \circguard nodeOut132~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      
+      
+      \lcircguard l = 2 \land n = 1 \land i = 0 \rcircguard \circguard layerRes21~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut211~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 2 \land n = 1 \land i = 2 \rcircguard \circguard nodeOut212~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 2 \land n = 1 \land i = 3 \rcircguard \circguard nodeOut213~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      
+      \lcircguard l = 3 \land n = 1 \land i = 0 \rcircguard \circguard layerRes31~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 3 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut311~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      
+      \lcircguard l = 4 \land n = 1 \land i = 0 \rcircguard \circguard layerRes41~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 4 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut411~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \extchoice
+      \lcircguard l = 4 \land n = 2 \land i = 0 \rcircguard \circguard layerRes42~!(sign(sum + ( 0 ))) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 4 \land n = 2 \land i = 1 \rcircguard \circguard nodeOut421~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      
+      
+      NodeIn \circdef l, n, i : \nat \circspot \\%
+      \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut111~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard layerRes02~?x \then nodeOut112~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      \lcircguard l = 1 \land n = 2 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut121~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      \lcircguard l = 1 \land n = 2 \land i = 2 \rcircguard \circguard layerRes02~?x \then nodeOut122~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      \lcircguard l = 1 \land n = 3 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut131~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      \lcircguard l = 1 \land n = 3 \land i = 2 \rcircguard \circguard layerRes02~?x \then nodeOut132~!(x * ( 1 )) \then \Skip \\%
+      \extchoice \\%
+      
+      \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard layerRes11~?x \then nodeOut211~!(x * ( 1 )) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 2 \land n = 1 \land i = 2 \rcircguard \circguard layerRes12~?x \then nodeOut212~!(x * ( 1 )) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 2 \land n = 1 \land i = 3 \rcircguard \circguard layerRes13~?x \then nodeOut213~!(x * ( 1 )) \then \Skip \\%
+      \extchoice
+      
+      \lcircguard l = 3 \land n = 1 \land i = 1 \rcircguard \circguard layerRes21~?x \then nodeOut311~!(x * ( 1 )) \then \Skip \\%
+      \extchoice
+      
+      \lcircguard l = 4 \land n = 1 \land i = 1 \rcircguard \circguard layerRes31~?x \then nodeOut411~!(x * ( 1 )) \then \Skip \\%
+      \extchoice
+      \lcircguard l = 4 \land n = 2 \land i = 1 \rcircguard \circguard layerRes31~?x \then nodeOut421~!(x * ( 1 )) \then \Skip \\%
+      
+    
+      Node \circdef l, n, inpSize : \nat \circspot \\%
+        \lcircguard l = 1 \land n = 1 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut111, nodeOut112 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut111, nodeOut112 \rchanset \\   
+        ) \\
+        \extchoice \\
+        
+        \lcircguard l = 1 \land n = 2 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut121, nodeOut122 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut121, nodeOut122 \rchanset \\   
+        ) \\
+        \extchoice \\
+        
+        \lcircguard l = 1 \land n = 3 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut131, nodeOut132 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut131, nodeOut132 \rchanset \\   
+        ) \\
+        \extchoice \\
+        
+        \lcircguard l = 2 \land n = 1 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut211, nodeOut212, nodeOut213 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut211, nodeOut212, nodeOut213 \rchanset \\   
+        ) \\
+        \extchoice
+        
+        \lcircguard l = 3 \land n = 1 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut311 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut311 \rchanset \\   
+        ) \\
+        \extchoice
+        
+         \lcircguard l = 4 \land n = 1 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut411 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut411 \rchanset \\   
+        ) \\
+        \extchoice
+        
+         \lcircguard l = 4 \land n = 2 \rcircguard \circguard
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut421 \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut421 \rchanset \\   
+        ) \\
+        
+        
+      HiddenLayer \circdef l, s, inpSize : \nat \circspot \\%
+      \lcircguard l = 1 \rcircguard \circguard
+      (\lpar \lchanset layerRes01, layerRes02 \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize)) \\%
+      \extchoice 
+      
+      \lcircguard l = 2 \rcircguard \circguard
+      (\lpar \lchanset layerRes11, layerRes12, layerRes13 \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize)) \\%
+      \extchoice 
+      
+      \lcircguard l = 3 \rcircguard \circguard
+      (\lpar \lchanset layerRes21 \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize)) \\%
+      
+      
+      HiddenLayers \circdef \\%
+      (((HiddenLayer(1, 3, 2)) \lpar | \lchanset layerRes11, layerRes12, layerRes13 \rchanset | \rpar HiddenLayer(2, 1, 3))  \\%
+      \t1 %
+      \lpar | \lchanset layerRes21 \rchanset | \rpar HiddenLayer(3,1,1)) \\%
+      
+      OutputLayer \circdef \\%
+      (\lpar \lchanset layerRes31 \rchanset \rpar i : 1 \upto 2 \circspot Node(4, i, 1)) \\%
+      
+      ANN \circdef \\%
+      ((HiddenLayers \lpar | \lchanset layerRes31 \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
+      
+      ANNRenamed \circdef \\%
+      (ANN) \lcircrename layerRes01, layerRes02, layerRes41 := anewError\_in, adiff\_in, angleOutputE\_out \rcircrename \circinterrupt terminate \then \Skip \\%
+      
+    \circspot ANNRenamed \\%
+  \circend
+\end{circus}    
+
+
+  \caption{$AnglePIDANN2$ Circus Program, a mock example}
+  \label{anglepidann2-circus-example}
+\end{figure} 
+
+\section{CSP Semantics Sketch} 
+%Figure from overleaf: 
+\begin{figure}[h]
+  \setlength{\zedindent}{0pt}
+  \begin{zed}
+    ANNRenamed = ANN \circinterrupt end \then SKIP \\
+    ANN = 
+    \\
+    \quad
+      \begin{array}[t]{l}
+            ((HiddenLayers \parallel[\{| layerRes.(layerNo-1) |\}] OutputLayer) \hide ANNHiddenEvts) \\%
+            \circseq ANN
+          \end{array}  
+    \\
+
+    ANNHiddenEvts =  \Sigma \hide \{| layerRes.0, layerRes.layerNo, end |\}
+    
+    \also
+    
+    HiddenLayers = \Parallel i : 1\upto layerNo-1 @ [~\{| layerRes.(i-1), layerRes.i |\}~] \\
+    \t2 
+      HiddenLayer(i, layerSize(i), layerSize(i-1)) 
+    
+    \also
+    
+    HiddenLayer(l,s,inpSize) = 
+    %\\
+    %\quad
+      \Parallel i : 1 \upto s @  [ \{| layerRes.(l-1) |\} ]  Node(l, i, inpSize)
+    
+    \also
+    
+    Node(l, n, inpSize) = 
+    \\
+    \quad 
+      (\begin{array}[t]{l}    
+         (\Interleave i: 1 \upto inpSize @ NodeIn(l, n, i))
+         \\
+         \quad
+           \parallel[ \; \{| nodeOut.l.n |\} \; ] 
+         \\
+         Collator(l, n, inpSize)~) \hide \{| nodeOut |\}
+       \end{array}  
+    
+    \also
+    
+    NodeIn(l, n, i) = layerRes.(l-1).n?x \then nodeOut.l.n.i!(x * weight) \then \Skip 
+    
+    \also
+    
+    Collator(l, n, inpSize) = \mathbf{let} \\
+    \t2 C(l, n, 0, sum) = layerRes.l.n!(ReLU(sum + bias)) \then \Skip  \\
+    \t2 C(l, n, i, sum) = nodeOut.l.n.i?x \then C(l, n, (i-1), (sum+x)) \\
+    \t1 \mathbf{within} \\
+    \t2 C(l, n, inpSize, 0) 
+
+    \also 
+
+    OutputLayer = \Parallel i : 1 \upto layerSize(layerNo)-1 @  \; [ \; \{| layerRes.(layerNo-1) |\} \; ] 
+    \\
+    \t2
+      Node(layerNo, i, layerSize(layerNo-1))   
+  \end{zed}
+  \caption{CSP ANN Semantics - General.} 
+  \label{fig:annsemantics}
+\end{figure}
+
+
+\end{document}

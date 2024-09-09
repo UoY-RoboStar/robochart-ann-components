@@ -1,0 +1,265 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.4.16)  16 APR 2024 14:01
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**preamble.tex
+(./preamble.tex
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-01-21>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count185
+\c@section=\count186
+\c@subsection=\count187
+\c@subsubsection=\count188
+\c@paragraph=\count189
+\c@subparagraph=\count190
+\c@figure=\count191
+\c@table=\count192
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen138
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2021/03/04 v1.4d Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 107.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen139
+\Gin@req@width=\dimen140
+)
+(./circus.sty
+Package: circus 2015/07/23 v.1.4 Circus style file by the Community Z Tools
+ `Circus style file by the Community Z Tools' v.1.4 <2015/07/23>
+(./czt.sty
+Package: czt 2015/07/23 v.1.4 Standard Z style file by the Community Z Tools
+ `Standard Z style file by the Community Z Tools' v.1.4 <2015/07/23>
+Package czt Info: AMS fonts selected with default options on input line 85.
+Package czt Info: Rendering Z math mode in monochrome. on input line 120.
+\c@mv@czt=\count193
+Package czt Info: Creating `czt' math version on input line 151.
+\symstmry=\mathgroup4
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 158.
+LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `czt'
+(Font)                  OT1/cmr/m/n --> OT1/cmr/m/n on input line 162.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `czt'
+(Font)                  OT1/cmr/bx/n --> OT1/cmr/bx/n on input line 163.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `czt'
+(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 164.
+\symitalics=\mathgroup5
+Package czt Info: Loading AMS font symbols for Z on input line 602.
+\symAMSa=\mathgroup6
+\symAMSb=\mathgroup7
+Package czt Info: Current math version set to `czt' on input line 605.
+
+
+Package czt Warning: Could not resolve math code for letters.
+(czt)                Default could not be found. Using Italics on input line 66
+4.
+
+Package czt Info: Counting Z declarations? YES  on input line 682.
+\@zcountingwhat=\count194
+\c@cntZunboxed=\count195
+\c@cntZaxdef=\count196
+\c@cntZgendef=\count197
+\c@cntZschema=\count198
+\c@cntZgenschema=\count199
+\c@cntZtheorem=\count266
+\c@cntZproof=\count267
+\c@cntZdecl=\count268
+\c@cntZunknown=\count269
+\c@cntZtotunboxed=\count270
+\c@cntZtotaxdef=\count271
+\c@cntZtotgendef=\count272
+\c@cntZtotschema=\count273
+\c@cntZtotgenschema=\count274
+\c@cntZtottheorem=\count275
+\c@cntZtotproof=\count276
+\c@cntZtotdecl=\count277
+\c@cntZtotunknown=\count278
+\big@size=\dimen141
+\zedtab=\dimen142
+\zedindent=\dimen143
+\zedleftsep=\dimen144
+\zedbar=\dimen145
+\interzedlinepenalty=\count279
+\preboxpenalty=\count280
+\forcepagepenalty=\count281
+\zedskip=\skip49
+Package czt Info: Initialising Z registers with default values.
+(czt)                \zedtab=20.00003pt
+(czt)                \zedindent=25.00003pt=\leftmargini
+(czt)                \zedleftsep=10.00002pt
+(czt)                \zedbar=60.00009pt
+(czt)             
+(czt)                \interzedlinepenalty=10000
+(czt)                \preboxpenalty=0
+(czt)                \forcepagepenalty=-10000
+(czt)                \interdisplaylinepenalty=100
+(czt)             
+(czt)                \zedskip=6.0pt plus 3.99994pt minus 3.99994pt
+(czt)                \zt@p=false 
+(czt)                \CountDefstrue=true  on input line 1092.
+Package czt Info: Setting up Standard Z skipping and breaking on input line 112
+8.
+Package czt Info: Setting up Standard Z LaTeX environments on input line 1425.
+Package czt Info: Setting up Standard Z basic symbols on input line 1540.
+Package czt Info: Setting up Standard Z Greek and other letters on input line 1
+604.
+Package czt Info: Setting up Standard Z bracket symbols on input line 1651.
+Package czt Info: Marking \mid, \semicolon, and \spot
+(czt)             as 
+(czt)             active in math mode on input line 1655.
+Package czt Info: Setting up Standard Z predicate logic symbols on input line 1
+698.
+Package czt Info: Setting up Standard Z keywords on input line 1762.
+Package czt Info:   Loading prelude          symbols on input line 1772.
+Package czt Info:   Loading set      toolkit symbols on input line 1804.
+Package czt Info:   Loading relation toolkit symbols on input line 1830.
+Package czt Info:   Loading function toolkit symbols on input line 1845.
+Package czt Info:   Loading number   toolkit symbols on input line 1861.
+Package czt Info:   Loading sequence toolkit symbols on input line 1889.
+Package czt Info:   Loading standard toolkit symbols completed on input line 18
+93.
+Package czt Info:   Loading Z state refinement toolkit symbols completed on inp
+ut line 1904.
+)
+Package circus Info: Rendering Circus math mode in monochrome. on input line 10
+1.
+Package circus Info: Loading AMS font symbols for Circus on input line 320.
+\@circuscountingwhat=\count282
+\c@cntCircusChannel=\count283
+\c@cntCircusChannelset=\count284
+\c@cntCircusProcess=\count285
+\c@cntCircusProcessRef=\count286
+\c@cntCircusNameset=\count287
+\c@cntCircusAction=\count288
+\c@cntCircusActionRef=\count289
+\c@cntCircusDeclShallow=\count290
+\c@cntCircusDeclDeep=\count291
+\c@cntCircusZunboxed=\count292
+\c@cntCircusZaxdef=\count293
+\c@cntCircusZgendef=\count294
+\c@cntCircusZschema=\count295
+\c@cntCircusZgenschema=\count296
+\c@cntCircustotChannel=\count297
+\c@cntCircustotChannelset=\count298
+\c@cntCircustotProcess=\count299
+\c@cntCircustotProcessRef=\count300
+\c@cntCircustotNameset=\count301
+\c@cntCircustotAction=\count302
+\c@cntCircustotActionRef=\count303
+\c@cntCircustotDeclShallow=\count304
+\c@cntCircustotDeclDeep=\count305
+\c@cntCircusunknown=\count306
+\c@cntCircustotunknown=\count307
+\c@cntCircusZtotunboxed=\count308
+\c@cntCircusZtotaxdef=\count309
+\c@cntCircusZtotgendef=\count310
+\c@cntCircusZtotschema=\count311
+\c@cntCircusZtotgenschema=\count312
+\c@cntCircusZunknown=\count313
+\c@cntCircusZtotunknown=\count314
+Package circus Info: Initialising Circus registers with default values.
+(circus)                \TypesetCircusToolsCmds=false  on input line 472.
+\c@cntCircusOverallTotShallow=\count315
+\c@cntCircusOverallTotDeep=\count316
+Package circus Info: Setting up Circus LaTeX environments on input line 870.
+Package circus Info: Loading Circus keywords on input line 932.
+Package circus Info: Loading Circus brackets on input line 964.
+Package circus Info: Loading Circus special symbols on input line 998.
+Package circus Info: Loading Circus CSP symbols on input line 1020.
+Package circus Info: Loading Circus boxing symbols on input line 1037.
+Package circus Info: Loading Circus circus\unhbox \voidb@x \kern 0.06em\vbox {\
+hrule width0.5em}prelude symbols on input line 1047.
+Package circus Info: Loading Circus circus\unhbox \voidb@x \kern 0.06em\vbox {\
+hrule width0.5em}mc\unhbox \voidb@x \kern 0.06em\vbox {\hrule width0.5em}toolki
+t symbols on input line 1057.
+\circnotewidth=\skip50
+)
+! Undefined control sequence.
+l.31 \definecolor
+                 {ZedColor}{rgb}{0,0,0}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.31 \definecolor{Z
+                   edColor}{rgb}{0,0,0}
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.34 \definecolor
+                 {MetaColor}{rgb}{1,0,0}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.34 \definecolor{M
+                   etaColor}{rgb}{1,0,0}
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.35 \definecolor
+                 {GreyColor}{rgb}{0.5,0.5,0.5}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+)
+! Emergency stop.
+<*> preamble.tex
+                
+*** (job aborted, no legal \end found)
+
+ 
+Here is how much of TeX's memory you used:
+ 1564 strings out of 478287
+ 20856 string characters out of 5849289
+ 309827 words of memory out of 5000000
+ 19826 multiletter control sequences out of 15000+600000
+ 469259 words of font info for 28 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 55i,0n,62p,233b,36s stack positions out of 5000i,500n,10000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!

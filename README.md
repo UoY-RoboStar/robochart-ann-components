@@ -21,4 +21,6 @@ The `Supporting Proofs` directory contains additional files supporting our verif
 - CSPM documents that show our ANN Circus semantics are equivalent to our CSPM semantics. 
 
 The `Validation` directory contains a Java implementation of our CSP semantics, written using the JCSP library. The directory `JCSP_JML_Previous_Version` contains 
-an old version of our JCSP implementation with Java Modelling Language (JML) annotations. 
+an old version of our JCSP implementation with Java Modelling Language (JML) annotations.
+
+The `Semantics` directory contains our denotational semantic rules in Circus.  

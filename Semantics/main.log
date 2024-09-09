@@ -1,0 +1,782 @@
+This is LuaHBTeX, Version 1.14.0 (TeX Live 2022/dev/Debian)  (format=lualatex 2024.4.16)  2 JUN 2024 21:14
+ restricted system commands enabled.
+**main.tex
+(./main.tex
+LaTeX2e <2021-11-15> patch level 1
+Lua module: luaotfload 2021-05-21 3.18 Lua based OpenType font support
+Lua module: lualibs 2021-05-20 2.74 ConTeXt Lua standard libraries.
+Lua module: lualibs-extended 2021-05-20 2.74 ConTeXt Lua libraries -- extended c
+ollection.
+luaotfload | conf : Root cache directory is "/home/za628/.texlive2021/texmf-var/
+luatex-cache/generic/names".
+luaotfload | init : Loading fontloader "fontloader-2021-05-20.lua" from kpse-res
+olved path "/usr/share/texlive/texmf-dist/tex/luatex/luaotfload/fontloader-2021-
+05-20.lua".
+Lua-only attribute luaotfload@noligature = 1
+Lua-only attribute luaotfload@syllabe = 2
+luaotfload | init : Context OpenType loader version 3.116
+Inserting `luaotfload.node_processor' at position 1 in `pre_linebreak_filter'.
+Inserting `luaotfload.node_processor' at position 1 in `hpack_filter'.
+Inserting `luaotfload.glyph_stream' at position 1 in `glyph_stream_provider'.
+Inserting `luaotfload.define_font' at position 1 in `define_font'.
+Lua-only attribute luaotfload_color_attribute = 3
+luaotfload | conf : Root cache directory is "/home/za628/.texlive2021/texmf-var/
+luatex-cache/generic/names".
+Inserting `luaotfload.harf.strip_prefix' at position 1 in `find_opentype_file'.
+Inserting `luaotfload.harf.strip_prefix' at position 1 in `find_truetype_file'.
+Inserting `luaotfload.harf.finalize_vlist' at position 1 in `post_linebreak_filt
+er'.
+Inserting `luaotfload.harf.finalize_hlist' at position 2 in `hpack_filter'.
+Inserting `luaotfload.cleanup_files' at position 1 in `wrapup_run'.
+Inserting `luaotfload.harf.finalize_unicode' at position 1 in `finish_pdffile'.
+Inserting `luaotfload.glyphinfo' at position 1 in `glyph_info'.
+Lua-only attribute luaotfload.letterspace_done = 4
+Inserting `luaotfload.aux.set_sscale_dimens' at position 1 in `luaotfload.patch_
+font'.
+Inserting `luaotfload.aux.set_font_index' at position 2 in `luaotfload.patch_fon
+t'.
+Inserting `luaotfload.aux.patch_cambria_domh' at position 3 in `luaotfload.patch
+_font'.
+Inserting `luaotfload.aux.fixup_fontdata' at position 1 in `luaotfload.patch_fon
+t_unsafe'.
+Inserting `luaotfload.aux.set_capheight' at position 4 in `luaotfload.patch_font
+'.
+Inserting `luaotfload.aux.set_xheight' at position 5 in `luaotfload.patch_font'.
+Inserting `luaotfload.rewrite_fontname' at position 6 in `luaotfload.patch_font'
+. L3 programming layer <2022-01-21>
+Inserting `tracingstacklevels' at position 1 in `input_level_string'.
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
+luaotfload | db : Font names database loaded from /home/za628/.texlive2021/texmf
+-var/luatex-cache/generic/names/luaotfload-names.luc)
+\c@part=\count183
+\c@section=\count184
+\c@subsection=\count185
+\c@subsubsection=\count186
+\c@paragraph=\count187
+\c@subparagraph=\count188
+\c@figure=\count189
+\c@table=\count190
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen137
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2021/03/04 v1.4d Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: luatex.def on input line 107.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/luatex.def
+File: luatex.def 2021/06/01 v1.2c Graphics/color driver for luatex
+))
+\Gin@req@height=\dimen138
+\Gin@req@width=\dimen139
+)
+(./circus.sty
+Package: circus 2015/07/23 v.1.4 Circus style file by the Community Z Tools
+ `Circus style file by the Community Z Tools' v.1.4 <2015/07/23>
+(./czt.sty
+Package: czt 2015/07/23 v.1.4 Standard Z style file by the Community Z Tools
+ `Standard Z style file by the Community Z Tools' v.1.4 <2015/07/23>
+Package czt Info: AMS fonts selected with default options on input line 85.
+Package czt Info: Rendering Z math mode in monochrome. on input line 120.
+\c@mv@czt=\count191
+Package czt Info: Creating `czt' math version on input line 151.
+\symstmry=\mathgroup4
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 158.
+LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `czt'
+(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 162.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `czt'
+(Font)                  OT1/cmr/bx/n --> TU/lmr/bx/n on input line 163.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `czt'
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 164.
+\symitalics=\mathgroup5
+Package czt Info: Loading AMS font symbols for Z on input line 602.
+\symAMSa=\mathgroup6
+\symAMSb=\mathgroup7
+Package czt Info: Current math version set to `czt' on input line 605.
+
+
+Package czt Warning: Could not resolve math code for letters.
+(czt)                Default could not be found. Using Italics on input line 66
+4.
+
+Package czt Info: Counting Z declarations? YES  on input line 682.
+\@zcountingwhat=\count192
+\c@cntZunboxed=\count193
+\c@cntZaxdef=\count194
+\c@cntZgendef=\count195
+\c@cntZschema=\count196
+\c@cntZgenschema=\count197
+\c@cntZtheorem=\count198
+\c@cntZproof=\count199
+\c@cntZdecl=\count266
+\c@cntZunknown=\count267
+\c@cntZtotunboxed=\count268
+\c@cntZtotaxdef=\count269
+\c@cntZtotgendef=\count270
+\c@cntZtotschema=\count271
+\c@cntZtotgenschema=\count272
+\c@cntZtottheorem=\count273
+\c@cntZtotproof=\count274
+\c@cntZtotdecl=\count275
+\c@cntZtotunknown=\count276
+\big@size=\dimen140
+\zedtab=\dimen141
+\zedindent=\dimen142
+\zedleftsep=\dimen143
+\zedbar=\dimen144
+\interzedlinepenalty=\count277
+\preboxpenalty=\count278
+\forcepagepenalty=\count279
+\zedskip=\skip49
+Package czt Info: Initialising Z registers with default values.
+(czt)                \zedtab=20.0pt
+(czt)                \zedindent=25.0pt=\leftmargini
+(czt)                \zedleftsep=10.0pt
+(czt)                \zedbar=60.0pt
+(czt)             
+(czt)                \interzedlinepenalty=10000
+(czt)                \preboxpenalty=0
+(czt)                \forcepagepenalty=-10000
+(czt)                \interdisplaylinepenalty=100
+(czt)             
+(czt)                \zedskip=6.0pt plus 3.99994pt minus 3.99994pt
+(czt)                \zt@p=false 
+(czt)                \CountDefstrue=true  on input line 1092.
+Package czt Info: Setting up Standard Z skipping and breaking on input line 112
+8.
+Package czt Info: Setting up Standard Z LaTeX environments on input line 1425.
+Package czt Info: Setting up Standard Z basic symbols on input line 1540.
+Package czt Info: Setting up Standard Z Greek and other letters on input line 1
+604.
+Package czt Info: Setting up Standard Z bracket symbols on input line 1651.
+Package czt Info: Marking \mid, \semicolon, and \spot
+(czt)             as 
+(czt)             active in math mode on input line 1655.
+Package czt Info: Setting up Standard Z predicate logic symbols on input line 1
+698.
+Package czt Info: Setting up Standard Z keywords on input line 1762.
+Package czt Info:   Loading prelude          symbols on input line 1772.
+Package czt Info:   Loading set      toolkit symbols on input line 1804.
+Package czt Info:   Loading relation toolkit symbols on input line 1830.
+Package czt Info:   Loading function toolkit symbols on input line 1845.
+Package czt Info:   Loading number   toolkit symbols on input line 1861.
+Package czt Info:   Loading sequence toolkit symbols on input line 1889.
+Package czt Info:   Loading standard toolkit symbols completed on input line 18
+93.
+Package czt Info:   Loading Z state refinement toolkit symbols completed on inp
+ut line 1904.
+)
+Package circus Info: Rendering Circus math mode in monochrome. on input line 10
+1.
+Package circus Info: Loading AMS font symbols for Circus on input line 320.
+\@circuscountingwhat=\count280
+\c@cntCircusChannel=\count281
+\c@cntCircusChannelset=\count282
+\c@cntCircusProcess=\count283
+\c@cntCircusProcessRef=\count284
+\c@cntCircusNameset=\count285
+\c@cntCircusAction=\count286
+\c@cntCircusActionRef=\count287
+\c@cntCircusDeclShallow=\count288
+\c@cntCircusDeclDeep=\count289
+\c@cntCircusZunboxed=\count290
+\c@cntCircusZaxdef=\count291
+\c@cntCircusZgendef=\count292
+\c@cntCircusZschema=\count293
+\c@cntCircusZgenschema=\count294
+\c@cntCircustotChannel=\count295
+\c@cntCircustotChannelset=\count296
+\c@cntCircustotProcess=\count297
+\c@cntCircustotProcessRef=\count298
+\c@cntCircustotNameset=\count299
+\c@cntCircustotAction=\count300
+\c@cntCircustotActionRef=\count301
+\c@cntCircustotDeclShallow=\count302
+\c@cntCircustotDeclDeep=\count303
+\c@cntCircusunknown=\count304
+\c@cntCircustotunknown=\count305
+\c@cntCircusZtotunboxed=\count306
+\c@cntCircusZtotaxdef=\count307
+\c@cntCircusZtotgendef=\count308
+\c@cntCircusZtotschema=\count309
+\c@cntCircusZtotgenschema=\count310
+\c@cntCircusZunknown=\count311
+\c@cntCircusZtotunknown=\count312
+Package circus Info: Initialising Circus registers with default values.
+(circus)                \TypesetCircusToolsCmds=false  on input line 472.
+\c@cntCircusOverallTotShallow=\count313
+\c@cntCircusOverallTotDeep=\count314
+Package circus Info: Setting up Circus LaTeX environments on input line 870.
+Package circus Info: Loading Circus keywords on input line 932.
+Package circus Info: Loading Circus brackets on input line 964.
+Package circus Info: Loading Circus special symbols on input line 998.
+Package circus Info: Loading Circus CSP symbols on input line 1020.
+Package circus Info: Loading Circus boxing symbols on input line 1037.
+Package circus Info: Loading Circus circus\unhbox \voidb@x \kern 0.06em\vbox {\
+hrule width0.5em}prelude symbols on input line 1047.
+Package circus Info: Loading Circus circus\unhbox \voidb@x \kern 0.06em\vbox {\
+hrule width0.5em}mc\unhbox \voidb@x \kern 0.06em\vbox {\hrule width0.5em}toolki
+t symbols on input line 1057.
+\circnotewidth=\skip50
+) (./preamble.tex
+\c@ruleT=\count315
+\c@tRule=\count316
+)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-luatex.def
+File: l3backend-luatex.def 2022-01-12 L3 backend support: PDF output (LuaTeX)
+\l__color_backend_stack_int=\count317
+\l__pdf_internal_box=\box50
+)
+(./main.aux)
+\openout1 = main.aux
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 11.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 1
+1.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
+File: ts1cmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count318
+\scratchdimen=\dimen145
+\scratchbox=\box51
+\nofMPsegments=\count319
+\nofMParguments=\count320
+\everyMPshowfont=\toks17
+\MPscratchCnt=\count321
+\MPscratchDim=\dimen146
+\MPnumerator=\count322
+\makeMPintoPDFobject=\count323
+\everyMPtoPDFconversion=\toks18
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 13.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 13.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 13.
+LaTeX Font Info:    Trying to load font information for U+stmry on input line 1
+3.
+
+(/usr/share/texlive/texmf-dist/tex/latex/stmaryrd/Ustmry.fd)
+LaTeX Font Info:    Trying to load font information for U+msa on input line 13.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 13.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 17.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 17.
+
+
+Package czt Warning: Counting nothing  on input line 17.
+
+
+Package czt Warning: Counting unboxed  on input line 22.
+
+
+Package czt Warning: Counting unboxed  on input line 25.
+
+
+Package czt Warning: Counting unboxed  on input line 30.
+
+
+Package czt Warning: Counting unboxed  on input line 35.
+
+
+Overfull \hbox (48.40749pt too wide) in alignment at lines 35--37
+[] 
+ []
+
+
+Package czt Warning: Counting axdef  on input line 40.
+
+
+Package czt Warning: Counting axdef  on input line 43.
+
+
+Package czt Warning: Counting axdef  on input line 45.
+
+
+Package czt Warning: Counting schema  on input line 51.
+
+
+Package czt Warning: Counting schema  on input line 62.
+
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+
+Package czt Warning: Counting schema  on input line 66.
+
+[2]
+LaTeX Font Info:    Font shape `U/mathc/m/it' will be
+(Font)              scaled to size 10.29999pt on input line 85.
+LaTeX Font Info:    Font shape `U/mathc/m/it' will be
+(Font)              scaled to size 7.20999pt on input line 85.
+LaTeX Font Info:    Font shape `U/mathc/m/it' will be
+(Font)              scaled to size 5.15pt on input line 85.
+LaTeX Font Info:    Font shape `U/mathc/m/it' will be
+(Font)              scaled to size 8.23999pt on input line 85.
+LaTeX Font Info:    Font shape `U/mathc/m/it' will be
+(Font)              scaled to size 6.18pt on input line 85.
+
+
+Package czt Warning: Counting nothing  on input line 85.
+
+
+Package czt Warning: Counting nothing  on input line 93.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 96.
+
+
+Package circus Warning: Counting (C) channel set not in BP  on input line 97.
+
+
+Package czt Warning: Counting nothing  on input line 108.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 115.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 120.
+
+
+Package czt Warning: Counting nothing  on input line 142.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 148.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 153.
+
+
+Package czt Warning: Counting nothing  on input line 162.
+
+
+Package circus Warning: Counting (C) process not in BP  on input line 164.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 168.
+
+LaTeX Font Info:    Font shape `U/mathc/m/it' will be
+(Font)              scaled to size 12.35999pt on input line 168.
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 172.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 176.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 180.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 184.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 185.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 186.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 192.
+
+
+Package circus Warning: Counting (C) action def. not in BP  on input line 196.
+
+
+Overfull \hbox (16.49744pt too wide) in alignment at lines 162--202
+[] 
+ []
+
+
+Package czt Warning: Counting nothing  on input line 205.
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <17.28> on input line 207.
+LaTeX Font Info:    Font shape `U/mathc/m/it' will be
+(Font)              scaled to size 17.79837pt on input line 207.
+
+Package czt Warning: Counting nothing  on input line 229.
+
+
+Package czt Warning: Counting nothing  on input line 244.
+
+
+Package czt Warning: Counting nothing  on input line 264.
+
+
+Package czt Warning: Counting nothing  on input line 278.
+
+
+Package czt Warning: Counting nothing  on input line 297.
+
+
+Package czt Warning: Counting nothing  on input line 305.
+
+
+Package czt Warning: Counting nothing  on input line 326.
+
+
+Package czt Warning: Counting nothing  on input line 340.
+
+
+Package czt Warning: Counting nothing  on input line 347.
+
+
+Package czt Warning: Counting nothing  on input line 355.
+
+
+Package czt Warning: Counting nothing  on input line 362.
+
+
+Package czt Warning: Counting nothing  on input line 369.
+
+
+Package czt Warning: Counting nothing  on input line 376.
+
+
+Package czt Warning: Counting nothing  on input line 383.
+
+
+Package czt Warning: Counting nothing  on input line 392.
+
+
+Package czt Warning: Counting unboxed  on input line 404.
+
+
+Package czt Warning: Counting nothing  on input line 408.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 409.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 410.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 411.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 412.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 413.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 414.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 415.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 416.
+
+
+Package czt Warning: Counting nothing  on input line 419.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 420.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 421.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 422.
+
+
+Package czt Warning: Counting nothing  on input line 425.
+
+
+Package circus Warning: Counting (C) channel set not in BP  on input line 426.
+
+
+Package czt Warning: Counting axdef  on input line 429.
+
+
+Package czt Warning: Counting axdef  on input line 432.
+
+
+Package czt Warning: Counting axdef  on input line 434.
+
+
+Package czt Warning: Counting nothing  on input line 446.
+
+
+Package circus Warning: Counting (C) process not in BP  on input line 447.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 451.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 461.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 470.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 487.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 491.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 495.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 499.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 503.
+
+
+Package circus Warning: Counting (C) action def. not in BP  on input line 512.
+
+
+Overfull \hbox (109.80045pt too wide) in alignment at lines 446--514
+[] 
+ []
+
+[3] [4] [5] [6] [7] [8]
+Overfull \hbox (1.42097pt too wide) in paragraph at lines 562--563
+[]\TU/lmr/m/n/10 Con-crete in-stan-ti-a-tions: Ba-s-ic-Cha-n-nelSe-t-Expr, Bind-
+Expr, Con-d-Expr, Nu-
+ []
+
+
+Overfull \hbox (9.08891pt too wide) in paragraph at lines 570--571
+\TU/lmr/m/n/10 Notes from CZT API, https://czt.source-forge.net/core-java/coreja
+va-z/api-docs/in-
+ []
+
+[9] [10]
+Overfull \hbox (2.16603pt too wide) in paragraph at lines 618--619
+\TU/lmr/m/n/10 nelset name, cre-ates a chan-nel set, with the ref-er-ence ex-pre
+s-sion, of $\TU/lmr/m/it/10 cs[]ame$\TU/lmr/m/n/10 . 
+ []
+
+[11]
+Overfull \hbox (3.58449pt too wide) in paragraph at lines 638--639
+[]\TU/lmr/m/n/10 OR-DER-ING WORKS, NOT SURE WHY, SAYS UN-ORDERED, IN EMF,
+ []
+
+
+Package czt Warning: Counting nothing  on input line 648.
+
+
+Package circus Warning: Counting (C) process not in BP  on input line 649.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 650.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 694.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 723.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 773.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 786.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 791.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 794.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 797.
+
+
+Package circus Warning: Counting (C) action def. not in BP  on input line 801.
+
+
+Overfull \hbox (170.15872pt too wide) in alignment at lines 648--802
+[] 
+ []
+
+
+LaTeX Warning: Float too large for page by 603.82164pt on input line 807.
+
+
+Package czt Warning: Counting unboxed  on input line 813.
+
+
+Package czt Warning: Counting unboxed  on input line 814.
+
+
+Package czt Warning: Counting unboxed  on input line 816.
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <14.4> on input line 819.
+LaTeX Font Info:    Font shape `U/mathc/m/it' will be
+(Font)              scaled to size 14.83197pt on input line 819.
+
+Package czt Warning: Counting unboxed  on input line 822.
+
+
+Package czt Warning: Counting unboxed  on input line 826.
+
+
+Package czt Warning: Counting unboxed  on input line 828.
+
+
+Package czt Warning: Counting unboxed  on input line 832.
+
+
+Package czt Warning: Counting unboxed  on input line 839.
+
+
+Package czt Warning: Counting unboxed  on input line 842.
+
+
+Package czt Warning: Counting unboxed  on input line 853.
+
+
+Package czt Warning: Counting unboxed  on input line 857.
+
+
+Package czt Warning: Counting unboxed  on input line 859.
+
+
+Package czt Warning: Counting unboxed  on input line 860.
+
+
+Package czt Warning: Counting unboxed  on input line 861.
+
+
+Package czt Warning: Counting unboxed  on input line 862.
+
+
+Package czt Warning: Counting unboxed  on input line 865.
+
+
+Package czt Warning: Counting unboxed  on input line 868.
+
+
+Overfull \hbox (28.81082pt too wide) in alignment at lines 813--871
+[] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[12] [13] [14] [15] [16] (./main.aux))
+
+Here is how much of LuaTeX's memory you used:
+ 2415 strings out of 477805
+ 156265,383344 words of node,token memory allocated
+ 610 words of node memory still in use:
+   3 hlist, 1 vlist, 1 rule, 2 glue, 3 kern, 27 sub_mlist, 1 glyph, 31 attribute
+, 51 glue_spec, 31 attribute_list, 1 write nodes
+   avail lists: 2:5634,3:578,4:13,5:1228,6:95,7:11875,8:143,9:3526,10:6,11:367
+ 23063 multiletter control sequences out of 65536+600000
+ 103 fonts using 8441719 bytes
+ 55i,32n,59p,410b,631s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texmf/fonts/opentype/public/lm/lmroman7-italic.otf></usr/share/texmf
+/fonts/opentype/public/lm/lmroman8-italic.otf></usr/share/texmf/fonts/opentype/p
+ublic/lm/lmroman8-bold.otf></usr/share/texmf/fonts/opentype/public/lm/lmsans8-re
+gular.otf></usr/share/texmf/fonts/opentype/public/lm/lmsans10-regular.otf></usr/
+share/texmf/fonts/opentype/public/lm/lmroman10-regular.otf></usr/share/texmf/fon
+ts/opentype/public/lm/lmroman10-italic.otf></usr/share/texmf/fonts/opentype/publ
+ic/lm/lmroman10-bold.otf></usr/share/texmf/fonts/opentype/public/lm/lmroman12-bo
+ld.otf></usr/share/texmf/fonts/opentype/public/lm/lmroman12-regular.otf></usr/sh
+are/texmf/fonts/opentype/public/lm/lmroman17-regular.otf></usr/share/texlive/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.p
+fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/mathabx-type1/mathc10.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/stmaryrd/stmary10.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/stmaryrd/stmary8.pfb>
+Output written on main.pdf (16 pages, 193970 bytes).
+
+PDF statistics: 189 PDF objects out of 1000 (max. 8388607)
+ 122 compressed objects within 2 object streams
+ 0 named destinations out of 1000 (max. 131072)
+ 1 words of extra memory for PDF output out of 10000 (max. 100000000)
+
