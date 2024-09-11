@@ -361,21 +361,21 @@ HELPER RULES:
 
 \begin{TRule}[Function layerNo (number of layers) \\]{\meta{layerNo(c : ANNController) : \nat =}}
   \begin{array}[t]{l}
-    \# ((list \inv)~c.annparameters.layerstructure)
+    \meta{\# ((list \inv)~c.annparameters.layerstructure)}
   \end{array} 
   \label{rule:layerno}
 \end{TRule} 
 
 \begin{TRule}[Function weight \\]{\meta{weight(c : ANNController; l, n, i : \nat) : Value =}}
   \begin{array}[t]{l}
-    ((tensor \inv)~c.annparameters.weights)~l~n~i
+    \meta{((tensor \inv)~c.annparameters.weights)~l~n~i}
   \end{array} 
   \label{rule:weight}
 \end{TRule} 
 
 \begin{TRule}[Function bias \\]{\meta{bias(c : ANNController; l, n : \nat) : Value =}}
   \begin{array}[t]{l}
-    ((matrix \inv)~c.annparameters.biases)~l~n
+    \meta{((matrix \inv)~c.annparameters.biases)~l~n}
   \end{array} 
   \label{rule:bias}
 \end{TRule} 
@@ -426,6 +426,7 @@ HELPER RULES:
   \circchannelset ANNHiddenEvts == \lchanset layerRes11 \rchanset
 \end{circus}
 
+DON'T NEED THIS, for the meta-language. 
 \begin{axdef}
   relu : Value \fun Value %
   \where %
@@ -864,12 +865,12 @@ Used to make an example with more than one hidden layer, and more than one layer
 
     \also 
 
-    OutputLayer = \Parallel i : 1 \upto layerSize(layerNo)-1 @  \; [ \; \{| layerRes.(layerNo-1) |\} \; ] 
+    OutputLayer = \Parallel i : 1 \upto layerSize(layerNo) @  \; [ \; \{| layerRes.(layerNo-1) |\} \; ] 
     \\
     \t2
       Node(layerNo, i, layerSize(layerNo-1))   
   \end{zed}
-  \caption{CSP ANN Semantics - General.} 
+  \caption{CSP ANN Semantic Pattern.} 
   \label{fig:annsemantics}
 \end{figure}
 
