@@ -19,7 +19,7 @@
 
 
 We just assume we have a context, then we can run the allEvents metalanguage function on this context. 
-\begin{zed}[ Context, CSExp, Channel, CircusProgram ]
+\begin{zed}[ Context ]
 \end{zed}
 
 \begin{zed}ActivationFunction ::= RELU | LINEAR | NOTSPECIFIED
@@ -36,16 +36,6 @@ Sequence of values, if 1d, then it is layerstructure, 2d or 3d, biases or layer 
 SeqExp ::= null\_ seq | list \ldata \seq \nat \rdata | matrix \ldata \seq \seq Value \rdata | tensor \ldata \seq \seq \seq Value \rdata
 \end{zed}
 
-
-\begin{axdef}
-  relu : Value \fun Value %
-  \where %
-  \forall x : Value @ \\%
-  \t1 %
-  (x < 0 \implies (x,0) \in relu) \land \\% 
-  \t1 %
-  (x \geq 0 \implies (x,x) \in relu)
-\end{axdef}
 
 \begin{schema}{ANNParameters}
 \\

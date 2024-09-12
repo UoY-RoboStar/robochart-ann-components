@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.6.11)  11 SEP 2024 17:20
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.6.11)  12 SEP 2024 17:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -292,88 +292,91 @@ Overfull \hbox (49.41867pt too wide) in alignment at lines 35--37
  []
 
 
-Package czt Warning: Counting axdef  on input line 40.
+Package czt Warning: Counting schema  on input line 41.
 
 
-Package czt Warning: Counting axdef  on input line 43.
+Package czt Warning: Counting schema  on input line 52.
 
 
-Package czt Warning: Counting axdef  on input line 45.
-
-
-Package czt Warning: Counting schema  on input line 51.
-
-
-Package czt Warning: Counting schema  on input line 62.
+Package czt Warning: Counting schema  on input line 56.
 
 
 
 [1
 
 {/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-
-Package czt Warning: Counting schema  on input line 66.
-
-
-
-[2{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
-}]
 LaTeX Font Info:    Font shape `U/mathc/m/it' will be
-(Font)              scaled to size 10.29999pt on input line 85.
+(Font)              scaled to size 10.29999pt on input line 75.
 LaTeX Font Info:    Font shape `U/mathc/m/it' will be
-(Font)              scaled to size 7.20999pt on input line 85.
+(Font)              scaled to size 7.20999pt on input line 75.
 LaTeX Font Info:    Font shape `U/mathc/m/it' will be
-(Font)              scaled to size 5.15pt on input line 85.
+(Font)              scaled to size 5.15pt on input line 75.
 LaTeX Font Info:    Font shape `U/mathc/m/it' will be
-(Font)              scaled to size 8.23999pt on input line 85.
+(Font)              scaled to size 8.23999pt on input line 75.
 LaTeX Font Info:    Font shape `U/mathc/m/it' will be
-(Font)              scaled to size 6.18pt on input line 85.
+(Font)              scaled to size 6.18pt on input line 75.
 
 
-Package czt Warning: Counting nothing  on input line 85.
+Package czt Warning: Counting nothing  on input line 75.
 
 
-Package czt Warning: Counting nothing  on input line 93.
+Package czt Warning: Counting nothing  on input line 83.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 96.
+Package circus Warning: Counting (C) channel not in BP  on input line 86.
 
 
-Package circus Warning: Counting (C) channel set not in BP  on input line 97.
+Package circus Warning: Counting (C) channel set not in BP  on input line 87.
 
 
-Package czt Warning: Counting nothing  on input line 108.
+Package czt Warning: Counting nothing  on input line 98.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 115.
+Package circus Warning: Counting (C) channel not in BP  on input line 105.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 120.
+Package circus Warning: Counting (C) channel not in BP  on input line 110.
 
 
-Package czt Warning: Counting nothing  on input line 142.
+Package czt Warning: Counting nothing  on input line 132.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 148.
+Package circus Warning: Counting (C) channel not in BP  on input line 138.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 153.
+Package circus Warning: Counting (C) channel not in BP  on input line 143.
 
 
-Package czt Warning: Counting nothing  on input line 162.
+Package czt Warning: Counting nothing  on input line 152.
 
 
-Package circus Warning: Counting (C) process not in BP  on input line 164.
+Package circus Warning: Counting (C) process not in BP  on input line 154.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 168.
+ (nothing ); ignored counting on input line 158.
 
 LaTeX Font Info:    Font shape `U/mathc/m/it' will be
-(Font)              scaled to size 12.35999pt on input line 168.
+(Font)              scaled to size 12.35999pt on input line 158.
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 172.
+ (nothing ); ignored counting on input line 162.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 166.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 170.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 174.
+
+
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 175.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
@@ -381,92 +384,110 @@ Package circus Warning: Couln't identify kind of definition for circdef command
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 180.
+ (nothing ); ignored counting on input line 182.
 
 
-Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 184.
+Package circus Warning: Counting (C) action def. not in BP  on input line 186.
 
 
-Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 185.
-
-
-Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 186.
-
-
-Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 192.
-
-
-Package circus Warning: Counting (C) action def. not in BP  on input line 196.
-
-
-Overfull \hbox (15.6222pt too wide) in alignment at lines 162--202
+Overfull \hbox (15.6222pt too wide) in alignment at lines 152--192
 [] 
  []
 
 
-Package czt Warning: Counting nothing  on input line 205.
+Package czt Warning: Counting nothing  on input line 195.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <17.28> on input line 207.
+(Font)              <17.28> on input line 197.
 LaTeX Font Info:    Font shape `U/mathc/m/it' will be
-(Font)              scaled to size 17.79837pt on input line 207.
+(Font)              scaled to size 17.79837pt on input line 197.
 
-Package czt Warning: Counting nothing  on input line 229.
-
-
-Package czt Warning: Counting nothing  on input line 244.
+Package czt Warning: Counting nothing  on input line 219.
 
 
-Package czt Warning: Counting nothing  on input line 264.
+Package czt Warning: Counting nothing  on input line 234.
 
 
-Package czt Warning: Counting nothing  on input line 278.
+Package czt Warning: Counting nothing  on input line 254.
 
 
-Package czt Warning: Counting nothing  on input line 297.
+Package czt Warning: Counting nothing  on input line 268.
 
 
-Package czt Warning: Counting nothing  on input line 305.
+Package czt Warning: Counting nothing  on input line 287.
 
 
-Package czt Warning: Counting nothing  on input line 326.
+Package czt Warning: Counting nothing  on input line 295.
 
 
-Package czt Warning: Counting nothing  on input line 340.
+Package czt Warning: Counting nothing  on input line 316.
 
 
-Package czt Warning: Counting nothing  on input line 347.
+
+[2{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
+}]
+
+[3]
+
+[4]
+
+[5]
+
+Package czt Warning: Counting nothing  on input line 330.
 
 
-Package czt Warning: Counting nothing  on input line 355.
+Package czt Warning: Counting nothing  on input line 337.
 
 
-Package czt Warning: Counting nothing  on input line 362.
+Package czt Warning: Counting nothing  on input line 345.
 
 
-Package czt Warning: Counting nothing  on input line 369.
+Package czt Warning: Counting nothing  on input line 352.
 
 
-Package czt Warning: Counting nothing  on input line 376.
+Package czt Warning: Counting nothing  on input line 359.
 
 
-Package czt Warning: Counting nothing  on input line 383.
+Package czt Warning: Counting nothing  on input line 366.
 
 
-Package czt Warning: Counting nothing  on input line 392.
+Package czt Warning: Counting nothing  on input line 373.
 
 
-Package czt Warning: Counting unboxed  on input line 404.
+Package czt Warning: Counting nothing  on input line 382.
 
 
-Package czt Warning: Counting nothing  on input line 408.
+Package czt Warning: Counting unboxed  on input line 394.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 409.
+Package czt Warning: Counting nothing  on input line 398.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 399.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 400.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 401.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 402.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 403.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 404.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 405.
+
+
+Package circus Warning: Counting (C) channel not in BP  on input line 406.
+
+
+Package czt Warning: Counting nothing  on input line 409.
 
 
 Package circus Warning: Counting (C) channel not in BP  on input line 410.
@@ -478,49 +499,29 @@ Package circus Warning: Counting (C) channel not in BP  on input line 411.
 Package circus Warning: Counting (C) channel not in BP  on input line 412.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 413.
+Package czt Warning: Counting nothing  on input line 415.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 414.
+Package circus Warning: Counting (C) channel set not in BP  on input line 416.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 415.
+Package czt Warning: Counting axdef  on input line 420.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 416.
+Package czt Warning: Counting axdef  on input line 423.
 
 
-Package czt Warning: Counting nothing  on input line 419.
+Package czt Warning: Counting axdef  on input line 425.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 420.
+Package czt Warning: Counting nothing  on input line 437.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 421.
+Package circus Warning: Counting (C) process not in BP  on input line 438.
 
 
-Package circus Warning: Counting (C) channel not in BP  on input line 422.
-
-
-Package czt Warning: Counting nothing  on input line 425.
-
-
-Package circus Warning: Counting (C) channel set not in BP  on input line 426.
-
-
-Package czt Warning: Counting axdef  on input line 430.
-
-
-Package czt Warning: Counting axdef  on input line 433.
-
-
-Package czt Warning: Counting axdef  on input line 435.
-
-
-Package czt Warning: Counting nothing  on input line 447.
-
-
-Package circus Warning: Counting (C) process not in BP  on input line 448.
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 442.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
@@ -528,60 +529,50 @@ Package circus Warning: Couln't identify kind of definition for circdef command
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 462.
+ (nothing ); ignored counting on input line 461.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 471.
+ (nothing ); ignored counting on input line 478.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 488.
+ (nothing ); ignored counting on input line 482.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 492.
+ (nothing ); ignored counting on input line 486.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 496.
+ (nothing ); ignored counting on input line 490.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 500.
+ (nothing ); ignored counting on input line 494.
 
 
-Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 504.
+Package circus Warning: Counting (C) action def. not in BP  on input line 503.
 
 
-Package circus Warning: Counting (C) action def. not in BP  on input line 513.
-
-
-Overfull \hbox (111.52084pt too wide) in alignment at lines 447--515
+Overfull \hbox (111.52084pt too wide) in alignment at lines 437--505
 [] 
  []
 
 
-
-[3]
-
-[4]
-
-[5]
 
 [6]
 
 [7]
 
 [8]
-Overfull \hbox (1.36185pt too wide) in paragraph at lines 563--564
+Overfull \hbox (1.36185pt too wide) in paragraph at lines 553--554
 []\OT1/cmr/m/n/10 Concrete in-stan-ti-a-tions: Ba-s-ic-Cha-n-nelSe-t-Expr, Bind
 -Expr, Con-d-Expr, Nu-
  []
 
 
-Overfull \hbox (44.11078pt too wide) in paragraph at lines 571--572
+Overfull \hbox (44.11078pt too wide) in paragraph at lines 561--562
 \OT1/cmr/m/n/10 Notes from CZT API, https://czt.sourceforge.net/corejava/coreja
 va-z/apidocs/index.html 
  []
@@ -591,7 +582,7 @@ va-z/apidocs/index.html
 [9]
 
 [10]
-Overfull \hbox (3.0098pt too wide) in paragraph at lines 619--620
+Overfull \hbox (3.0098pt too wide) in paragraph at lines 609--610
 \OT1/cmr/m/n/10 nelset name, cre-ates a chan-nel set, with the ref-er-ence ex-p
 res-sion, of $\OT1/cmr/m/it/10 cs[]ame$\OT1/cmr/m/n/10 . 
  []
@@ -599,116 +590,116 @@ res-sion, of $\OT1/cmr/m/it/10 cs[]ame$\OT1/cmr/m/n/10 .
 
 
 [11]
-Overfull \hbox (3.53674pt too wide) in paragraph at lines 639--640
+Overfull \hbox (3.53674pt too wide) in paragraph at lines 629--630
 []\OT1/cmr/m/n/10 ORDERING WORKS, NOT SURE WHY, SAYS UN-ORDERED, IN EMF,
  []
 
 
-Package czt Warning: Counting nothing  on input line 649.
+Package czt Warning: Counting nothing  on input line 639.
 
 
-Package circus Warning: Counting (C) process not in BP  on input line 650.
-
-
-Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 651.
+Package circus Warning: Counting (C) process not in BP  on input line 640.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 695.
+ (nothing ); ignored counting on input line 641.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 724.
+ (nothing ); ignored counting on input line 685.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 774.
+ (nothing ); ignored counting on input line 714.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 787.
+ (nothing ); ignored counting on input line 764.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 792.
+ (nothing ); ignored counting on input line 777.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 795.
+ (nothing ); ignored counting on input line 782.
 
 
 Package circus Warning: Couln't identify kind of definition for circdef command
- (nothing ); ignored counting on input line 798.
+ (nothing ); ignored counting on input line 785.
 
 
-Package circus Warning: Counting (C) action def. not in BP  on input line 802.
+Package circus Warning: Couln't identify kind of definition for circdef command
+ (nothing ); ignored counting on input line 788.
 
 
-Overfull \hbox (172.4733pt too wide) in alignment at lines 649--803
+Package circus Warning: Counting (C) action def. not in BP  on input line 792.
+
+
+Overfull \hbox (172.4733pt too wide) in alignment at lines 639--793
 [] 
  []
 
 
-LaTeX Warning: Float too large for page by 603.70609pt on input line 808.
+LaTeX Warning: Float too large for page by 603.70609pt on input line 798.
 
 
-Package czt Warning: Counting unboxed  on input line 814.
+Package czt Warning: Counting unboxed  on input line 804.
 
 
-Package czt Warning: Counting unboxed  on input line 815.
+Package czt Warning: Counting unboxed  on input line 805.
+
+
+Package czt Warning: Counting unboxed  on input line 807.
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <14.4> on input line 810.
+LaTeX Font Info:    Font shape `U/mathc/m/it' will be
+(Font)              scaled to size 14.83197pt on input line 810.
+
+Package czt Warning: Counting unboxed  on input line 813.
 
 
 Package czt Warning: Counting unboxed  on input line 817.
 
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <14.4> on input line 820.
-LaTeX Font Info:    Font shape `U/mathc/m/it' will be
-(Font)              scaled to size 14.83197pt on input line 820.
+
+Package czt Warning: Counting unboxed  on input line 819.
+
 
 Package czt Warning: Counting unboxed  on input line 823.
 
 
-Package czt Warning: Counting unboxed  on input line 827.
-
-
-Package czt Warning: Counting unboxed  on input line 829.
+Package czt Warning: Counting unboxed  on input line 830.
 
 
 Package czt Warning: Counting unboxed  on input line 833.
 
 
-Package czt Warning: Counting unboxed  on input line 840.
+Package czt Warning: Counting unboxed  on input line 844.
 
 
-Package czt Warning: Counting unboxed  on input line 843.
+Package czt Warning: Counting unboxed  on input line 848.
 
 
-Package czt Warning: Counting unboxed  on input line 854.
+Package czt Warning: Counting unboxed  on input line 850.
 
 
-Package czt Warning: Counting unboxed  on input line 858.
+Package czt Warning: Counting unboxed  on input line 851.
 
 
-Package czt Warning: Counting unboxed  on input line 860.
+Package czt Warning: Counting unboxed  on input line 852.
 
 
-Package czt Warning: Counting unboxed  on input line 861.
+Package czt Warning: Counting unboxed  on input line 853.
 
 
-Package czt Warning: Counting unboxed  on input line 862.
+Package czt Warning: Counting unboxed  on input line 856.
 
 
-Package czt Warning: Counting unboxed  on input line 863.
+Package czt Warning: Counting unboxed  on input line 859.
 
 
-Package czt Warning: Counting unboxed  on input line 866.
-
-
-Package czt Warning: Counting unboxed  on input line 869.
-
-
-Overfull \hbox (29.4902pt too wide) in alignment at lines 814--872
+Overfull \hbox (29.4902pt too wide) in alignment at lines 804--862
 [] 
  []
 
@@ -730,11 +721,15 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 LaTeX2e <2024-06-01>
 L3 programming layer <2024-05-27>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
  2359 strings out of 473600
  35130 string characters out of 5728708
- 1991891 words of memory out of 5000000
+ 1990891 words of memory out of 5000000
  25226 multiletter control sequences out of 15000+600000
  579495 words of font info for 108 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -763,7 +758,7 @@ exmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/20
 e/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/
 2024/texmf-dist/fonts/type1/public/stmaryrd/stmary10.pfb></usr/local/texlive/20
 24/texmf-dist/fonts/type1/public/stmaryrd/stmary8.pfb>
-Output written on main.pdf (16 pages, 280504 bytes).
+Output written on main.pdf (16 pages, 280317 bytes).
 PDF statistics:
  178 PDF objects out of 1000 (max. 8388607)
  110 compressed objects within 2 object streams

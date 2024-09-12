@@ -1,0 +1,15 @@
+anncontroller test322{
+params {
+inputcontext {
+event in0: real
+event in1: real
+}
+outputcontext {
+event out0: real
+}
+layerstructure <5,5,1>
+weights <<< 1.0, 1.0>,< 1.0, 1.0>,< 1.0, 1.0>,< 1.0, 1.0>,< 1.0, 1.0>>,<< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>>,<< 1.0, 1.0, 1.0, 1.0, 1.0>>>
+biases << 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0>>
+activationfunction relu
+}
+}

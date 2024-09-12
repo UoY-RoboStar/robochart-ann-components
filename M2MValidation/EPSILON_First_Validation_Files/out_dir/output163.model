@@ -1,0 +1,2961 @@
+<?xml version="1.0" encoding="ASCII"?>
+<circus:Spec xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:circus="http://www.robocalc.circus/Circus">
+  <sects xsi:type="circus:NarrSect"/>
+  <sects xsi:type="circus:ZSect" name="test245">
+    <parents word="roboworld_2d_toolkit_withval"/>
+    <paraList>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="nodeOut511"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="nodeOut511"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="layerRes51"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="layerRes51"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="nodeOut411"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="nodeOut411"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="layerRes41"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="layerRes41"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="nodeOut311"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="nodeOut311"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="layerRes31"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="layerRes31"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="nodeOut211"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="nodeOut211"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="layerRes21"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="layerRes21"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="nodeOut112"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="nodeOut112"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="nodeOut111"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="nodeOut111"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="layerRes11"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="layerRes11"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="layerRes02"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="layerRes02"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="layerRes01"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="real"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="layerRes01"/>
+      </paras>
+      <paras xsi:type="circus:ChannelPara">
+        <declList>
+          <decls xsi:type="circus:ChannelDecl">
+            <genFormals/>
+            <channelNameList>
+              <names word="terminate"/>
+            </channelNameList>
+            <expr xsi:type="circus:RefExpr">
+              <name word="SYNCH"/>
+            </expr>
+          </decls>
+        </declList>
+        <name word="terminate"/>
+      </paras>
+      <paras xsi:type="circus:ChannelSetPara">
+        <channelSet xsi:type="circus:CircusChannelSet">
+          <expr xsi:type="circus:BasicChannelSetExpr">
+            <communicationList>
+              <communications commUsage="Normal" multiSych="0">
+                <channelExpr>
+                  <name word="layerRes41"/>
+                </channelExpr>
+                <fieldList/>
+              </communications>
+              <communications commUsage="Normal" multiSych="0">
+                <channelExpr>
+                  <name word="layerRes31"/>
+                </channelExpr>
+                <fieldList/>
+              </communications>
+              <communications commUsage="Normal" multiSych="0">
+                <channelExpr>
+                  <name word="layerRes42"/>
+                </channelExpr>
+                <fieldList/>
+              </communications>
+              <communications commUsage="Normal" multiSych="0">
+                <channelExpr>
+                  <name word="layerRes21"/>
+                </channelExpr>
+                <fieldList/>
+              </communications>
+              <communications commUsage="Normal" multiSych="0">
+                <channelExpr>
+                  <name word="layerRes32"/>
+                </channelExpr>
+                <fieldList/>
+              </communications>
+              <communications commUsage="Normal" multiSych="0">
+                <channelExpr>
+                  <name word="layerRes43"/>
+                </channelExpr>
+                <fieldList/>
+              </communications>
+              <communications commUsage="Normal" multiSych="0">
+                <channelExpr>
+                  <name word="layerRes11"/>
+                </channelExpr>
+                <fieldList/>
+              </communications>
+              <communications commUsage="Normal" multiSych="0">
+                <channelExpr>
+                  <name word="layerRes22"/>
+                </channelExpr>
+                <fieldList/>
+              </communications>
+              <communications commUsage="Normal" multiSych="0">
+                <channelExpr>
+                  <name word="layerRes33"/>
+                </channelExpr>
+                <fieldList/>
+              </communications>
+              <communications commUsage="Normal" multiSych="0">
+                <channelExpr>
+                  <name word="layerRes44"/>
+                </channelExpr>
+                <fieldList/>
+              </communications>
+            </communicationList>
+          </expr>
+        </channelSet>
+        <name word="ANNHiddenEvts"/>
+      </paras>
+      <paras xsi:type="circus:ProcessPara" isBasicProcess="true">
+        <circusProcess xsi:type="circus:BasicProcess">
+          <mainAction xsi:type="circus:CallAction">
+            <name word="ANNRenamed"/>
+          </mainAction>
+          <paraList>
+            <paras xsi:type="circus:ActionPara">
+              <circusAction xsi:type="circus:ParamAction">
+                <circusAction xsi:type="circus:ExtChoiceAction">
+                  <leftAction xsi:type="circus:ExtChoiceAction">
+                    <leftAction xsi:type="circus:ExtChoiceAction">
+                      <leftAction xsi:type="circus:ExtChoiceAction">
+                        <leftAction xsi:type="circus:ExtChoiceAction">
+                          <leftAction xsi:type="circus:ExtChoiceAction">
+                            <leftAction xsi:type="circus:ExtChoiceAction">
+                              <leftAction xsi:type="circus:ExtChoiceAction">
+                                <leftAction xsi:type="circus:ExtChoiceAction">
+                                  <leftAction xsi:type="circus:ExtChoiceAction">
+                                    <leftAction xsi:type="circus:GuardedAction">
+                                      <circusAction xsi:type="circus:PrefixingAction">
+                                        <circusAction xsi:type="circus:SkipAction"/>
+                                        <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                                          <channelExpr>
+                                            <name word="layerRes11"/>
+                                          </channelExpr>
+                                          <fieldList>
+                                            <fields xsi:type="circus:DotField" outputField="true">
+                                              <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                                <leftExpr xsi:type="circus:RefExpr">
+                                                  <name word="relu"/>
+                                                </leftExpr>
+                                                <rightExpr xsi:type="circus:ApplExpr" mixFix="true">
+                                                  <leftExpr xsi:type="circus:RefExpr">
+                                                    <name word="_+_"/>
+                                                  </leftExpr>
+                                                  <rightExpr xsi:type="circus:TupleExpr">
+                                                    <exprList>
+                                                      <exprs xsi:type="circus:RefExpr">
+                                                        <name word="sum"/>
+                                                      </exprs>
+                                                      <exprs xsi:type="circus:RefExpr">
+                                                        <name word="0.0"/>
+                                                      </exprs>
+                                                    </exprList>
+                                                  </rightExpr>
+                                                </rightExpr>
+                                              </expr>
+                                            </fields>
+                                          </fieldList>
+                                        </communication>
+                                      </circusAction>
+                                      <pred xsi:type="circus:AndPred">
+                                        <leftPred xsi:type="circus:AndPred">
+                                          <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                            <leftExpr xsi:type="circus:RefExpr">
+                                              <name word="l"/>
+                                            </leftExpr>
+                                            <rightExpr xsi:type="circus:SetExpr">
+                                              <exprList>
+                                                <exprs xsi:type="circus:NumExpr">
+                                                  <numeral value="1"/>
+                                                </exprs>
+                                              </exprList>
+                                            </rightExpr>
+                                          </leftPred>
+                                          <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                            <leftExpr xsi:type="circus:RefExpr">
+                                              <name word="n"/>
+                                            </leftExpr>
+                                            <rightExpr xsi:type="circus:SetExpr">
+                                              <exprList>
+                                                <exprs xsi:type="circus:NumExpr">
+                                                  <numeral value="1"/>
+                                                </exprs>
+                                              </exprList>
+                                            </rightExpr>
+                                          </rightPred>
+                                        </leftPred>
+                                        <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                          <leftExpr xsi:type="circus:RefExpr">
+                                            <name word="i"/>
+                                          </leftExpr>
+                                          <rightExpr xsi:type="circus:SetExpr">
+                                            <exprList>
+                                              <exprs xsi:type="circus:NumExpr">
+                                                <numeral value="0"/>
+                                              </exprs>
+                                            </exprList>
+                                          </rightExpr>
+                                        </rightPred>
+                                      </pred>
+                                    </leftAction>
+                                    <rightAction xsi:type="circus:GuardedAction">
+                                      <circusAction xsi:type="circus:PrefixingAction">
+                                        <circusAction xsi:type="circus:CallAction">
+                                          <exprList>
+                                            <exprs xsi:type="circus:RefExpr">
+                                              <name word="l"/>
+                                            </exprs>
+                                            <exprs xsi:type="circus:RefExpr">
+                                              <name word="n"/>
+                                            </exprs>
+                                            <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                                              <leftExpr xsi:type="circus:RefExpr">
+                                                <name word="_-_"/>
+                                              </leftExpr>
+                                              <rightExpr xsi:type="circus:TupleExpr">
+                                                <exprList>
+                                                  <exprs xsi:type="circus:RefExpr">
+                                                    <name word="i"/>
+                                                  </exprs>
+                                                  <exprs xsi:type="circus:NumExpr">
+                                                    <numeral value="1"/>
+                                                  </exprs>
+                                                </exprList>
+                                              </rightExpr>
+                                            </exprs>
+                                            <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                                              <leftExpr xsi:type="circus:RefExpr">
+                                                <name word="_+_"/>
+                                              </leftExpr>
+                                              <rightExpr xsi:type="circus:TupleExpr">
+                                                <exprList>
+                                                  <exprs xsi:type="circus:RefExpr">
+                                                    <name word="sum"/>
+                                                  </exprs>
+                                                  <exprs xsi:type="circus:RefExpr">
+                                                    <name word="x"/>
+                                                  </exprs>
+                                                </exprList>
+                                              </rightExpr>
+                                            </exprs>
+                                          </exprList>
+                                          <name word="Collator"/>
+                                        </circusAction>
+                                        <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                                          <channelExpr>
+                                            <name word="nodeOut111"/>
+                                          </channelExpr>
+                                          <fieldList>
+                                            <fields xsi:type="circus:InputField">
+                                              <varialbeName word="x"/>
+                                            </fields>
+                                          </fieldList>
+                                        </communication>
+                                      </circusAction>
+                                      <pred xsi:type="circus:AndPred">
+                                        <leftPred xsi:type="circus:AndPred">
+                                          <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                            <leftExpr xsi:type="circus:RefExpr">
+                                              <name word="l"/>
+                                            </leftExpr>
+                                            <rightExpr xsi:type="circus:SetExpr">
+                                              <exprList>
+                                                <exprs xsi:type="circus:NumExpr">
+                                                  <numeral value="1"/>
+                                                </exprs>
+                                              </exprList>
+                                            </rightExpr>
+                                          </leftPred>
+                                          <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                            <leftExpr xsi:type="circus:RefExpr">
+                                              <name word="n"/>
+                                            </leftExpr>
+                                            <rightExpr xsi:type="circus:SetExpr">
+                                              <exprList>
+                                                <exprs xsi:type="circus:NumExpr">
+                                                  <numeral value="1"/>
+                                                </exprs>
+                                              </exprList>
+                                            </rightExpr>
+                                          </rightPred>
+                                        </leftPred>
+                                        <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                          <leftExpr xsi:type="circus:RefExpr">
+                                            <name word="i"/>
+                                          </leftExpr>
+                                          <rightExpr xsi:type="circus:SetExpr">
+                                            <exprList>
+                                              <exprs xsi:type="circus:NumExpr">
+                                                <numeral value="1"/>
+                                              </exprs>
+                                            </exprList>
+                                          </rightExpr>
+                                        </rightPred>
+                                      </pred>
+                                    </rightAction>
+                                  </leftAction>
+                                  <rightAction xsi:type="circus:GuardedAction">
+                                    <circusAction xsi:type="circus:PrefixingAction">
+                                      <circusAction xsi:type="circus:CallAction">
+                                        <exprList>
+                                          <exprs xsi:type="circus:RefExpr">
+                                            <name word="l"/>
+                                          </exprs>
+                                          <exprs xsi:type="circus:RefExpr">
+                                            <name word="n"/>
+                                          </exprs>
+                                          <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                                            <leftExpr xsi:type="circus:RefExpr">
+                                              <name word="_-_"/>
+                                            </leftExpr>
+                                            <rightExpr xsi:type="circus:TupleExpr">
+                                              <exprList>
+                                                <exprs xsi:type="circus:RefExpr">
+                                                  <name word="i"/>
+                                                </exprs>
+                                                <exprs xsi:type="circus:NumExpr">
+                                                  <numeral value="1"/>
+                                                </exprs>
+                                              </exprList>
+                                            </rightExpr>
+                                          </exprs>
+                                          <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                                            <leftExpr xsi:type="circus:RefExpr">
+                                              <name word="_+_"/>
+                                            </leftExpr>
+                                            <rightExpr xsi:type="circus:TupleExpr">
+                                              <exprList>
+                                                <exprs xsi:type="circus:RefExpr">
+                                                  <name word="sum"/>
+                                                </exprs>
+                                                <exprs xsi:type="circus:RefExpr">
+                                                  <name word="x"/>
+                                                </exprs>
+                                              </exprList>
+                                            </rightExpr>
+                                          </exprs>
+                                        </exprList>
+                                        <name word="Collator"/>
+                                      </circusAction>
+                                      <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                                        <channelExpr>
+                                          <name word="nodeOut112"/>
+                                        </channelExpr>
+                                        <fieldList>
+                                          <fields xsi:type="circus:InputField">
+                                            <varialbeName word="x"/>
+                                          </fields>
+                                        </fieldList>
+                                      </communication>
+                                    </circusAction>
+                                    <pred xsi:type="circus:AndPred">
+                                      <leftPred xsi:type="circus:AndPred">
+                                        <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                          <leftExpr xsi:type="circus:RefExpr">
+                                            <name word="l"/>
+                                          </leftExpr>
+                                          <rightExpr xsi:type="circus:SetExpr">
+                                            <exprList>
+                                              <exprs xsi:type="circus:NumExpr">
+                                                <numeral value="1"/>
+                                              </exprs>
+                                            </exprList>
+                                          </rightExpr>
+                                        </leftPred>
+                                        <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                          <leftExpr xsi:type="circus:RefExpr">
+                                            <name word="n"/>
+                                          </leftExpr>
+                                          <rightExpr xsi:type="circus:SetExpr">
+                                            <exprList>
+                                              <exprs xsi:type="circus:NumExpr">
+                                                <numeral value="1"/>
+                                              </exprs>
+                                            </exprList>
+                                          </rightExpr>
+                                        </rightPred>
+                                      </leftPred>
+                                      <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                        <leftExpr xsi:type="circus:RefExpr">
+                                          <name word="i"/>
+                                        </leftExpr>
+                                        <rightExpr xsi:type="circus:SetExpr">
+                                          <exprList>
+                                            <exprs xsi:type="circus:NumExpr">
+                                              <numeral value="2"/>
+                                            </exprs>
+                                          </exprList>
+                                        </rightExpr>
+                                      </rightPred>
+                                    </pred>
+                                  </rightAction>
+                                </leftAction>
+                                <rightAction xsi:type="circus:GuardedAction">
+                                  <circusAction xsi:type="circus:PrefixingAction">
+                                    <circusAction xsi:type="circus:SkipAction"/>
+                                    <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                                      <channelExpr>
+                                        <name word="layerRes21"/>
+                                      </channelExpr>
+                                      <fieldList>
+                                        <fields xsi:type="circus:DotField" outputField="true">
+                                          <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                            <leftExpr xsi:type="circus:RefExpr">
+                                              <name word="relu"/>
+                                            </leftExpr>
+                                            <rightExpr xsi:type="circus:ApplExpr" mixFix="true">
+                                              <leftExpr xsi:type="circus:RefExpr">
+                                                <name word="_+_"/>
+                                              </leftExpr>
+                                              <rightExpr xsi:type="circus:TupleExpr">
+                                                <exprList>
+                                                  <exprs xsi:type="circus:RefExpr">
+                                                    <name word="sum"/>
+                                                  </exprs>
+                                                  <exprs xsi:type="circus:RefExpr">
+                                                    <name word="0.0"/>
+                                                  </exprs>
+                                                </exprList>
+                                              </rightExpr>
+                                            </rightExpr>
+                                          </expr>
+                                        </fields>
+                                      </fieldList>
+                                    </communication>
+                                  </circusAction>
+                                  <pred xsi:type="circus:AndPred">
+                                    <leftPred xsi:type="circus:AndPred">
+                                      <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                        <leftExpr xsi:type="circus:RefExpr">
+                                          <name word="l"/>
+                                        </leftExpr>
+                                        <rightExpr xsi:type="circus:SetExpr">
+                                          <exprList>
+                                            <exprs xsi:type="circus:NumExpr">
+                                              <numeral value="2"/>
+                                            </exprs>
+                                          </exprList>
+                                        </rightExpr>
+                                      </leftPred>
+                                      <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                        <leftExpr xsi:type="circus:RefExpr">
+                                          <name word="n"/>
+                                        </leftExpr>
+                                        <rightExpr xsi:type="circus:SetExpr">
+                                          <exprList>
+                                            <exprs xsi:type="circus:NumExpr">
+                                              <numeral value="1"/>
+                                            </exprs>
+                                          </exprList>
+                                        </rightExpr>
+                                      </rightPred>
+                                    </leftPred>
+                                    <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                      <leftExpr xsi:type="circus:RefExpr">
+                                        <name word="i"/>
+                                      </leftExpr>
+                                      <rightExpr xsi:type="circus:SetExpr">
+                                        <exprList>
+                                          <exprs xsi:type="circus:NumExpr">
+                                            <numeral value="0"/>
+                                          </exprs>
+                                        </exprList>
+                                      </rightExpr>
+                                    </rightPred>
+                                  </pred>
+                                </rightAction>
+                              </leftAction>
+                              <rightAction xsi:type="circus:GuardedAction">
+                                <circusAction xsi:type="circus:PrefixingAction">
+                                  <circusAction xsi:type="circus:CallAction">
+                                    <exprList>
+                                      <exprs xsi:type="circus:RefExpr">
+                                        <name word="l"/>
+                                      </exprs>
+                                      <exprs xsi:type="circus:RefExpr">
+                                        <name word="n"/>
+                                      </exprs>
+                                      <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                                        <leftExpr xsi:type="circus:RefExpr">
+                                          <name word="_-_"/>
+                                        </leftExpr>
+                                        <rightExpr xsi:type="circus:TupleExpr">
+                                          <exprList>
+                                            <exprs xsi:type="circus:RefExpr">
+                                              <name word="i"/>
+                                            </exprs>
+                                            <exprs xsi:type="circus:NumExpr">
+                                              <numeral value="1"/>
+                                            </exprs>
+                                          </exprList>
+                                        </rightExpr>
+                                      </exprs>
+                                      <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                                        <leftExpr xsi:type="circus:RefExpr">
+                                          <name word="_+_"/>
+                                        </leftExpr>
+                                        <rightExpr xsi:type="circus:TupleExpr">
+                                          <exprList>
+                                            <exprs xsi:type="circus:RefExpr">
+                                              <name word="sum"/>
+                                            </exprs>
+                                            <exprs xsi:type="circus:RefExpr">
+                                              <name word="x"/>
+                                            </exprs>
+                                          </exprList>
+                                        </rightExpr>
+                                      </exprs>
+                                    </exprList>
+                                    <name word="Collator"/>
+                                  </circusAction>
+                                  <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                                    <channelExpr>
+                                      <name word="nodeOut211"/>
+                                    </channelExpr>
+                                    <fieldList>
+                                      <fields xsi:type="circus:InputField">
+                                        <varialbeName word="x"/>
+                                      </fields>
+                                    </fieldList>
+                                  </communication>
+                                </circusAction>
+                                <pred xsi:type="circus:AndPred">
+                                  <leftPred xsi:type="circus:AndPred">
+                                    <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                      <leftExpr xsi:type="circus:RefExpr">
+                                        <name word="l"/>
+                                      </leftExpr>
+                                      <rightExpr xsi:type="circus:SetExpr">
+                                        <exprList>
+                                          <exprs xsi:type="circus:NumExpr">
+                                            <numeral value="2"/>
+                                          </exprs>
+                                        </exprList>
+                                      </rightExpr>
+                                    </leftPred>
+                                    <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                      <leftExpr xsi:type="circus:RefExpr">
+                                        <name word="n"/>
+                                      </leftExpr>
+                                      <rightExpr xsi:type="circus:SetExpr">
+                                        <exprList>
+                                          <exprs xsi:type="circus:NumExpr">
+                                            <numeral value="1"/>
+                                          </exprs>
+                                        </exprList>
+                                      </rightExpr>
+                                    </rightPred>
+                                  </leftPred>
+                                  <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                    <leftExpr xsi:type="circus:RefExpr">
+                                      <name word="i"/>
+                                    </leftExpr>
+                                    <rightExpr xsi:type="circus:SetExpr">
+                                      <exprList>
+                                        <exprs xsi:type="circus:NumExpr">
+                                          <numeral value="1"/>
+                                        </exprs>
+                                      </exprList>
+                                    </rightExpr>
+                                  </rightPred>
+                                </pred>
+                              </rightAction>
+                            </leftAction>
+                            <rightAction xsi:type="circus:GuardedAction">
+                              <circusAction xsi:type="circus:PrefixingAction">
+                                <circusAction xsi:type="circus:SkipAction"/>
+                                <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                                  <channelExpr>
+                                    <name word="layerRes31"/>
+                                  </channelExpr>
+                                  <fieldList>
+                                    <fields xsi:type="circus:DotField" outputField="true">
+                                      <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                        <leftExpr xsi:type="circus:RefExpr">
+                                          <name word="relu"/>
+                                        </leftExpr>
+                                        <rightExpr xsi:type="circus:ApplExpr" mixFix="true">
+                                          <leftExpr xsi:type="circus:RefExpr">
+                                            <name word="_+_"/>
+                                          </leftExpr>
+                                          <rightExpr xsi:type="circus:TupleExpr">
+                                            <exprList>
+                                              <exprs xsi:type="circus:RefExpr">
+                                                <name word="sum"/>
+                                              </exprs>
+                                              <exprs xsi:type="circus:RefExpr">
+                                                <name word="0.0"/>
+                                              </exprs>
+                                            </exprList>
+                                          </rightExpr>
+                                        </rightExpr>
+                                      </expr>
+                                    </fields>
+                                  </fieldList>
+                                </communication>
+                              </circusAction>
+                              <pred xsi:type="circus:AndPred">
+                                <leftPred xsi:type="circus:AndPred">
+                                  <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                    <leftExpr xsi:type="circus:RefExpr">
+                                      <name word="l"/>
+                                    </leftExpr>
+                                    <rightExpr xsi:type="circus:SetExpr">
+                                      <exprList>
+                                        <exprs xsi:type="circus:NumExpr">
+                                          <numeral value="3"/>
+                                        </exprs>
+                                      </exprList>
+                                    </rightExpr>
+                                  </leftPred>
+                                  <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                    <leftExpr xsi:type="circus:RefExpr">
+                                      <name word="n"/>
+                                    </leftExpr>
+                                    <rightExpr xsi:type="circus:SetExpr">
+                                      <exprList>
+                                        <exprs xsi:type="circus:NumExpr">
+                                          <numeral value="1"/>
+                                        </exprs>
+                                      </exprList>
+                                    </rightExpr>
+                                  </rightPred>
+                                </leftPred>
+                                <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="i"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:SetExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:NumExpr">
+                                        <numeral value="0"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </rightPred>
+                              </pred>
+                            </rightAction>
+                          </leftAction>
+                          <rightAction xsi:type="circus:GuardedAction">
+                            <circusAction xsi:type="circus:PrefixingAction">
+                              <circusAction xsi:type="circus:CallAction">
+                                <exprList>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="l"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="n"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                                    <leftExpr xsi:type="circus:RefExpr">
+                                      <name word="_-_"/>
+                                    </leftExpr>
+                                    <rightExpr xsi:type="circus:TupleExpr">
+                                      <exprList>
+                                        <exprs xsi:type="circus:RefExpr">
+                                          <name word="i"/>
+                                        </exprs>
+                                        <exprs xsi:type="circus:NumExpr">
+                                          <numeral value="1"/>
+                                        </exprs>
+                                      </exprList>
+                                    </rightExpr>
+                                  </exprs>
+                                  <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                                    <leftExpr xsi:type="circus:RefExpr">
+                                      <name word="_+_"/>
+                                    </leftExpr>
+                                    <rightExpr xsi:type="circus:TupleExpr">
+                                      <exprList>
+                                        <exprs xsi:type="circus:RefExpr">
+                                          <name word="sum"/>
+                                        </exprs>
+                                        <exprs xsi:type="circus:RefExpr">
+                                          <name word="x"/>
+                                        </exprs>
+                                      </exprList>
+                                    </rightExpr>
+                                  </exprs>
+                                </exprList>
+                                <name word="Collator"/>
+                              </circusAction>
+                              <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                                <channelExpr>
+                                  <name word="nodeOut311"/>
+                                </channelExpr>
+                                <fieldList>
+                                  <fields xsi:type="circus:InputField">
+                                    <varialbeName word="x"/>
+                                  </fields>
+                                </fieldList>
+                              </communication>
+                            </circusAction>
+                            <pred xsi:type="circus:AndPred">
+                              <leftPred xsi:type="circus:AndPred">
+                                <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="l"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:SetExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:NumExpr">
+                                        <numeral value="3"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </leftPred>
+                                <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="n"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:SetExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:NumExpr">
+                                        <numeral value="1"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </rightPred>
+                              </leftPred>
+                              <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="i"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:SetExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:NumExpr">
+                                      <numeral value="1"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </rightPred>
+                            </pred>
+                          </rightAction>
+                        </leftAction>
+                        <rightAction xsi:type="circus:GuardedAction">
+                          <circusAction xsi:type="circus:PrefixingAction">
+                            <circusAction xsi:type="circus:SkipAction"/>
+                            <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                              <channelExpr>
+                                <name word="layerRes41"/>
+                              </channelExpr>
+                              <fieldList>
+                                <fields xsi:type="circus:DotField" outputField="true">
+                                  <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                    <leftExpr xsi:type="circus:RefExpr">
+                                      <name word="relu"/>
+                                    </leftExpr>
+                                    <rightExpr xsi:type="circus:ApplExpr" mixFix="true">
+                                      <leftExpr xsi:type="circus:RefExpr">
+                                        <name word="_+_"/>
+                                      </leftExpr>
+                                      <rightExpr xsi:type="circus:TupleExpr">
+                                        <exprList>
+                                          <exprs xsi:type="circus:RefExpr">
+                                            <name word="sum"/>
+                                          </exprs>
+                                          <exprs xsi:type="circus:RefExpr">
+                                            <name word="0.0"/>
+                                          </exprs>
+                                        </exprList>
+                                      </rightExpr>
+                                    </rightExpr>
+                                  </expr>
+                                </fields>
+                              </fieldList>
+                            </communication>
+                          </circusAction>
+                          <pred xsi:type="circus:AndPred">
+                            <leftPred xsi:type="circus:AndPred">
+                              <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="l"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:SetExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:NumExpr">
+                                      <numeral value="4"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </leftPred>
+                              <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="n"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:SetExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:NumExpr">
+                                      <numeral value="1"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </rightPred>
+                            </leftPred>
+                            <rightPred xsi:type="circus:MemPred" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="i"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:SetExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="0"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </rightPred>
+                          </pred>
+                        </rightAction>
+                      </leftAction>
+                      <rightAction xsi:type="circus:GuardedAction">
+                        <circusAction xsi:type="circus:PrefixingAction">
+                          <circusAction xsi:type="circus:CallAction">
+                            <exprList>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="l"/>
+                              </exprs>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="n"/>
+                              </exprs>
+                              <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="_-_"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:TupleExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:RefExpr">
+                                      <name word="i"/>
+                                    </exprs>
+                                    <exprs xsi:type="circus:NumExpr">
+                                      <numeral value="1"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </exprs>
+                              <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="_+_"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:TupleExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:RefExpr">
+                                      <name word="sum"/>
+                                    </exprs>
+                                    <exprs xsi:type="circus:RefExpr">
+                                      <name word="x"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </exprs>
+                            </exprList>
+                            <name word="Collator"/>
+                          </circusAction>
+                          <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                            <channelExpr>
+                              <name word="nodeOut411"/>
+                            </channelExpr>
+                            <fieldList>
+                              <fields xsi:type="circus:InputField">
+                                <varialbeName word="x"/>
+                              </fields>
+                            </fieldList>
+                          </communication>
+                        </circusAction>
+                        <pred xsi:type="circus:AndPred">
+                          <leftPred xsi:type="circus:AndPred">
+                            <leftPred xsi:type="circus:MemPred" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="l"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:SetExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="4"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </leftPred>
+                            <rightPred xsi:type="circus:MemPred" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="n"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:SetExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="1"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </rightPred>
+                          </leftPred>
+                          <rightPred xsi:type="circus:MemPred" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="i"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:SetExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="1"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </rightPred>
+                        </pred>
+                      </rightAction>
+                    </leftAction>
+                    <rightAction xsi:type="circus:GuardedAction">
+                      <circusAction xsi:type="circus:PrefixingAction">
+                        <circusAction xsi:type="circus:SkipAction"/>
+                        <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                          <channelExpr>
+                            <name word="layerRes51"/>
+                          </channelExpr>
+                          <fieldList>
+                            <fields xsi:type="circus:DotField" outputField="true">
+                              <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="relu"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:ApplExpr" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="_+_"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:TupleExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:RefExpr">
+                                        <name word="sum"/>
+                                      </exprs>
+                                      <exprs xsi:type="circus:RefExpr">
+                                        <name word="0.0"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </rightExpr>
+                              </expr>
+                            </fields>
+                          </fieldList>
+                        </communication>
+                      </circusAction>
+                      <pred xsi:type="circus:AndPred">
+                        <leftPred xsi:type="circus:AndPred">
+                          <leftPred xsi:type="circus:MemPred" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="l"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:SetExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="5"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </leftPred>
+                          <rightPred xsi:type="circus:MemPred" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="n"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:SetExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="1"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </rightPred>
+                        </leftPred>
+                        <rightPred xsi:type="circus:MemPred" mixFix="true">
+                          <leftExpr xsi:type="circus:RefExpr">
+                            <name word="i"/>
+                          </leftExpr>
+                          <rightExpr xsi:type="circus:SetExpr">
+                            <exprList>
+                              <exprs xsi:type="circus:NumExpr">
+                                <numeral value="0"/>
+                              </exprs>
+                            </exprList>
+                          </rightExpr>
+                        </rightPred>
+                      </pred>
+                    </rightAction>
+                  </leftAction>
+                  <rightAction xsi:type="circus:GuardedAction">
+                    <circusAction xsi:type="circus:PrefixingAction">
+                      <circusAction xsi:type="circus:CallAction">
+                        <exprList>
+                          <exprs xsi:type="circus:RefExpr">
+                            <name word="l"/>
+                          </exprs>
+                          <exprs xsi:type="circus:RefExpr">
+                            <name word="n"/>
+                          </exprs>
+                          <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="_-_"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:TupleExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="i"/>
+                                </exprs>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="1"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </exprs>
+                          <exprs xsi:type="circus:ApplExpr" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="_+_"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:TupleExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="sum"/>
+                                </exprs>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="x"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </exprs>
+                        </exprList>
+                        <name word="Collator"/>
+                      </circusAction>
+                      <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                        <channelExpr>
+                          <name word="nodeOut511"/>
+                        </channelExpr>
+                        <fieldList>
+                          <fields xsi:type="circus:InputField">
+                            <varialbeName word="x"/>
+                          </fields>
+                        </fieldList>
+                      </communication>
+                    </circusAction>
+                    <pred xsi:type="circus:AndPred">
+                      <leftPred xsi:type="circus:AndPred">
+                        <leftPred xsi:type="circus:MemPred" mixFix="true">
+                          <leftExpr xsi:type="circus:RefExpr">
+                            <name word="l"/>
+                          </leftExpr>
+                          <rightExpr xsi:type="circus:SetExpr">
+                            <exprList>
+                              <exprs xsi:type="circus:NumExpr">
+                                <numeral value="5"/>
+                              </exprs>
+                            </exprList>
+                          </rightExpr>
+                        </leftPred>
+                        <rightPred xsi:type="circus:MemPred" mixFix="true">
+                          <leftExpr xsi:type="circus:RefExpr">
+                            <name word="n"/>
+                          </leftExpr>
+                          <rightExpr xsi:type="circus:SetExpr">
+                            <exprList>
+                              <exprs xsi:type="circus:NumExpr">
+                                <numeral value="1"/>
+                              </exprs>
+                            </exprList>
+                          </rightExpr>
+                        </rightPred>
+                      </leftPred>
+                      <rightPred xsi:type="circus:MemPred" mixFix="true">
+                        <leftExpr xsi:type="circus:RefExpr">
+                          <name word="i"/>
+                        </leftExpr>
+                        <rightExpr xsi:type="circus:SetExpr">
+                          <exprList>
+                            <exprs xsi:type="circus:NumExpr">
+                              <numeral value="1"/>
+                            </exprs>
+                          </exprList>
+                        </rightExpr>
+                      </rightPred>
+                    </pred>
+                  </rightAction>
+                </circusAction>
+                <declList>
+                  <decls xsi:type="circus:VarDecl">
+                    <expr xsi:type="circus:RefExpr">
+                      <name word="real"/>
+                    </expr>
+                    <nameList>
+                      <names word="sum"/>
+                    </nameList>
+                  </decls>
+                  <decls xsi:type="circus:VarDecl">
+                    <expr xsi:type="circus:RefExpr">
+                      <name word="int"/>
+                    </expr>
+                    <nameList>
+                      <names word="l, n, i"/>
+                    </nameList>
+                  </decls>
+                </declList>
+              </circusAction>
+              <name word="Collator"/>
+            </paras>
+            <paras xsi:type="circus:ActionPara">
+              <circusAction xsi:type="circus:ParamAction">
+                <circusAction xsi:type="circus:ExtChoiceAction">
+                  <leftAction xsi:type="circus:ExtChoiceAction">
+                    <leftAction xsi:type="circus:ExtChoiceAction">
+                      <leftAction xsi:type="circus:ExtChoiceAction">
+                        <leftAction xsi:type="circus:ExtChoiceAction">
+                          <leftAction xsi:type="circus:GuardedAction">
+                            <circusAction xsi:type="circus:PrefixingAction">
+                              <circusAction xsi:type="circus:PrefixingAction">
+                                <circusAction xsi:type="circus:SkipAction"/>
+                                <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                                  <channelExpr>
+                                    <name word="nodeOut111"/>
+                                  </channelExpr>
+                                  <fieldList>
+                                    <fields xsi:type="circus:DotField" outputField="true">
+                                      <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                        <leftExpr xsi:type="circus:RefExpr">
+                                          <name word="_*_"/>
+                                        </leftExpr>
+                                        <rightExpr xsi:type="circus:TupleExpr">
+                                          <exprList>
+                                            <exprs xsi:type="circus:RefExpr">
+                                              <name word="x"/>
+                                            </exprs>
+                                            <exprs xsi:type="circus:RefExpr">
+                                              <name word="0.0"/>
+                                            </exprs>
+                                          </exprList>
+                                        </rightExpr>
+                                      </expr>
+                                    </fields>
+                                  </fieldList>
+                                </communication>
+                              </circusAction>
+                              <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                                <channelExpr>
+                                  <name word="layerRes11"/>
+                                </channelExpr>
+                                <fieldList>
+                                  <fields xsi:type="circus:InputField">
+                                    <varialbeName word="x"/>
+                                  </fields>
+                                </fieldList>
+                              </communication>
+                            </circusAction>
+                            <pred xsi:type="circus:AndPred">
+                              <leftPred xsi:type="circus:AndPred">
+                                <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="l"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:SetExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:NumExpr">
+                                        <numeral value="1"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </leftPred>
+                                <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="n"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:SetExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:NumExpr">
+                                        <numeral value="1"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </rightPred>
+                              </leftPred>
+                              <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="i"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:SetExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:NumExpr">
+                                      <numeral value="1"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </rightPred>
+                            </pred>
+                          </leftAction>
+                          <rightAction xsi:type="circus:GuardedAction">
+                            <circusAction xsi:type="circus:PrefixingAction">
+                              <circusAction xsi:type="circus:PrefixingAction">
+                                <circusAction xsi:type="circus:SkipAction"/>
+                                <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                                  <channelExpr>
+                                    <name word="nodeOut112"/>
+                                  </channelExpr>
+                                  <fieldList>
+                                    <fields xsi:type="circus:DotField" outputField="true">
+                                      <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                        <leftExpr xsi:type="circus:RefExpr">
+                                          <name word="_*_"/>
+                                        </leftExpr>
+                                        <rightExpr xsi:type="circus:TupleExpr">
+                                          <exprList>
+                                            <exprs xsi:type="circus:RefExpr">
+                                              <name word="x"/>
+                                            </exprs>
+                                            <exprs xsi:type="circus:RefExpr">
+                                              <name word="0.0"/>
+                                            </exprs>
+                                          </exprList>
+                                        </rightExpr>
+                                      </expr>
+                                    </fields>
+                                  </fieldList>
+                                </communication>
+                              </circusAction>
+                              <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                                <channelExpr>
+                                  <name word="layerRes11"/>
+                                </channelExpr>
+                                <fieldList>
+                                  <fields xsi:type="circus:InputField">
+                                    <varialbeName word="x"/>
+                                  </fields>
+                                </fieldList>
+                              </communication>
+                            </circusAction>
+                            <pred xsi:type="circus:AndPred">
+                              <leftPred xsi:type="circus:AndPred">
+                                <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="l"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:SetExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:NumExpr">
+                                        <numeral value="1"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </leftPred>
+                                <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="n"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:SetExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:NumExpr">
+                                        <numeral value="1"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </rightPred>
+                              </leftPred>
+                              <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="i"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:SetExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:NumExpr">
+                                      <numeral value="2"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </rightPred>
+                            </pred>
+                          </rightAction>
+                        </leftAction>
+                        <rightAction xsi:type="circus:GuardedAction">
+                          <circusAction xsi:type="circus:PrefixingAction">
+                            <circusAction xsi:type="circus:PrefixingAction">
+                              <circusAction xsi:type="circus:SkipAction"/>
+                              <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                                <channelExpr>
+                                  <name word="nodeOut211"/>
+                                </channelExpr>
+                                <fieldList>
+                                  <fields xsi:type="circus:DotField" outputField="true">
+                                    <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                      <leftExpr xsi:type="circus:RefExpr">
+                                        <name word="_*_"/>
+                                      </leftExpr>
+                                      <rightExpr xsi:type="circus:TupleExpr">
+                                        <exprList>
+                                          <exprs xsi:type="circus:RefExpr">
+                                            <name word="x"/>
+                                          </exprs>
+                                          <exprs xsi:type="circus:RefExpr">
+                                            <name word="0.0"/>
+                                          </exprs>
+                                        </exprList>
+                                      </rightExpr>
+                                    </expr>
+                                  </fields>
+                                </fieldList>
+                              </communication>
+                            </circusAction>
+                            <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                              <channelExpr>
+                                <name word="layerRes21"/>
+                              </channelExpr>
+                              <fieldList>
+                                <fields xsi:type="circus:InputField">
+                                  <varialbeName word="x"/>
+                                </fields>
+                              </fieldList>
+                            </communication>
+                          </circusAction>
+                          <pred xsi:type="circus:AndPred">
+                            <leftPred xsi:type="circus:AndPred">
+                              <leftPred xsi:type="circus:MemPred" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="l"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:SetExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:NumExpr">
+                                      <numeral value="2"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </leftPred>
+                              <rightPred xsi:type="circus:MemPred" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="n"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:SetExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:NumExpr">
+                                      <numeral value="1"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </rightPred>
+                            </leftPred>
+                            <rightPred xsi:type="circus:MemPred" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="i"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:SetExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="1"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </rightPred>
+                          </pred>
+                        </rightAction>
+                      </leftAction>
+                      <rightAction xsi:type="circus:GuardedAction">
+                        <circusAction xsi:type="circus:PrefixingAction">
+                          <circusAction xsi:type="circus:PrefixingAction">
+                            <circusAction xsi:type="circus:SkipAction"/>
+                            <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                              <channelExpr>
+                                <name word="nodeOut311"/>
+                              </channelExpr>
+                              <fieldList>
+                                <fields xsi:type="circus:DotField" outputField="true">
+                                  <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                    <leftExpr xsi:type="circus:RefExpr">
+                                      <name word="_*_"/>
+                                    </leftExpr>
+                                    <rightExpr xsi:type="circus:TupleExpr">
+                                      <exprList>
+                                        <exprs xsi:type="circus:RefExpr">
+                                          <name word="x"/>
+                                        </exprs>
+                                        <exprs xsi:type="circus:RefExpr">
+                                          <name word="0.0"/>
+                                        </exprs>
+                                      </exprList>
+                                    </rightExpr>
+                                  </expr>
+                                </fields>
+                              </fieldList>
+                            </communication>
+                          </circusAction>
+                          <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                            <channelExpr>
+                              <name word="layerRes31"/>
+                            </channelExpr>
+                            <fieldList>
+                              <fields xsi:type="circus:InputField">
+                                <varialbeName word="x"/>
+                              </fields>
+                            </fieldList>
+                          </communication>
+                        </circusAction>
+                        <pred xsi:type="circus:AndPred">
+                          <leftPred xsi:type="circus:AndPred">
+                            <leftPred xsi:type="circus:MemPred" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="l"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:SetExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="3"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </leftPred>
+                            <rightPred xsi:type="circus:MemPred" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="n"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:SetExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="1"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </rightPred>
+                          </leftPred>
+                          <rightPred xsi:type="circus:MemPred" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="i"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:SetExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="1"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </rightPred>
+                        </pred>
+                      </rightAction>
+                    </leftAction>
+                    <rightAction xsi:type="circus:GuardedAction">
+                      <circusAction xsi:type="circus:PrefixingAction">
+                        <circusAction xsi:type="circus:PrefixingAction">
+                          <circusAction xsi:type="circus:SkipAction"/>
+                          <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                            <channelExpr>
+                              <name word="nodeOut411"/>
+                            </channelExpr>
+                            <fieldList>
+                              <fields xsi:type="circus:DotField" outputField="true">
+                                <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="_*_"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:TupleExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:RefExpr">
+                                        <name word="x"/>
+                                      </exprs>
+                                      <exprs xsi:type="circus:RefExpr">
+                                        <name word="0.0"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </expr>
+                              </fields>
+                            </fieldList>
+                          </communication>
+                        </circusAction>
+                        <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                          <channelExpr>
+                            <name word="layerRes41"/>
+                          </channelExpr>
+                          <fieldList>
+                            <fields xsi:type="circus:InputField">
+                              <varialbeName word="x"/>
+                            </fields>
+                          </fieldList>
+                        </communication>
+                      </circusAction>
+                      <pred xsi:type="circus:AndPred">
+                        <leftPred xsi:type="circus:AndPred">
+                          <leftPred xsi:type="circus:MemPred" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="l"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:SetExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="4"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </leftPred>
+                          <rightPred xsi:type="circus:MemPred" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="n"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:SetExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="1"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </rightPred>
+                        </leftPred>
+                        <rightPred xsi:type="circus:MemPred" mixFix="true">
+                          <leftExpr xsi:type="circus:RefExpr">
+                            <name word="i"/>
+                          </leftExpr>
+                          <rightExpr xsi:type="circus:SetExpr">
+                            <exprList>
+                              <exprs xsi:type="circus:NumExpr">
+                                <numeral value="1"/>
+                              </exprs>
+                            </exprList>
+                          </rightExpr>
+                        </rightPred>
+                      </pred>
+                    </rightAction>
+                  </leftAction>
+                  <rightAction xsi:type="circus:GuardedAction">
+                    <circusAction xsi:type="circus:PrefixingAction">
+                      <circusAction xsi:type="circus:PrefixingAction">
+                        <circusAction xsi:type="circus:SkipAction"/>
+                        <communication commPattern="Output" commUsage="Normal" multiSych="0">
+                          <channelExpr>
+                            <name word="nodeOut511"/>
+                          </channelExpr>
+                          <fieldList>
+                            <fields xsi:type="circus:DotField" outputField="true">
+                              <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="_*_"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:TupleExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:RefExpr">
+                                      <name word="x"/>
+                                    </exprs>
+                                    <exprs xsi:type="circus:RefExpr">
+                                      <name word="0.0"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </expr>
+                            </fields>
+                          </fieldList>
+                        </communication>
+                      </circusAction>
+                      <communication commPattern="Input" commUsage="Normal" multiSych="0">
+                        <channelExpr>
+                          <name word="layerRes51"/>
+                        </channelExpr>
+                        <fieldList>
+                          <fields xsi:type="circus:InputField">
+                            <varialbeName word="x"/>
+                          </fields>
+                        </fieldList>
+                      </communication>
+                    </circusAction>
+                    <pred xsi:type="circus:AndPred">
+                      <leftPred xsi:type="circus:AndPred">
+                        <leftPred xsi:type="circus:MemPred" mixFix="true">
+                          <leftExpr xsi:type="circus:RefExpr">
+                            <name word="l"/>
+                          </leftExpr>
+                          <rightExpr xsi:type="circus:SetExpr">
+                            <exprList>
+                              <exprs xsi:type="circus:NumExpr">
+                                <numeral value="5"/>
+                              </exprs>
+                            </exprList>
+                          </rightExpr>
+                        </leftPred>
+                        <rightPred xsi:type="circus:MemPred" mixFix="true">
+                          <leftExpr xsi:type="circus:RefExpr">
+                            <name word="n"/>
+                          </leftExpr>
+                          <rightExpr xsi:type="circus:SetExpr">
+                            <exprList>
+                              <exprs xsi:type="circus:NumExpr">
+                                <numeral value="1"/>
+                              </exprs>
+                            </exprList>
+                          </rightExpr>
+                        </rightPred>
+                      </leftPred>
+                      <rightPred xsi:type="circus:MemPred" mixFix="true">
+                        <leftExpr xsi:type="circus:RefExpr">
+                          <name word="i"/>
+                        </leftExpr>
+                        <rightExpr xsi:type="circus:SetExpr">
+                          <exprList>
+                            <exprs xsi:type="circus:NumExpr">
+                              <numeral value="1"/>
+                            </exprs>
+                          </exprList>
+                        </rightExpr>
+                      </rightPred>
+                    </pred>
+                  </rightAction>
+                </circusAction>
+                <declList>
+                  <decls xsi:type="circus:VarDecl">
+                    <expr xsi:type="circus:RefExpr">
+                      <name word="int"/>
+                    </expr>
+                    <nameList>
+                      <names word="l, n, i"/>
+                    </nameList>
+                  </decls>
+                </declList>
+              </circusAction>
+              <name word="NodeIn"/>
+            </paras>
+            <paras xsi:type="circus:ActionPara">
+              <circusAction xsi:type="circus:ParamAction">
+                <circusAction xsi:type="circus:ExtChoiceAction">
+                  <leftAction xsi:type="circus:ExtChoiceAction">
+                    <leftAction xsi:type="circus:ExtChoiceAction">
+                      <leftAction xsi:type="circus:ExtChoiceAction">
+                        <leftAction xsi:type="circus:GuardedAction">
+                          <circusAction xsi:type="circus:ParallelAction">
+                            <leftAction xsi:type="circus:InterleaveActionIte">
+                              <circusAction xsi:type="circus:CallAction">
+                                <exprList>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="l"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="n"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="i"/>
+                                  </exprs>
+                                </exprList>
+                                <name word="NodeIn"/>
+                              </circusAction>
+                              <declList>
+                                <decls xsi:type="circus:VarDecl">
+                                  <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                    <leftExpr xsi:type="circus:RefExpr">
+                                      <name word="_.._"/>
+                                    </leftExpr>
+                                    <rightExpr xsi:type="circus:TupleExpr">
+                                      <exprList>
+                                        <exprs xsi:type="circus:NumExpr">
+                                          <numeral value="1"/>
+                                        </exprs>
+                                        <exprs xsi:type="circus:RefExpr">
+                                          <name word="inpSize"/>
+                                        </exprs>
+                                      </exprList>
+                                    </rightExpr>
+                                  </expr>
+                                  <nameList>
+                                    <names word="i"/>
+                                  </nameList>
+                                </decls>
+                              </declList>
+                              <nameSet xsi:type="circus:CircusNameSet">
+                                <expr xsi:type="circus:SetExpr">
+                                  <exprList/>
+                                </expr>
+                              </nameSet>
+                            </leftAction>
+                            <rightAction xsi:type="circus:HideAction">
+                              <circusAction xsi:type="circus:CallAction">
+                                <exprList>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="l"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="n"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="inpSize"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="0"/>
+                                  </exprs>
+                                </exprList>
+                                <name word="Collator"/>
+                              </circusAction>
+                              <channelSet xsi:type="circus:CircusChannelSet">
+                                <expr xsi:type="circus:BasicChannelSetExpr">
+                                  <communicationList>
+                                    <communications commUsage="Normal" multiSych="0">
+                                      <channelExpr>
+                                        <name word="nodeOut112"/>
+                                      </channelExpr>
+                                      <fieldList/>
+                                    </communications>
+                                    <communications commUsage="Normal" multiSych="0">
+                                      <channelExpr>
+                                        <name word="nodeOut111"/>
+                                      </channelExpr>
+                                      <fieldList/>
+                                    </communications>
+                                  </communicationList>
+                                </expr>
+                              </channelSet>
+                            </rightAction>
+                            <channelSet xsi:type="circus:CircusChannelSet">
+                              <expr xsi:type="circus:BasicChannelSetExpr">
+                                <communicationList>
+                                  <communications commUsage="Normal" multiSych="0">
+                                    <channelExpr>
+                                      <name word="nodeOut112"/>
+                                    </channelExpr>
+                                    <fieldList/>
+                                  </communications>
+                                  <communications commUsage="Normal" multiSych="0">
+                                    <channelExpr>
+                                      <name word="nodeOut111"/>
+                                    </channelExpr>
+                                    <fieldList/>
+                                  </communications>
+                                </communicationList>
+                              </expr>
+                            </channelSet>
+                          </circusAction>
+                          <pred xsi:type="circus:AndPred">
+                            <leftPred xsi:type="circus:MemPred" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="l"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:SetExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="1"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </leftPred>
+                            <rightPred xsi:type="circus:MemPred" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="n"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:SetExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="1"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </rightPred>
+                          </pred>
+                        </leftAction>
+                        <rightAction xsi:type="circus:GuardedAction">
+                          <circusAction xsi:type="circus:ParallelAction">
+                            <leftAction xsi:type="circus:InterleaveActionIte">
+                              <circusAction xsi:type="circus:CallAction">
+                                <exprList>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="l"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="n"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="i"/>
+                                  </exprs>
+                                </exprList>
+                                <name word="NodeIn"/>
+                              </circusAction>
+                              <declList>
+                                <decls xsi:type="circus:VarDecl">
+                                  <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                    <leftExpr xsi:type="circus:RefExpr">
+                                      <name word="_.._"/>
+                                    </leftExpr>
+                                    <rightExpr xsi:type="circus:TupleExpr">
+                                      <exprList>
+                                        <exprs xsi:type="circus:NumExpr">
+                                          <numeral value="1"/>
+                                        </exprs>
+                                        <exprs xsi:type="circus:RefExpr">
+                                          <name word="inpSize"/>
+                                        </exprs>
+                                      </exprList>
+                                    </rightExpr>
+                                  </expr>
+                                  <nameList>
+                                    <names word="i"/>
+                                  </nameList>
+                                </decls>
+                              </declList>
+                              <nameSet xsi:type="circus:CircusNameSet">
+                                <expr xsi:type="circus:SetExpr">
+                                  <exprList/>
+                                </expr>
+                              </nameSet>
+                            </leftAction>
+                            <rightAction xsi:type="circus:HideAction">
+                              <circusAction xsi:type="circus:CallAction">
+                                <exprList>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="l"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="n"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="inpSize"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="0"/>
+                                  </exprs>
+                                </exprList>
+                                <name word="Collator"/>
+                              </circusAction>
+                              <channelSet xsi:type="circus:CircusChannelSet">
+                                <expr xsi:type="circus:BasicChannelSetExpr">
+                                  <communicationList>
+                                    <communications commUsage="Normal" multiSych="0">
+                                      <channelExpr>
+                                        <name word="nodeOut211"/>
+                                      </channelExpr>
+                                      <fieldList/>
+                                    </communications>
+                                  </communicationList>
+                                </expr>
+                              </channelSet>
+                            </rightAction>
+                            <channelSet xsi:type="circus:CircusChannelSet">
+                              <expr xsi:type="circus:BasicChannelSetExpr">
+                                <communicationList>
+                                  <communications commUsage="Normal" multiSych="0">
+                                    <channelExpr>
+                                      <name word="nodeOut211"/>
+                                    </channelExpr>
+                                    <fieldList/>
+                                  </communications>
+                                </communicationList>
+                              </expr>
+                            </channelSet>
+                          </circusAction>
+                          <pred xsi:type="circus:AndPred">
+                            <leftPred xsi:type="circus:MemPred" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="l"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:SetExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="2"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </leftPred>
+                            <rightPred xsi:type="circus:MemPred" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="n"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:SetExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="1"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </rightPred>
+                          </pred>
+                        </rightAction>
+                      </leftAction>
+                      <rightAction xsi:type="circus:GuardedAction">
+                        <circusAction xsi:type="circus:ParallelAction">
+                          <leftAction xsi:type="circus:InterleaveActionIte">
+                            <circusAction xsi:type="circus:CallAction">
+                              <exprList>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="l"/>
+                                </exprs>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="n"/>
+                                </exprs>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="i"/>
+                                </exprs>
+                              </exprList>
+                              <name word="NodeIn"/>
+                            </circusAction>
+                            <declList>
+                              <decls xsi:type="circus:VarDecl">
+                                <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="_.._"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:TupleExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:NumExpr">
+                                        <numeral value="1"/>
+                                      </exprs>
+                                      <exprs xsi:type="circus:RefExpr">
+                                        <name word="inpSize"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </expr>
+                                <nameList>
+                                  <names word="i"/>
+                                </nameList>
+                              </decls>
+                            </declList>
+                            <nameSet xsi:type="circus:CircusNameSet">
+                              <expr xsi:type="circus:SetExpr">
+                                <exprList/>
+                              </expr>
+                            </nameSet>
+                          </leftAction>
+                          <rightAction xsi:type="circus:HideAction">
+                            <circusAction xsi:type="circus:CallAction">
+                              <exprList>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="l"/>
+                                </exprs>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="n"/>
+                                </exprs>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="inpSize"/>
+                                </exprs>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="0"/>
+                                </exprs>
+                              </exprList>
+                              <name word="Collator"/>
+                            </circusAction>
+                            <channelSet xsi:type="circus:CircusChannelSet">
+                              <expr xsi:type="circus:BasicChannelSetExpr">
+                                <communicationList>
+                                  <communications commUsage="Normal" multiSych="0">
+                                    <channelExpr>
+                                      <name word="nodeOut311"/>
+                                    </channelExpr>
+                                    <fieldList/>
+                                  </communications>
+                                </communicationList>
+                              </expr>
+                            </channelSet>
+                          </rightAction>
+                          <channelSet xsi:type="circus:CircusChannelSet">
+                            <expr xsi:type="circus:BasicChannelSetExpr">
+                              <communicationList>
+                                <communications commUsage="Normal" multiSych="0">
+                                  <channelExpr>
+                                    <name word="nodeOut311"/>
+                                  </channelExpr>
+                                  <fieldList/>
+                                </communications>
+                              </communicationList>
+                            </expr>
+                          </channelSet>
+                        </circusAction>
+                        <pred xsi:type="circus:AndPred">
+                          <leftPred xsi:type="circus:MemPred" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="l"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:SetExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="3"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </leftPred>
+                          <rightPred xsi:type="circus:MemPred" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="n"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:SetExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="1"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </rightPred>
+                        </pred>
+                      </rightAction>
+                    </leftAction>
+                    <rightAction xsi:type="circus:GuardedAction">
+                      <circusAction xsi:type="circus:ParallelAction">
+                        <leftAction xsi:type="circus:InterleaveActionIte">
+                          <circusAction xsi:type="circus:CallAction">
+                            <exprList>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="l"/>
+                              </exprs>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="n"/>
+                              </exprs>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="i"/>
+                              </exprs>
+                            </exprList>
+                            <name word="NodeIn"/>
+                          </circusAction>
+                          <declList>
+                            <decls xsi:type="circus:VarDecl">
+                              <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="_.._"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:TupleExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:NumExpr">
+                                      <numeral value="1"/>
+                                    </exprs>
+                                    <exprs xsi:type="circus:RefExpr">
+                                      <name word="inpSize"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </expr>
+                              <nameList>
+                                <names word="i"/>
+                              </nameList>
+                            </decls>
+                          </declList>
+                          <nameSet xsi:type="circus:CircusNameSet">
+                            <expr xsi:type="circus:SetExpr">
+                              <exprList/>
+                            </expr>
+                          </nameSet>
+                        </leftAction>
+                        <rightAction xsi:type="circus:HideAction">
+                          <circusAction xsi:type="circus:CallAction">
+                            <exprList>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="l"/>
+                              </exprs>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="n"/>
+                              </exprs>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="inpSize"/>
+                              </exprs>
+                              <exprs xsi:type="circus:NumExpr">
+                                <numeral value="0"/>
+                              </exprs>
+                            </exprList>
+                            <name word="Collator"/>
+                          </circusAction>
+                          <channelSet xsi:type="circus:CircusChannelSet">
+                            <expr xsi:type="circus:BasicChannelSetExpr">
+                              <communicationList>
+                                <communications commUsage="Normal" multiSych="0">
+                                  <channelExpr>
+                                    <name word="nodeOut411"/>
+                                  </channelExpr>
+                                  <fieldList/>
+                                </communications>
+                              </communicationList>
+                            </expr>
+                          </channelSet>
+                        </rightAction>
+                        <channelSet xsi:type="circus:CircusChannelSet">
+                          <expr xsi:type="circus:BasicChannelSetExpr">
+                            <communicationList>
+                              <communications commUsage="Normal" multiSych="0">
+                                <channelExpr>
+                                  <name word="nodeOut411"/>
+                                </channelExpr>
+                                <fieldList/>
+                              </communications>
+                            </communicationList>
+                          </expr>
+                        </channelSet>
+                      </circusAction>
+                      <pred xsi:type="circus:AndPred">
+                        <leftPred xsi:type="circus:MemPred" mixFix="true">
+                          <leftExpr xsi:type="circus:RefExpr">
+                            <name word="l"/>
+                          </leftExpr>
+                          <rightExpr xsi:type="circus:SetExpr">
+                            <exprList>
+                              <exprs xsi:type="circus:NumExpr">
+                                <numeral value="4"/>
+                              </exprs>
+                            </exprList>
+                          </rightExpr>
+                        </leftPred>
+                        <rightPred xsi:type="circus:MemPred" mixFix="true">
+                          <leftExpr xsi:type="circus:RefExpr">
+                            <name word="n"/>
+                          </leftExpr>
+                          <rightExpr xsi:type="circus:SetExpr">
+                            <exprList>
+                              <exprs xsi:type="circus:NumExpr">
+                                <numeral value="1"/>
+                              </exprs>
+                            </exprList>
+                          </rightExpr>
+                        </rightPred>
+                      </pred>
+                    </rightAction>
+                  </leftAction>
+                  <rightAction xsi:type="circus:GuardedAction">
+                    <circusAction xsi:type="circus:ParallelAction">
+                      <leftAction xsi:type="circus:InterleaveActionIte">
+                        <circusAction xsi:type="circus:CallAction">
+                          <exprList>
+                            <exprs xsi:type="circus:RefExpr">
+                              <name word="l"/>
+                            </exprs>
+                            <exprs xsi:type="circus:RefExpr">
+                              <name word="n"/>
+                            </exprs>
+                            <exprs xsi:type="circus:RefExpr">
+                              <name word="i"/>
+                            </exprs>
+                          </exprList>
+                          <name word="NodeIn"/>
+                        </circusAction>
+                        <declList>
+                          <decls xsi:type="circus:VarDecl">
+                            <expr xsi:type="circus:ApplExpr" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="_.._"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:TupleExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="1"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="inpSize"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </expr>
+                            <nameList>
+                              <names word="i"/>
+                            </nameList>
+                          </decls>
+                        </declList>
+                        <nameSet xsi:type="circus:CircusNameSet">
+                          <expr xsi:type="circus:SetExpr">
+                            <exprList/>
+                          </expr>
+                        </nameSet>
+                      </leftAction>
+                      <rightAction xsi:type="circus:HideAction">
+                        <circusAction xsi:type="circus:CallAction">
+                          <exprList>
+                            <exprs xsi:type="circus:RefExpr">
+                              <name word="l"/>
+                            </exprs>
+                            <exprs xsi:type="circus:RefExpr">
+                              <name word="n"/>
+                            </exprs>
+                            <exprs xsi:type="circus:RefExpr">
+                              <name word="inpSize"/>
+                            </exprs>
+                            <exprs xsi:type="circus:NumExpr">
+                              <numeral value="0"/>
+                            </exprs>
+                          </exprList>
+                          <name word="Collator"/>
+                        </circusAction>
+                        <channelSet xsi:type="circus:CircusChannelSet">
+                          <expr xsi:type="circus:BasicChannelSetExpr">
+                            <communicationList>
+                              <communications commUsage="Normal" multiSych="0">
+                                <channelExpr>
+                                  <name word="nodeOut511"/>
+                                </channelExpr>
+                                <fieldList/>
+                              </communications>
+                            </communicationList>
+                          </expr>
+                        </channelSet>
+                      </rightAction>
+                      <channelSet xsi:type="circus:CircusChannelSet">
+                        <expr xsi:type="circus:BasicChannelSetExpr">
+                          <communicationList>
+                            <communications commUsage="Normal" multiSych="0">
+                              <channelExpr>
+                                <name word="nodeOut511"/>
+                              </channelExpr>
+                              <fieldList/>
+                            </communications>
+                          </communicationList>
+                        </expr>
+                      </channelSet>
+                    </circusAction>
+                    <pred xsi:type="circus:AndPred">
+                      <leftPred xsi:type="circus:MemPred" mixFix="true">
+                        <leftExpr xsi:type="circus:RefExpr">
+                          <name word="l"/>
+                        </leftExpr>
+                        <rightExpr xsi:type="circus:SetExpr">
+                          <exprList>
+                            <exprs xsi:type="circus:NumExpr">
+                              <numeral value="5"/>
+                            </exprs>
+                          </exprList>
+                        </rightExpr>
+                      </leftPred>
+                      <rightPred xsi:type="circus:MemPred" mixFix="true">
+                        <leftExpr xsi:type="circus:RefExpr">
+                          <name word="n"/>
+                        </leftExpr>
+                        <rightExpr xsi:type="circus:SetExpr">
+                          <exprList>
+                            <exprs xsi:type="circus:NumExpr">
+                              <numeral value="1"/>
+                            </exprs>
+                          </exprList>
+                        </rightExpr>
+                      </rightPred>
+                    </pred>
+                  </rightAction>
+                </circusAction>
+                <declList>
+                  <decls xsi:type="circus:VarDecl">
+                    <expr xsi:type="circus:RefExpr">
+                      <name word="int"/>
+                    </expr>
+                    <nameList>
+                      <names word="l, n, inpSize"/>
+                    </nameList>
+                  </decls>
+                </declList>
+              </circusAction>
+              <name word="Node"/>
+            </paras>
+            <paras xsi:type="circus:ActionPara">
+              <circusAction xsi:type="circus:ParamAction">
+                <circusAction xsi:type="circus:ExtChoiceAction">
+                  <leftAction xsi:type="circus:ExtChoiceAction">
+                    <leftAction xsi:type="circus:ExtChoiceAction">
+                      <leftAction xsi:type="circus:ExtChoiceAction">
+                        <leftAction xsi:type="circus:GuardedAction">
+                          <circusAction xsi:type="circus:ParallelActionIte">
+                            <circusAction xsi:type="circus:CallAction">
+                              <exprList>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="l"/>
+                                </exprs>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="i"/>
+                                </exprs>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="inpSize"/>
+                                </exprs>
+                              </exprList>
+                              <name word="Node"/>
+                            </circusAction>
+                            <declList>
+                              <decls xsi:type="circus:VarDecl">
+                                <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="_.._"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:TupleExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:NumExpr">
+                                        <numeral value="1"/>
+                                      </exprs>
+                                      <exprs xsi:type="circus:RefExpr">
+                                        <name word="s"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </expr>
+                                <nameList>
+                                  <names word="i"/>
+                                </nameList>
+                              </decls>
+                            </declList>
+                            <channelSet xsi:type="circus:CircusChannelSet">
+                              <expr xsi:type="circus:BasicChannelSetExpr">
+                                <communicationList>
+                                  <communications commUsage="Normal" multiSych="0">
+                                    <channelExpr>
+                                      <name word="layerRes11"/>
+                                    </channelExpr>
+                                    <fieldList/>
+                                  </communications>
+                                </communicationList>
+                              </expr>
+                            </channelSet>
+                          </circusAction>
+                          <pred xsi:type="circus:MemPred" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="l"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:SetExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="1"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </pred>
+                        </leftAction>
+                        <rightAction xsi:type="circus:GuardedAction">
+                          <circusAction xsi:type="circus:ParallelActionIte">
+                            <circusAction xsi:type="circus:CallAction">
+                              <exprList>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="l"/>
+                                </exprs>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="i"/>
+                                </exprs>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="inpSize"/>
+                                </exprs>
+                              </exprList>
+                              <name word="Node"/>
+                            </circusAction>
+                            <declList>
+                              <decls xsi:type="circus:VarDecl">
+                                <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                  <leftExpr xsi:type="circus:RefExpr">
+                                    <name word="_.._"/>
+                                  </leftExpr>
+                                  <rightExpr xsi:type="circus:TupleExpr">
+                                    <exprList>
+                                      <exprs xsi:type="circus:NumExpr">
+                                        <numeral value="1"/>
+                                      </exprs>
+                                      <exprs xsi:type="circus:RefExpr">
+                                        <name word="s"/>
+                                      </exprs>
+                                    </exprList>
+                                  </rightExpr>
+                                </expr>
+                                <nameList>
+                                  <names word="i"/>
+                                </nameList>
+                              </decls>
+                            </declList>
+                            <channelSet xsi:type="circus:CircusChannelSet">
+                              <expr xsi:type="circus:BasicChannelSetExpr">
+                                <communicationList>
+                                  <communications commUsage="Normal" multiSych="0">
+                                    <channelExpr>
+                                      <name word="layerRes21"/>
+                                    </channelExpr>
+                                    <fieldList/>
+                                  </communications>
+                                </communicationList>
+                              </expr>
+                            </channelSet>
+                          </circusAction>
+                          <pred xsi:type="circus:MemPred" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="l"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:SetExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="2"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </pred>
+                        </rightAction>
+                      </leftAction>
+                      <rightAction xsi:type="circus:GuardedAction">
+                        <circusAction xsi:type="circus:ParallelActionIte">
+                          <circusAction xsi:type="circus:CallAction">
+                            <exprList>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="l"/>
+                              </exprs>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="i"/>
+                              </exprs>
+                              <exprs xsi:type="circus:RefExpr">
+                                <name word="inpSize"/>
+                              </exprs>
+                            </exprList>
+                            <name word="Node"/>
+                          </circusAction>
+                          <declList>
+                            <decls xsi:type="circus:VarDecl">
+                              <expr xsi:type="circus:ApplExpr" mixFix="true">
+                                <leftExpr xsi:type="circus:RefExpr">
+                                  <name word="_.._"/>
+                                </leftExpr>
+                                <rightExpr xsi:type="circus:TupleExpr">
+                                  <exprList>
+                                    <exprs xsi:type="circus:NumExpr">
+                                      <numeral value="1"/>
+                                    </exprs>
+                                    <exprs xsi:type="circus:RefExpr">
+                                      <name word="s"/>
+                                    </exprs>
+                                  </exprList>
+                                </rightExpr>
+                              </expr>
+                              <nameList>
+                                <names word="i"/>
+                              </nameList>
+                            </decls>
+                          </declList>
+                          <channelSet xsi:type="circus:CircusChannelSet">
+                            <expr xsi:type="circus:BasicChannelSetExpr">
+                              <communicationList>
+                                <communications commUsage="Normal" multiSych="0">
+                                  <channelExpr>
+                                    <name word="layerRes31"/>
+                                  </channelExpr>
+                                  <fieldList/>
+                                </communications>
+                              </communicationList>
+                            </expr>
+                          </channelSet>
+                        </circusAction>
+                        <pred xsi:type="circus:MemPred" mixFix="true">
+                          <leftExpr xsi:type="circus:RefExpr">
+                            <name word="l"/>
+                          </leftExpr>
+                          <rightExpr xsi:type="circus:SetExpr">
+                            <exprList>
+                              <exprs xsi:type="circus:NumExpr">
+                                <numeral value="3"/>
+                              </exprs>
+                            </exprList>
+                          </rightExpr>
+                        </pred>
+                      </rightAction>
+                    </leftAction>
+                    <rightAction xsi:type="circus:GuardedAction">
+                      <circusAction xsi:type="circus:ParallelActionIte">
+                        <circusAction xsi:type="circus:CallAction">
+                          <exprList>
+                            <exprs xsi:type="circus:RefExpr">
+                              <name word="l"/>
+                            </exprs>
+                            <exprs xsi:type="circus:RefExpr">
+                              <name word="i"/>
+                            </exprs>
+                            <exprs xsi:type="circus:RefExpr">
+                              <name word="inpSize"/>
+                            </exprs>
+                          </exprList>
+                          <name word="Node"/>
+                        </circusAction>
+                        <declList>
+                          <decls xsi:type="circus:VarDecl">
+                            <expr xsi:type="circus:ApplExpr" mixFix="true">
+                              <leftExpr xsi:type="circus:RefExpr">
+                                <name word="_.._"/>
+                              </leftExpr>
+                              <rightExpr xsi:type="circus:TupleExpr">
+                                <exprList>
+                                  <exprs xsi:type="circus:NumExpr">
+                                    <numeral value="1"/>
+                                  </exprs>
+                                  <exprs xsi:type="circus:RefExpr">
+                                    <name word="s"/>
+                                  </exprs>
+                                </exprList>
+                              </rightExpr>
+                            </expr>
+                            <nameList>
+                              <names word="i"/>
+                            </nameList>
+                          </decls>
+                        </declList>
+                        <channelSet xsi:type="circus:CircusChannelSet">
+                          <expr xsi:type="circus:BasicChannelSetExpr">
+                            <communicationList>
+                              <communications commUsage="Normal" multiSych="0">
+                                <channelExpr>
+                                  <name word="layerRes41"/>
+                                </channelExpr>
+                                <fieldList/>
+                              </communications>
+                            </communicationList>
+                          </expr>
+                        </channelSet>
+                      </circusAction>
+                      <pred xsi:type="circus:MemPred" mixFix="true">
+                        <leftExpr xsi:type="circus:RefExpr">
+                          <name word="l"/>
+                        </leftExpr>
+                        <rightExpr xsi:type="circus:SetExpr">
+                          <exprList>
+                            <exprs xsi:type="circus:NumExpr">
+                              <numeral value="4"/>
+                            </exprs>
+                          </exprList>
+                        </rightExpr>
+                      </pred>
+                    </rightAction>
+                  </leftAction>
+                  <rightAction xsi:type="circus:GuardedAction">
+                    <circusAction xsi:type="circus:ParallelActionIte">
+                      <circusAction xsi:type="circus:CallAction">
+                        <exprList>
+                          <exprs xsi:type="circus:RefExpr">
+                            <name word="l"/>
+                          </exprs>
+                          <exprs xsi:type="circus:RefExpr">
+                            <name word="i"/>
+                          </exprs>
+                          <exprs xsi:type="circus:RefExpr">
+                            <name word="inpSize"/>
+                          </exprs>
+                        </exprList>
+                        <name word="Node"/>
+                      </circusAction>
+                      <declList>
+                        <decls xsi:type="circus:VarDecl">
+                          <expr xsi:type="circus:ApplExpr" mixFix="true">
+                            <leftExpr xsi:type="circus:RefExpr">
+                              <name word="_.._"/>
+                            </leftExpr>
+                            <rightExpr xsi:type="circus:TupleExpr">
+                              <exprList>
+                                <exprs xsi:type="circus:NumExpr">
+                                  <numeral value="1"/>
+                                </exprs>
+                                <exprs xsi:type="circus:RefExpr">
+                                  <name word="s"/>
+                                </exprs>
+                              </exprList>
+                            </rightExpr>
+                          </expr>
+                          <nameList>
+                            <names word="i"/>
+                          </nameList>
+                        </decls>
+                      </declList>
+                      <channelSet xsi:type="circus:CircusChannelSet">
+                        <expr xsi:type="circus:BasicChannelSetExpr">
+                          <communicationList>
+                            <communications commUsage="Normal" multiSych="0">
+                              <channelExpr>
+                                <name word="layerRes51"/>
+                              </channelExpr>
+                              <fieldList/>
+                            </communications>
+                          </communicationList>
+                        </expr>
+                      </channelSet>
+                    </circusAction>
+                    <pred xsi:type="circus:MemPred" mixFix="true">
+                      <leftExpr xsi:type="circus:RefExpr">
+                        <name word="l"/>
+                      </leftExpr>
+                      <rightExpr xsi:type="circus:SetExpr">
+                        <exprList>
+                          <exprs xsi:type="circus:NumExpr">
+                            <numeral value="5"/>
+                          </exprs>
+                        </exprList>
+                      </rightExpr>
+                    </pred>
+                  </rightAction>
+                </circusAction>
+                <declList>
+                  <decls xsi:type="circus:VarDecl">
+                    <expr xsi:type="circus:RefExpr">
+                      <name word="int"/>
+                    </expr>
+                    <nameList>
+                      <names word="l, s, inpSize"/>
+                    </nameList>
+                  </decls>
+                </declList>
+              </circusAction>
+              <name word="HiddenLayer"/>
+            </paras>
+            <paras xsi:type="circus:ActionPara">
+              <circusAction xsi:type="circus:ParallelAction">
+                <leftAction xsi:type="circus:ParallelAction">
+                  <leftAction xsi:type="circus:ParallelAction">
+                    <leftAction xsi:type="circus:CallAction">
+                      <exprList>
+                        <exprs xsi:type="circus:NumExpr">
+                          <numeral value="1"/>
+                        </exprs>
+                        <exprs xsi:type="circus:NumExpr">
+                          <numeral value="1"/>
+                        </exprs>
+                        <exprs xsi:type="circus:NumExpr">
+                          <numeral value="2"/>
+                        </exprs>
+                      </exprList>
+                      <name word="HiddenLayer"/>
+                    </leftAction>
+                    <rightAction xsi:type="circus:CallAction">
+                      <exprList>
+                        <exprs xsi:type="circus:NumExpr">
+                          <numeral value="2"/>
+                        </exprs>
+                        <exprs xsi:type="circus:NumExpr">
+                          <numeral value="1"/>
+                        </exprs>
+                        <exprs xsi:type="circus:NumExpr">
+                          <numeral value="1"/>
+                        </exprs>
+                      </exprList>
+                      <name word="HiddenLayer"/>
+                    </rightAction>
+                    <channelSet xsi:type="circus:CircusChannelSet">
+                      <expr xsi:type="circus:BasicChannelSetExpr">
+                        <communicationList>
+                          <communications commUsage="Normal" multiSych="0">
+                            <channelExpr>
+                              <name word="layerRes11"/>
+                            </channelExpr>
+                            <fieldList/>
+                          </communications>
+                        </communicationList>
+                      </expr>
+                    </channelSet>
+                  </leftAction>
+                  <rightAction xsi:type="circus:CallAction">
+                    <exprList>
+                      <exprs xsi:type="circus:NumExpr">
+                        <numeral value="3"/>
+                      </exprs>
+                      <exprs xsi:type="circus:NumExpr">
+                        <numeral value="1"/>
+                      </exprs>
+                      <exprs xsi:type="circus:NumExpr">
+                        <numeral value="1"/>
+                      </exprs>
+                    </exprList>
+                    <name word="HiddenLayer"/>
+                  </rightAction>
+                  <channelSet xsi:type="circus:CircusChannelSet">
+                    <expr xsi:type="circus:BasicChannelSetExpr">
+                      <communicationList>
+                        <communications commUsage="Normal" multiSych="0">
+                          <channelExpr>
+                            <name word="layerRes21"/>
+                          </channelExpr>
+                          <fieldList/>
+                        </communications>
+                      </communicationList>
+                    </expr>
+                  </channelSet>
+                </leftAction>
+                <rightAction xsi:type="circus:CallAction">
+                  <exprList>
+                    <exprs xsi:type="circus:NumExpr">
+                      <numeral value="4"/>
+                    </exprs>
+                    <exprs xsi:type="circus:NumExpr">
+                      <numeral value="1"/>
+                    </exprs>
+                    <exprs xsi:type="circus:NumExpr">
+                      <numeral value="1"/>
+                    </exprs>
+                  </exprList>
+                  <name word="HiddenLayer"/>
+                </rightAction>
+                <channelSet xsi:type="circus:CircusChannelSet">
+                  <expr xsi:type="circus:BasicChannelSetExpr">
+                    <communicationList>
+                      <communications commUsage="Normal" multiSych="0">
+                        <channelExpr>
+                          <name word="layerRes31"/>
+                        </channelExpr>
+                        <fieldList/>
+                      </communications>
+                    </communicationList>
+                  </expr>
+                </channelSet>
+              </circusAction>
+              <name word="HiddenLayers"/>
+            </paras>
+            <paras xsi:type="circus:ActionPara">
+              <circusAction xsi:type="circus:ParallelActionIte">
+                <circusAction xsi:type="circus:CallAction">
+                  <exprList>
+                    <exprs xsi:type="circus:RefExpr">
+                      <name word="l"/>
+                    </exprs>
+                    <exprs xsi:type="circus:RefExpr">
+                      <name word="i"/>
+                    </exprs>
+                    <exprs xsi:type="circus:NumExpr">
+                      <numeral value="1"/>
+                    </exprs>
+                  </exprList>
+                  <name word="Node"/>
+                </circusAction>
+                <declList>
+                  <decls xsi:type="circus:VarDecl">
+                    <expr xsi:type="circus:ApplExpr" mixFix="true">
+                      <leftExpr xsi:type="circus:RefExpr">
+                        <name word="_.._"/>
+                      </leftExpr>
+                      <rightExpr xsi:type="circus:TupleExpr">
+                        <exprList>
+                          <exprs xsi:type="circus:NumExpr">
+                            <numeral value="1"/>
+                          </exprs>
+                          <exprs xsi:type="circus:NumExpr">
+                            <numeral value="1"/>
+                          </exprs>
+                        </exprList>
+                      </rightExpr>
+                    </expr>
+                    <nameList>
+                      <names word="i"/>
+                    </nameList>
+                  </decls>
+                </declList>
+                <channelSet xsi:type="circus:CircusChannelSet">
+                  <expr xsi:type="circus:BasicChannelSetExpr">
+                    <communicationList>
+                      <communications commUsage="Normal" multiSych="0">
+                        <channelExpr>
+                          <name word="layerRes41"/>
+                        </channelExpr>
+                        <fieldList/>
+                      </communications>
+                    </communicationList>
+                  </expr>
+                </channelSet>
+              </circusAction>
+              <name word="OutputLayer"/>
+            </paras>
+            <paras xsi:type="circus:ActionPara">
+              <circusAction xsi:type="circus:SeqAction">
+                <leftAction xsi:type="circus:HideAction">
+                  <circusAction xsi:type="circus:ParallelAction">
+                    <leftAction xsi:type="circus:CallAction">
+                      <name word="HiddenLayers"/>
+                    </leftAction>
+                    <rightAction xsi:type="circus:CallAction">
+                      <name word="OutputLayer"/>
+                    </rightAction>
+                    <channelSet xsi:type="circus:CircusChannelSet">
+                      <expr xsi:type="circus:BasicChannelSetExpr">
+                        <communicationList>
+                          <communications commUsage="Normal" multiSych="0">
+                            <channelExpr>
+                              <name word="layerRes41"/>
+                            </channelExpr>
+                            <fieldList/>
+                          </communications>
+                        </communicationList>
+                      </expr>
+                    </channelSet>
+                  </circusAction>
+                  <channelSet xsi:type="circus:CircusChannelSet">
+                    <expr xsi:type="circus:RefExpr">
+                      <name word="ANNHiddenEvts"/>
+                    </expr>
+                  </channelSet>
+                </leftAction>
+                <rightAction xsi:type="circus:CallAction">
+                  <name word="ANN"/>
+                </rightAction>
+              </circusAction>
+              <name word="ANN"/>
+            </paras>
+            <paras xsi:type="circus:ActionPara">
+              <circusAction xsi:type="circus:InterruptAction">
+                <leftAction xsi:type="circus:RenameAction">
+                  <circusAction xsi:type="circus:CallAction">
+                    <name word="ANN"/>
+                  </circusAction>
+                  <assignmentPairs>
+                    <lhsElement>
+                      <names word="layerRes01"/>
+                      <names word="layerRes02"/>
+                      <names word="layerRes51"/>
+                    </lhsElement>
+                    <rhsElement>
+                      <exprs xsi:type="circus:RefExpr">
+                        <name word="in0"/>
+                      </exprs>
+                      <exprs xsi:type="circus:RefExpr">
+                        <name word="in1"/>
+                      </exprs>
+                      <exprs xsi:type="circus:RefExpr">
+                        <name word="out0"/>
+                      </exprs>
+                    </rhsElement>
+                  </assignmentPairs>
+                </leftAction>
+                <rightAction xsi:type="circus:PrefixingAction">
+                  <circusAction xsi:type="circus:SkipAction"/>
+                  <communication>
+                    <channelExpr>
+                      <name word="terminate"/>
+                    </channelExpr>
+                  </communication>
+                </rightAction>
+              </circusAction>
+              <name word="ANNRenamed"/>
+            </paras>
+          </paraList>
+        </circusProcess>
+        <name word="AnglePIDANN"/>
+      </paras>
+    </paraList>
+  </sects>
+</circus:Spec>

@@ -1,0 +1,32 @@
+anncontroller test718{
+params {
+inputcontext {
+event in0: real
+event in1: real
+event in2: real
+event in3: real
+event in4: real
+event in5: real
+event in6: real
+event in7: real
+event in8: real
+event in9: real
+}
+outputcontext {
+event out0: real
+event out1: real
+event out2: real
+event out3: real
+event out4: real
+event out5: real
+event out6: real
+event out7: real
+event out8: real
+event out9: real
+}
+layerstructure <5,5,10>
+weights <<< 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0>>,<< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>>,<< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0, 1.0, 1.0, 1.0>>>
+biases << -1.0, -1.0, -1.0, -1.0, -1.0>,< -1.0, -1.0, -1.0, -1.0, -1.0>,< -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0>>
+activationfunction relu
+}
+}

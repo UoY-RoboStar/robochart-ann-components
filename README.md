@@ -20,6 +20,8 @@ The `Supporting Proofs` directory contains additional files supporting our verif
 - Files to use Marabou to prove that an ANN component (`AnglePIDANN`) conforms to a controller (`AnglePID_C`). 
 - CSPM documents that show our ANN Circus semantics are equivalent to our CSPM semantics. 
 
+The `M2MValidation` directory contains our first validation files for the Epsilon M2M translation.
+
 The `Validation` directory contains a Java implementation of our CSP semantics, written using the JCSP library. The directory `JCSP_JML_Previous_Version` contains 
 an old version of our JCSP implementation with Java Modelling Language (JML) annotations.
 

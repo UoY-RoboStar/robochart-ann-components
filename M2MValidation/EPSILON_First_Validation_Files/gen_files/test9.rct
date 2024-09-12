@@ -1,0 +1,14 @@
+anncontroller test9{
+params {
+inputcontext {
+event in0: real
+}
+outputcontext {
+event out0: real
+}
+layerstructure <1,1>
+weights <<< 0.0>>,<< 0.0>>>
+biases << -1.0>,< -1.0>>
+activationfunction relu
+}
+}

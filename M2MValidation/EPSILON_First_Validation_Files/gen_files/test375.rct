@@ -1,0 +1,16 @@
+anncontroller test375{
+params {
+inputcontext {
+event in0: real
+event in1: real
+}
+outputcontext {
+event out0: real
+event out1: real
+}
+layerstructure <5,2>
+weights <<< -1.0, -1.0>,< -1.0, -1.0>,< -1.0, -1.0>,< -1.0, -1.0>,< -1.0, -1.0>>,<< -1.0, -1.0, -1.0, -1.0, -1.0>,< -1.0, -1.0, -1.0, -1.0, -1.0>>>
+biases << 1.0, 1.0, 1.0, 1.0, 1.0>,< 1.0, 1.0>>
+activationfunction relu
+}
+}

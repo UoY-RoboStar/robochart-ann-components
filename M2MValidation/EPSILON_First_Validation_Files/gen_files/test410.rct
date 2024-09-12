@@ -1,0 +1,24 @@
+anncontroller test410{
+params {
+inputcontext {
+event in0: real
+event in1: real
+}
+outputcontext {
+event out0: real
+event out1: real
+event out2: real
+event out3: real
+event out4: real
+event out5: real
+event out6: real
+event out7: real
+event out8: real
+event out9: real
+}
+layerstructure <2,2,2,2,10>
+weights <<< 0.0, 0.0>,< 0.0, 0.0>>,<< 0.0, 0.0>,< 0.0, 0.0>>,<< 0.0, 0.0>,< 0.0, 0.0>>,<< 0.0, 0.0>,< 0.0, 0.0>>,<< 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0>>>
+biases << 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0>,< 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0>>
+activationfunction relu
+}
+}
