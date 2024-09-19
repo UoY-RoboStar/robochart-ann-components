@@ -19,23 +19,12 @@
 
 
 We just assume we have a context, then we can run the allEvents metalanguage function on this context. 
-\begin{zed}[ Context ]
-\end{zed}
-
-\begin{zed}ActivationFunction ::= RELU | LINEAR | NOTSPECIFIED
-\end{zed}
-
-
-Type synomym for ANNs. 
 \begin{zed}
-Value == \arithmos
+	[ Context ] \\
+	ActivationFunction ::= RELU | LINEAR | NOTSPECIFIED \\
+	Value == \arithmos \\
+	SeqExp ::= null\_ seq | list \ldata \seq \nat \rdata | matrix \ldata \seq \seq Value \rdata | tensor \ldata \seq \seq \seq Value \rdata
 \end{zed}
-
-Sequence of values, if 1d, then it is layerstructure, 2d or 3d, biases or layer structure. 
-\begin{zed}
-SeqExp ::= null\_ seq | list \ldata \seq \nat \rdata | matrix \ldata \seq \seq Value \rdata | tensor \ldata \seq \seq \seq Value \rdata
-\end{zed}
-
 
 \begin{schema}{ANNParameters}
 \\
@@ -47,7 +36,6 @@ SeqExp ::= null\_ seq | list \ldata \seq \nat \rdata | matrix \ldata \seq \seq V
  outputContext : Context \\
 \end{schema}
 
-To match the meta-model better. 
 \begin{schema}{ANN} 
    annparameters : ANNParameters
 \end{schema} 
@@ -110,7 +98,7 @@ NOTES:
       \circchannel \meta{layerRes(1, n)} \\%
       \meta{if(l \neq 0)} \\%
       \t1 % 
-      \meta{NodeOutChannels(l, n, \# c.annparameters.layerstructure)} \\%
+      \meta{NodeOutChannels(l, n, LStructure(c, (l - 1)))} \\%
       \meta{if (n > 1)} \\%
       \t1 %
       \begin{array}[t]{l}
@@ -225,7 +213,7 @@ NOTES:
       \meta{ @} %
       \lcircguard l = \meta{l} \land n = \meta{n} \land i = \meta{i} \rcircguard \circguard \\%
       \t1 %
-      \meta{\meta{layerRes(l,n)}?x \then \meta{nodeOut(l, n, i)}!(x * \meta{weight(c, l, n, i)}) \then \Skip  }
+      \meta{layerRes(l-1,i)}?x \then \meta{nodeOut(l, n, i)}!(x * \meta{weight(c, l, n, i)}) \then \Skip 
     \end{array}
   \end{array} \\%
   \label{rule:nodein}
