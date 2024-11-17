@@ -1,0 +1,324 @@
+--The problem with this, is that creates huge amounts of nondeterminism. 
+
+--Trying to model the possibilities of the networks decision logic, all possibilities, all branches. 
+
+--We can characterise choice by an event, and still obtain some guarantees. 
+
+--Inactivation Semantics. 
+
+
+--Normal semantics: 
+		
+--SEMANTIC CONSTANTS--
+insize = 5
+outsize = 5
+layerstructure = <5, 5> 
+layerNo = #layerstructure 
+maxSize = 5
+
+-- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --
+
+extract_sequence(1, sequence) = head(sequence)
+extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
+
+layerSize(0) = insize
+layerSize(layer) = extract_sequence(layer, layerstructure)
+
+--Extract single weights value
+extract_weights(layer, node, index) = extract_sequence(index, 
+					(extract_sequence(node, 
+						(extract_sequence(layer, weights)))))
+--Extract weights of node
+extract_weights_node(layer, node) = extract_sequence(node, 
+							(extract_sequence(layer, weights)))
+extract_biases(layer, node) = (extract_sequence(node, 
+											(extract_sequence(layer, biases))))
+											
+											
+
+--Modelling ACAS Xu network (1-1), with inactivation semantics: 
+
+--BUT JUST FIRST 5 NODES FOR EACH LAYER. RANDOMLY ASSIGNED WEIGHTS AND BIASES, DEMO network: 
+
+--Single node: 
+
+--NodeIn Behaviour: 
+
+--Output, is either active or zero. 
+-- separation of node behaviour, and weights? 
+--weights are either active or inactive, weights can never be zero. 
+--why do we need zero? Because, we can know if a weight is zero, defined by a threshold. 
+--if you have negative, then because of multiplied
+--Zero is a multiplication annihilator, negative is not, algebraic properties of arithmetic. 
+
+--Nodes output is either ACTIVE or zero. 
+--Abstraction of the nodes is either active or inactive. 
+--Weight abstraction is different, the calculation difference. 
+--Node output state, that is either active or inactive .
+--We need an intermediate calculation, for 
+--INACTIVE CORRESPONDS TO ZERO IN the INTERMEIDATE BEHAVIOUR. 
+--weight is either +, or - or 0, 
+--Model weights as either being active or inactive. 
+--zero is a helpful abstraction, 
+--weight applications, inactive and anything, is also inactive. 
+--see them as lights, each individual connection as a light, no zero.
+--Zero can be assumed, an inactive, negative, connected, with an inactive node
+--Always inactive, which means, FOR A WEIGHT APPLICATION, ALWAYS 0. 
+--Then the bias, if its active or not, will determine the result. 
+--THe only negativity will come from the ACTIVE AND THEN INACTIVE, THAT WILL BE, NEGATIVE. 
+--But not zero, we need something else. IF THAT IS INACTIVE, WE DON'T KNOW THE STRENGTH OF NEGATIVITY. 
+--So for a weight to be inactive, means to some degree negative, it is useful to know if it is negative ,
+--Or zero, because if its all zero, we can find out DEIFNITELY, THEN THE BIAS ENTIRELY DETERMINES IF TIS ACTIVE
+--OR NOT. 
+
+datatype Phases = active | inactive
+
+--This is the same as node result, adding the zero, it can communicate zero, because its useful algebraically.
+--For its properties.
+
+--where do we transmit zero? 
+
+--Inactive, at the level of weight applications, nodein. 
+
+--INACTIVE ALWAYS MEANS ZERO THERE, IT DOESN'T, it either means zero or negative. 
+
+--What you output, 
+
+--It doesn't always mean zero, 
+
+datatype Intermediate = pos | neg | zero
+
+--node values? Node communications, it is the OUTPUT OF EVERY NODE. Network, its the network result. 
+--Its the state of the nodes, phase of the nodes: 
+--MaxSize, still need it, output layer still useful. 
+--Input, WE DON'T HAVE AN INPUT LAYER FOR NOW. 
+channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
+
+--This is the intermediate channel, weight concatenation channel, 
+channel EdgePhase:{1..layerNo}.{1..maxSize}.{1..maxSize}.Intermediate
+
+channel end 
+
+--Model a single NodeIn, 
+
+--Rename, to Edges? Node edges, this models a single edge, in the graph. 
+--Graph theory, but automated, events, automated machines, 
+
+--extract_weights(layer, node, index)
+
+--Call it weight. 
+--Weights are etiher ACTIVE OR INACTIVE. 
+
+--weights, biases, are both active or inactive, triple nested seuqences. 
+weights = 
+	<
+		< 
+			<active,inactive,inactive,active,active>,
+			<inactive,active,inactive,active,inactive>,
+			<active,active,active,inactive,active>,
+			<inactive,inactive,inactive,active,inactive>,
+			<inactive,active,active,active,inactive>
+		>,
+
+		<
+			<inactive,active,inactive,active,active>,
+			<active,active,inactive,active,inactive>,
+			<inactive,inactive,active,active,inactive>,
+			<inactive,active,active,inactive,active>,
+			<inactive,active,inactive,active,inactive>
+		> 
+	>
+
+	
+
+
+biases = 
+	< 
+		<active,inactive,active,inactive,inactive>,
+		<inactive,active,inactive,inactive,inactive>
+	>
+
+--For a weight, ACTIVE MEANS POSITIVE, > 0 STRICTLY. 
+--INACTIVE MEANS <= 0, STRICTLY NEGATIVE. 
+--Need to do logic, function? it can be a function of the input phase, and the weight. 
+
+--function that evaluates to boolean. 
+--Edge Calculation 
+
+--For ReLU, means its 0, if its inactive, multiplication destructor, so always 0. 
+--For others, if the threshold is still lower, we can have an activation threshold, be harder but still possible. 
+
+--Then we treat 
+EdgeLogic(input_phase, weight) = 
+	if (input_phase == active) 
+		then 
+			if(weight == active) 
+				then 
+					pos 
+				else 
+					neg 
+		else 
+			zero
+
+--If its over any weight?
+
+--DONE, 
+NodeEdge(layer, node, index) = 
+	NodePhase.(layer - 1).index?phase ->
+	
+	EdgePhase.layer.node.index!(EdgeLogic(phase, extract_weights(layer, node, index))) -> 
+	
+	SKIP
+
+--Now, for the Collator, much more complex. 
+
+--We need to build a set of all EdgeResults. That is the sum: 
+--Sum is collection of weighted inputs. 
+--Activation function is also different., 
+--what information? Just the edge results and bias: 
+--This has to return ACTIVE or INACTIVE. 
+--Function, no, its not a function, THIS NEEDS TO BE A PROCESS, COULD HAVE NONDETERMINISTIC BEHAVIOUR. 
+
+--Returns if a node is active, if it MUST BE ACTIVE. 
+--ActivationLogic, if EVERYTHING is edge_results in positive, and bias is positive, 
+--HAS TO BE POSITIVE. 
+--Check all in the set, set comprehension. Edge_results are zero. 
+--If everything is either zero or positive, and bias is positive, 
+--If neg is a member, 
+--If neg is NOT A MEMBER, and bias is positive, must be positive. 
+--Complement of their behaviours, 
+--Bias is inactive, it cannot be the case, we can't guarantee that tis active. 
+
+ActivationLogic(edge_results, bias) = 
+	(not ( member(neg, edge_results) ) and (bias == active)) 
+	
+--Returns if a node is inactive, IF IT HAS TO BE INACTIVE. 
+--If everything is zero or negative, and negative, then must be negative. 
+--If all are zero, the bias just determines it, exactly. 
+--We do have base cases, then others, we have to determine later. 
+--Member, if bias is inactive, we can never guarantee. If everything is zero, 
+--even if everything is positive, bias could make it negative. 
+--We need logic about this, but for now, these are the base cases. 
+InactivationLogic(edge_results, bias) = 
+	(not ( member(pos, edge_results) ) and (bias == inactive))
+	
+
+--If both are false, then behave nondeterministically. 
+--Function, we can 
+--Edge Phase collator, 
+--If either of them are true, 
+--If strictly both of them are false, introduces nondeterminism. If we cannot guarantee either phase.
+ 
+--Might need to be a sequence, when we add more constraints, because WE NEED THE ORDER, PREDICATES OVER
+--THE ORDER BASED ON THE THRESHOLDING, so we do need order, but for the basic checks, we don't need order. 
+
+
+EdgeCollator(layer, node, index) = let
+	C(layer, node, 0, edge_results) = 
+		(ActivationLogic(edge_results, extract_biases(layer, node)) & 
+			NodePhase.layer.node!active -> SKIP)
+		[] 
+		(InactivationLogic(edge_results, extract_biases(layer, node)) &
+			NodePhase.layer.node!inactive -> SKIP) 
+			
+		[] 
+		(not(ActivationLogic(edge_results, extract_biases(layer, node))) and not(InactivationLogic(edge_results, extract_biases(layer, node))) & 
+			( 
+			(NodePhase.layer.node!active -> SKIP) 
+			|~|
+			(NodePhase.layer.node!inactive -> SKIP)
+			)
+		)
+	
+	C(layer, node, index, edge_results) = EdgePhase.layer.node.index?edge_phase -> 
+										C(layer, node, (index-1), union(edge_results, {edge_phase}))
+	within 
+		C(layer, node, index, {})
+
+
+Node(layer, node, inputSize) = 
+	(||| i:{1..inputSize} @ NodeEdge(layer, node, i)) 
+		[| {| EdgePhase.layer.node |} |]
+	EdgeCollator(layer, node, inputSize) \ {| EdgePhase |} 
+	
+
+HiddenLayer(layer, size, inputSize) = 
+	[| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
+
+HiddenLayers = 
+	|| i : {1..(layerNo-1)} @
+		[ {| NodePhase.(i-1), NodePhase.i |} ] 
+		HiddenLayer(i, layerSize(i), layerSize(i-1))  
+
+OutputLayer = [| {| NodePhase.(layerNo-1) |} |] 
+			i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1))
+
+
+ANNHiddenEvts = diff(Events, {| NodePhase.0, NodePhase.layerNo, end |})
+
+ANN = ((HiddenLayers [| {| NodePhase.(layerNo-1) |} |] OutputLayer) \ ANNHiddenEvts) ; ANN 
+
+
+--We need a VISIBLE EVENTS VERSION. 
+
+ANN_Visible = ((HiddenLayers [| {| NodePhase.(layerNo-1) |} |] OutputLayer)) ; ANN 
+
+
+--Assert, if any have to be active, or inactive, check, repetitively, if every node is deterministic? 
+--If any node is not deterministic, no, because you need behaviours, 
+
+--You could do, under any input, 
+
+--Need is ANN_Visible, this has all nodes not hidden, so hide one, check if it can do it. 
+--channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
+--Specification, is ANN_Visible, if it can be implemented by, refined by
+--If the specification can nondeterministically choose to do the event
+--Reduce , then the implementation must as well. 
+
+channel a, b, c
+
+assert (a -> SKIP |~| b -> SKIP) [T= (a -> SKIP) 
+
+assert (a -> SKIP) [T= (a -> SKIP |~| b -> SKIP)
+
+assert ((a -> SKIP |~| b -> SKIP) \ { b }) [T= (b -> SKIP)
+
+--This is what we do, we remove b from specification, 
+
+--Different nodes, are captured by nonderminsitic behaviour. 
+
+--If we are correct, and one NODE IS FIXED, then if we hide the event, 
+--Then that WILL BE A SPECIFICATION, for OUR NORMAL PROCESS, if not, if IT HAS THE NONDERMINISTIC BEHAVIOUR. 
+
+--IT WILL NOT.  
+
+--CHECKING FOR DEAD NODES, REMOVE THE *ACTIVE* EVENT, FROM THE ANN, SEE IF THAT IS A SPECIFICATION 
+--SEE IF ANN_VISIBLE IS A REFINEMENT OF THAT PROCESS, IF IT IS: 
+--Then we have found a dead node. 
+--If it is NOT: Then the node can be active. 
+
+--HIDING ACTIVE, SO CHECKING FOR DEAD BEHAVIOR. 
+assert ANN_Visible \ { NodePhase.1.1.active } [T= ANN_Visible 
+
+--Have, set up a situation where it must be dead, and go and check that. 
+--we need to reduce the nondeterminism, 
+
+--Check every node, 
+
+
+
+
+--Make a single node, with weights as a list, perhaps? Or a function, for now. 
+--
+assert EdgeCollator(2, 1, 1):[deterministic[FD]]
+
+
+--Model first layer of ACas Xu, then collate the second layer. 
+--They all have 5 inputs, dimension 5. 
+
+--Imagine, just the first layer, first layer aligned, just the first 5 nodes. 
+--Then make another symmetric layer with next 5 nodes, check activation logic. 
+
+--If we want the activation logic of the hidden layers, under any input. 
+--Allow it to be, put nothing on it, no assumptions, its either active or inactive, 
+
