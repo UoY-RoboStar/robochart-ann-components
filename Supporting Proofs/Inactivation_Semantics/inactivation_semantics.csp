@@ -1,0 +1,535 @@
+--We want to find out WHAT ONE DECISION, WHEN A NETWORK CANNOT CHOOSE ONE DECISION, EVER. CANNOT CHOOSE IT IF THE NODE IS INACTIVE, and at least one other output node is active. 
+
+--if the events, occur, output layer, inactive, then any other one active, or uncertain, then can't choose that one. 
+
+--care about WHEN A NODE IS INACTIVE. focus on just the logic, 
+
+--We will have all the traces, with a lot of uncertains, we need to reduce this, with an intermediate layer, perhaps? Conflict analysis? 
+
+--separate analysis, add nondeterminism AT THE END OF EVERY LAYER, WE DON'T PROPAGATE THE NONDETERMINISM, we still add it, but only at the end of every layer, if we have uncertains. 
+
+--Because, reality is, they have to be one or the other, and the weighted, the edge logic cant say much about uncertain, but its not propagated, 
+
+--EDGE LOGIC DOESN'T HAVE TO DEAL WITH uncertain, because the node output, for an edge, must always be active or inactive, we can reason better with that. 
+
+--Then the uncertains, only intermediate, external choice, not nondeterminism, easier to reason about, needs to feed the inputs, uncertain of them. 
+
+--We can, and already have done, the logic for dead nodes, 
+
+--We need to guarantee, the patterns for a single output node, 
+
+--Backwards, is literally just reversing all the sequences, and swapping the insize and outsize. 
+
+--For a fixed output.
+
+--Idea, flip it backwards, TAKE A SINGLE NODE IN OUTPUT LAYER. 
+
+--Backactivation logic. 
+
+--Then, try to prove that .inactive, that IT IS FORCED TO BE .INACTIVE. 
+
+--Backwards, we want to use the same, just flipped. How to flip sequences? 
+
+
+--This LOGIC WORKS FOR SIGMOID, ANYTHING WITH A RANGE 0, 1, 
+
+--Then if you have an inactive WEIGHT, then the EDGE MUST ALWAYS BE INACTIVE, no matter the value. 
+
+--The edge logic still works.
+
+--Formalise dependencies, to activate, if it only has 3 active connections, then it needs at least one of those to activate. 
+
+--If it gets none, 
+
+--For a negative node, with NEGATIVE BIAS, then it needs at least one positive weighted connection to activate. Reliance, that is the node dependencies. Carry that in a separate channel ?
+
+--Requires at least, one or more, of those nodes to activate. MINIMAL ACTIVATION SEMANTICS. What is the LOWER BOUND, the lowest thing you would need, theoretically, to activate. 
+
+--need at least one 
+
+--If met that, MINIMAL ACTIVATION, if haven't met that, impossible, but we already have the impossible ones. 
+
+
+--it evaluates the branches, one at a time, if we have it as nondeterministic choice, equivalent in this case. In terms of trace semantics, they are equivalent. 
+
+--Process itself, is the combination of all, traces and refusals, the semantics do have all behaviour. 
+
+--Want to do, want to find out, to further be able to restrict, to be able to force nodes, abstract way, 
+
+--Find out, when an output node is forced to be negative, when 
+
+--The final decision, is 
+
+--We want to FIND OUT WHAT THE FINAL DECISION CANNOT BE. 
+
+--FOR ONE SAFETY CRITICAL DECISION. 
+
+--Focus on ONE NODE, ONE OUTPUT NODE, rest, we ignore, 
+
+--
+
+--Have that information, in a channel. 
+
+--Reduce the dependencies, when? Have a dependency resolver. L1 is reliant on this set of nodes to activate. L2 is reliant on this. Not all patterns can be true at once, 
+
+--
+
+--Only have reliances, if it is possible, 
+
+
+--How to find the inactive nodes automatically? 
+
+--Make a chain of these, automatically. Then resolve them. 
+
+--DOESN'T WORK FOR TANH, range -1, 1
+
+
+--Normal semantics: 
+		
+--SEMANTIC CONSTANTS--
+insize = 5
+outsize = 5
+layerstructure = <5, 5> 
+layerNo = #layerstructure 
+maxSize = 5
+
+-- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --
+
+extract_sequence(1, sequence) = head(sequence)
+extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
+
+layerSize(0) = insize
+layerSize(layer) = extract_sequence(layer, layerstructure)
+
+--Extract single weights value
+extract_weights(layer, node, index) = extract_sequence(index, 
+					(extract_sequence(node, 
+						(extract_sequence(layer, weights)))))
+--Extract weights of node
+extract_weights_node(layer, node) = extract_sequence(node, 
+							(extract_sequence(layer, weights)))
+extract_biases(layer, node) = (extract_sequence(node, 
+											(extract_sequence(layer, biases))))
+											
+											
+
+--Modelling ACAS Xu network (1-1), with inactivation semantics: 
+
+--BUT JUST FIRST 5 NODES FOR EACH LAYER. RANDOMLY ASSIGNED WEIGHTS AND BIASES, DEMO network: 
+
+--Single node: 
+
+--NodeIn Behaviour: 
+
+--Output, is uncertain active or zero. 
+-- separation of node behaviour, and weights? 
+--weights are uncertain active or inactive, weights can never be zero. 
+--why do we need zero? Because, we can know if a weight is zero, defined by a threshold. 
+--if you have negative, then because of multiplied
+--Zero is a multiplication annihilator, negative is not, algebraic properties of arithmetic. 
+
+--Nodes output is uncertain ACTIVE or zero. 
+--Abstraction of the nodes is uncertain active or inactive. 
+--Weight abstraction is different, the calculation difference. 
+--Node output state, that is uncertain active or inactive .
+--We need an intermediate calculation, for 
+--INACTIVE CORRESPONDS TO ZERO IN the INTERMEIDATE BEHAVIOUR. 
+--weight is uncertain +, or - or 0, 
+--Model weights as uncertain being active or inactive. 
+--zero is a helpful abstraction, 
+--weight applications, inactive and anything, is also inactive. 
+--see them as lights, each individual connection as a light, no zero.
+--Zero can be assumed, an inactive, negative, connected, with an inactive node
+--Always inactive, which means, FOR A WEIGHT APPLICATION, ALWAYS 0. 
+--Then the bias, if its active or not, will determine the result. 
+--THe only negativity will come from the ACTIVE AND THEN INACTIVE, THAT WILL BE, NEGATIVE. 
+--But not zero, we need something else. IF THAT IS INACTIVE, WE DON'T KNOW THE STRENGTH OF NEGATIVITY. 
+--So for a weight to be inactive, means to some degree negative, it is useful to know if it is negative ,
+--Or zero, because if its all zero, we can find out DEIFNITELY, THEN THE BIAS ENTIRELY DETERMINES IF TIS ACTIVE
+--OR NOT. 
+
+datatype Phases = active | inactive | uncertain
+
+--This is the same as node result, adding the zero, it can communicate zero, because its useful algebraically.
+--For its properties.
+
+--where do we transmit zero? 
+
+--Inactive, at the level of weight applications, nodein. 
+
+--INACTIVE ALWAYS MEANS ZERO THERE, IT DOESN'T, it uncertain means zero or negative. 
+
+--What you output, 
+
+--It doesn't always mean zero, 
+
+--datatype Intermediate = pos | neg | zero
+
+--node values? Node communications, it is the OUTPUT OF EVERY NODE. Network, its the network result. 
+--Its the state of the nodes, phase of the nodes: 
+--MaxSize, still need it, output layer still useful. 
+--Input, WE DON'T HAVE AN INPUT LAYER FOR NOW. 
+channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
+
+--This is the intermediate channel, weight concatenation channel, 
+channel EdgePhase:{1..layerNo}.{1..maxSize}.{1..maxSize}.Phases
+
+channel end 
+
+--Model a single NodeIn, 
+
+--Rename, to Edges? Node edges, this models a single edge, in the graph. 
+--Graph theory, but automated, events, automated machines, 
+
+--extract_weights(layer, node, index)
+
+--Call it weight. 
+--Weights are etiher ACTIVE OR INACTIVE. 
+
+--weights, biases, are both active or inactive, triple nested seuqences. 
+
+
+weights = 
+	<
+		< 
+			<active,inactive,inactive,active,active>,
+			<inactive,active,inactive,active,inactive>,
+			<active,active,active,inactive,active>,
+			<inactive,inactive,inactive,active,inactive>,
+			<inactive,active,active,active,inactive>
+		>,
+
+		<
+			<inactive,active,inactive,active,active>,
+			<active,active,inactive,active,inactive>,
+			<inactive,inactive,active,active,inactive>,
+			<inactive,active,active,inactive,active>,
+			<inactive,active,inactive,active,inactive>
+		> 
+	>
+
+	
+
+
+biases = 
+	< 
+		<active,inactive,active,inactive,inactive>,
+		<inactive,active,inactive,inactive,inactive>
+	>
+
+--For a weight, ACTIVE MEANS POSITIVE, > 0 STRICTLY. 
+--INACTIVE MEANS <= 0, STRICTLY NEGATIVE. 
+--Need to do logic, function? it can be a function of the input phase, and the weight. 
+
+--function that evaluates to boolean. 
+--Edge Calculation 
+
+--For ReLU, means its 0, if its inactive, multiplication destructor, so always 0. 
+--For others, if the threshold is still lower, we can have an activation threshold, be harder but still possible. 
+
+--Then we treat 
+
+--How does this need to change? For a single node, for an edge, we need to model, what it can't do. 
+
+--Zero still useful? What can't you do, with zero, rather than inactive. If you have all inputs are zero, just based on bias. 
+
+--Try removing zero? 
+
+--EdgeLogic has to be backwards, if input_phase is active, 
+--We do need to ADD ANOTHER PHASE, which is uncertain. 
+--uncertain and active means: NONDETERMINISM, COULD BE ACTIVE OR INACTIVE, we have another uncertain, here. 
+
+--Under ReLU, inactive, negative weight, means that no matter what the result, it can't be active, must be an inactive weight. 
+--Must be less than 0, at least. 
+--uncertain and inactive means: CAN'T BE ACTIVE, CAN'T BE ACTIVE. 0 or +, * -, is always uncertain 0 or less than one. Because it can't be negative, MODEL AS ACTIVE. 
+
+--Inactivation semantics, what if we do have that it can't be active: 
+--whole thing, is backwards, 
+
+--If we get active, the set of things it can't do, is now active. 
+
+--Active and Active: MODEL AS ACTIVE, and the weight is active, > 0, if it can't be active, otherwise we are NEGATING OUR OWN SEMANTICS, WE MUST PROPAGATE THIS inactivity. 
+
+--Active and Inactive: model as inactive, MUST BE INACTIVE. In ReLU semantics. 
+
+--Inactive and Active: must be inactive.
+
+--Inactive still must be inactive all the time. 
+
+--uncertain and Inactive: must be inactive, why make it backwards? just represent nondeterminism via an event, 
+--resolve that nondeterminism, 
+--No because the conditions under which they become inactive much easier I think to quantify, add that later. 
+
+ 
+
+--We only PROPAGATE THE INACTIVITY, if we have uncertainty, otherwise, we propagate 
+--Inactivation semantics tells us that a node must be active, then we keep going. 
+
+--We keep propagating this, INACTIVATION COMES FROM 
+
+--We want it to tell us, 
+
+
+
+--Modelling things that it can't do. 
+
+--This HOLDS FOR ACTIVATION FUNCTIONS that have a minimum at 0, the uncertainty reduction. 
+EdgeLogic(input_phase, weight) = 
+	if (input_phase == active) 
+		then 
+			if(weight == active) 
+				then 
+					active 
+				else 
+					inactive
+		else 
+			if(input_phase == inactive) 
+				then 
+					inactive 
+				else 
+					if(input_phase == uncertain) 
+						then 
+							if(weight == inactive) 
+								then 
+									inactive 
+								else 
+									inactive
+						else 
+							inactive
+							
+									
+					
+					
+
+--If its over any weight?
+
+--DONE, 
+NodeEdge(layer, node, index) = 
+	NodePhase.(layer - 1).index?phase ->
+	
+	EdgePhase.layer.node.index!(EdgeLogic(phase, extract_weights(layer, node, index))) -> 
+	
+	SKIP
+
+--Now, for the Collator, much more complex. 
+
+--We need to build a set of all EdgeResults. That is the sum: 
+--Sum is collection of weighted inputs. 
+--Activation function is also different., 
+--what information? Just the edge results and bias: 
+--This has to return ACTIVE or INACTIVE. 
+--Function, no, its not a function, THIS NEEDS TO BE A PROCESS, COULD HAVE NONDETERMINISTIC BEHAVIOUR. 
+
+--Returns if a node is active, if it MUST BE ACTIVE. 
+--ActivationLogic, if EVERYTHING is edge_results in positive, and bias is positive, 
+--HAS TO BE POSITIVE. 
+--Check all in the set, set comprehension. Edge_results are zero. 
+--If everything is uncertain zero or positive, and bias is positive, 
+--If neg is a member, 
+--If neg is NOT A MEMBER, and bias is positive, must be positive. 
+--Complement of their behaviours, 
+--Bias is inactive, it cannot be the case, we can't guarantee that tis active. 
+
+--Active if none are inactive, if uncertain, we can't say a lot, if any is uncertain, because now this represents, could be any number. 
+
+
+--Assumption, edge results can NEVER BE uncertain, so we can reduce these. 
+
+--Dependencies, of each, we can calculate, must have at least one of, even if we can't guarantee it, we can show that certain combinations, 
+ActivationLogic(edge_results, bias) = 
+	(not ( member(inactive, edge_results) ) and (bias == active)) 
+	
+--Returns if a node is inactive, IF IT HAS TO BE INACTIVE. 
+--If everything is zero or negative, and negative, then must be negative. 
+--If all are zero, the bias just determines it, exactly. 
+--We do have base cases, then others, we have to determine later. 
+--Member, if bias is inactive, we can never guarantee. If everything is zero, 
+--even if everything is positive, bias could make it negative. 
+--We need logic about this, but for now, these are the base cases. 
+InactivationLogic(edge_results, bias) = 
+	(not ( member(active, edge_results) ) and (bias == inactive))
+	
+
+--If both are false, then behave nondeterministically. 
+--Function, we can 
+--Edge Phase collator, 
+--If uncertain of them are true, 
+--If strictly both of them are false, introduces nondeterminism. If we cannot guarantee uncertain phase.
+ 
+--Might need to be a sequence, when we add more constraints, because WE NEED THE ORDER, PREDICATES OVER
+--THE ORDER BASED ON THE THRESHOLDING, so we do need order, but for the basic checks, we don't need order. 
+
+
+EdgeCollator(layer, node, index) = let
+	C(layer, node, 0, edge_results) = 
+		(ActivationLogic(edge_results, extract_biases(layer, node)) & 
+			NodePhase.layer.node!active -> SKIP)
+		[] 
+		(InactivationLogic(edge_results, extract_biases(layer, node)) &
+			NodePhase.layer.node!inactive -> SKIP) 
+			
+		[] 
+		(not(ActivationLogic(edge_results, extract_biases(layer, node))) and not(InactivationLogic(edge_results, extract_biases(layer, node))) & 
+			( 
+			(NodePhase.layer.node!uncertain -> SKIP) 
+			)
+		)
+	
+	C(layer, node, index, edge_results) = EdgePhase.layer.node.index?edge_phase -> 
+										C(layer, node, (index-1), union(edge_results, {edge_phase}))
+	within 
+		C(layer, node, index, {})
+
+
+Node(layer, node, inputSize) = 
+	(||| i:{1..inputSize} @ NodeEdge(layer, node, i)) 
+		[| {| EdgePhase.layer.node |} |]
+	EdgeCollator(layer, node, inputSize) \ {| EdgePhase |} 
+	
+
+HiddenLayer(layer, size, inputSize) = 
+	[| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
+
+HiddenLayers = 
+	|| i : {1..(layerNo-1)} @
+		[ {| NodePhase.(i-1), NodePhase.i |} ] 
+		HiddenLayer(i, layerSize(i), layerSize(i-1))  
+
+OutputLayer = [| {| NodePhase.(layerNo-1) |} |] 
+			i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1))
+
+
+ANNHiddenEvts = diff(Events, {| NodePhase.0, NodePhase.layerNo, end |})
+
+--Just need this to, external choice, uncertain
+--Replicated sequential composition, or just iterated 
+InputLayer = (||| i : {1..insize} @ ( (NodePhase.0.i.active -> SKIP) [] (NodePhase.0.i.inactive -> SKIP) ) )
+
+
+--Can't put uncertain, because assuming it is a number, not a nondeterminism. 
+
+ANN = (( ( InputLayer [| {| NodePhase.0 |} |] HiddenLayers ) [| {| NodePhase.(layerNo-1) |} |] OutputLayer) \ ANNHiddenEvts) ; ANN 
+
+--Check the output nodes, perhaps? 
+
+--Try to check output nodes, know that this is true, 
+--This terminated, this IS TRACTABLE FOR A 2 LAYER, 10 NODE NETWORK ON A NORMAL COMPUTER, ON A REGULAR PC, NOT A SERVER. 
+--Can't rely on it to be active, but it could, we want really, are there any nodes that we have fixed, that must be true, or false? 
+assert ANN \ {NodePhase.2.1.active } [T= ANN
+
+
+--We need a VISIBLE EVENTS VERSION. 
+
+ANN_Visible = (( ( InputLayer [| {| NodePhase.0 |} |] HiddenLayers ) [| {| NodePhase.(layerNo-1) |} |] OutputLayer)) ; ANN 
+
+
+--Assert, if any have to be active, or inactive, check, repetitively, if every node is deterministic? 
+--If any node is not deterministic, no, because you need behaviours, 
+
+--You could do, under any input, 
+
+--Need is ANN_Visible, this has all nodes not hidden, so hide one, check if it can do it. 
+--channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
+--Specification, is ANN_Visible, if it can be implemented by, refined by
+--If the specification can nondeterministically choose to do the event
+--Reduce , then the implementation must as well. 
+
+channel a, b, c
+
+assert (a -> SKIP |~| b -> SKIP) [T= (a -> SKIP) 
+
+assert (a -> SKIP) [T= (a -> SKIP |~| b -> SKIP)
+
+assert ((a -> SKIP |~| b -> SKIP) \ { b }) [T= (b -> SKIP)
+
+--This is what we do, we remove b from specification, 
+
+--Different nodes, are captured by nonderminsitic behaviour. 
+
+--If we are correct, and one NODE IS FIXED, then if we hide the event, 
+--Then that WILL BE A SPECIFICATION, for OUR NORMAL PROCESS, if not, if IT HAS THE NONDERMINISTIC BEHAVIOUR. 
+
+--IT WILL NOT.  
+
+--CHECKING FOR DEAD NODES, REMOVE THE *ACTIVE* EVENT, FROM THE ANN, SEE IF THAT IS A SPECIFICATION 
+--SEE IF ANN_VISIBLE IS A REFINEMENT OF THAT PROCESS, IF IT IS: 
+--Then we have found a dead node. 
+--If it is NOT: Then the node can be active. 
+
+--HIDING ACTIVE, SO CHECKING FOR DEAD BEHAVIOR. 
+assert ANN_Visible \ { NodePhase.1.1.active } [T= ANN_Visible 
+
+--HOW CAN WE ASSERT AGAIST, ONE, A PARTICULAR OUTPUT NODE being inactive. 
+
+--What trace do we want? Non-Deadlock? We could model deadlock as an impossibility of reaching 
+
+--Assume that it must be the case, start backwards, must be able to find a path, find a network configuration 
+--that holds, that is valid, if the last one must be inactive. 
+
+--Must be UNABLE TO FIND A TRACE
+
+--If you can find a trace that reaches .active, or .uncertain, then its deadlock. 
+
+--Remove other nodes in output layer, if we can find a trace 
+--PASSES IF THE PROCESS IS DEADLOCK-FREE, encode deadlock as failure, 
+
+--patterns, if it can find a pattern, 
+
+--Then, we can add more constriants, about the last node, back to the weights, we can try to add 
+
+--thresholding, to help. 
+
+--Prove properties of system, under certain constraints, if dpeends on other activations, on other components. 
+
+
+
+--Encode as deadlock, 
+--Have, set up a situation where it must be dead, and go and check that. 
+--we need to reduce the nondeterminism, 
+
+--Check every node, 
+
+--IT CAN NEVER BE GUARANTEED TO BE ACTIVE, can be uncertain, or guaranteed inactive, NEVER GUARANTEED 
+--to be active. 
+
+assert (HiddenLayer(1,5,5) [| {| NodePhase.1 |} |] Node(2,1,5)) \ {NodePhase.2.1.active } [T=
+		(HiddenLayer(1,5,5) [| {| NodePhase.1 |} |] Node(2,1,5))
+
+assert (HiddenLayer(1,5,5) [| {| NodePhase.1 |} |] Node(2,1,5)) \ {NodePhase.2.1.inactive } [T=
+		(HiddenLayer(1,5,5) [| {| NodePhase.1 |} |] Node(2,1,5))
+
+assert (HiddenLayer(1,5,5) [| {| NodePhase.1 |} |] Node(2,1,5)) \ {NodePhase.2.1.uncertain } [T=
+		(HiddenLayer(1,5,5) [| {| NodePhase.1 |} |] Node(2,1,5))
+
+--With uncertain, do the node checking. 
+
+--At the beginning, we need an input layer, that fixes to just active or inactive, represents any number. 
+
+
+--Node, but under all input assumptions, under the first layers behaviour. 
+
+--Not sequential, its parallel, 
+--Check automatically, each nodes phase? This is not in the network uncertain, 
+
+--Can we decompose the network, find out from the layer, 
+
+--Can be guaranteed to be active, or uncertain. 
+
+--Can never be guaranteed to be negative, 
+
+
+
+--Make a single node, with weights as a list, perhaps? Or a function, for now. 
+--
+assert EdgeCollator(2, 1, 1):[deterministic[FD]]
+
+
+--Model first layer of ACas Xu, then collate the second layer. 
+--They all have 5 inputs, dimension 5. 
+
+--Imagine, just the first layer, first layer aligned, just the first 5 nodes. 
+--Then make another symmetric layer with next 5 nodes, check activation logic. 
+
+--If we want the activation logic of the hidden layers, under any input. 
+--Allow it to be, put nothing on it, no assumptions, its uncertain active or inactive, 
+
