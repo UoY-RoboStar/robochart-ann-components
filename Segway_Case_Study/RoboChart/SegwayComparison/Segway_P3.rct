@@ -1,0 +1,50 @@
+diagram Segway_P3
+
+module Segway_P3 {
+	controller SegwayController {
+		uses HallSensorsI uses IMUI uses AnglePIDVars_S requires MotorsI requires InterruptsI
+		
+	sref stm_ref0 = BalanceSTM_P2
+		connection SegwayController on leftMotorVelocity to stm_ref0 on leftMotorVelocity
+		connection SegwayController on rightMotorVelocity to stm_ref0 on rightMotorVelocity
+		connection SegwayController on angle to stm_ref0 on angle
+		connection SegwayController on gyroX to stm_ref0 on gyroX
+		connection SegwayController on gyroY to stm_ref0 on gyroY
+		connection SegwayController on gyroZ to stm_ref0 on gyroZ
+		connection stm_ref0 on anewError to SegwayController on anewError
+		connection stm_ref0 on adiff to SegwayController on adiff
+		connection SegwayController on angleOutputE to stm_ref0 on angleOutputE
+
+		
+	sref stm_ref2 = SpeedPID_S
+		connection stm_ref2 on speedOutputE to stm_ref0 on speedOutputE
+		connection stm_ref0 on snewError to stm_ref2 on snewError
+	sref stm_ref3 = RotationPID_S
+		connection stm_ref3 on rotationOutputE to stm_ref0 on rotationOutputE
+		connection stm_ref0 on rdiff to stm_ref3 on rdiff
+	}
+	
+	controller AnglePID_C {
+		uses AnglePIDVars_S
+		
+		sref stm_ref0 = AnglePID_S
+		  connection stm_ref0 on angleOutputE to AnglePID_C on angleOutputE
+		  connection AnglePID_C on anewError to stm_ref0 on anewError
+		  connection AnglePID_C on adiff to stm_ref0 on adiff
+	}
+	
+	
+	
+	connection rp_ref0 on angle to SegwayController on angle ( _async )
+	connection rp_ref0 on gyroX to SegwayController on gyroX ( _async )
+	connection rp_ref0 on gyroY to SegwayController on gyroY ( _async )
+	connection rp_ref0 on gyroZ to SegwayController on gyroZ ( _async )
+	connection rp_ref0 on leftMotorVelocity to SegwayController on leftMotorVelocity ( _async )
+	connection rp_ref0 on rightMotorVelocity to SegwayController on rightMotorVelocity ( _async )
+	connection SegwayController on anewError to AnglePID_C on anewError 
+	connection SegwayController on adiff to AnglePID_C on adiff 
+	connection AnglePID_C on angleOutputE to SegwayController on angleOutputE 
+	
+	rref rp_ref0 = SegwayRP
+	}
+

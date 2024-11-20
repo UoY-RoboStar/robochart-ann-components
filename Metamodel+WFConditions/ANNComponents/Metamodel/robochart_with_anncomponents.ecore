@@ -14,12 +14,6 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RCPackage" eSuperTypes="#//BasicPackage">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="interfaces" ordered="false"
-        upperBound="-1" eType="#//Interface" containment="true">
-      <eAnnotations source="http://www.eclipse.org/OCL/Collection">
-        <details key="nullFree" value="false"/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="robots" ordered="false"
         upperBound="-1" eType="#//RoboticPlatformDef" containment="true">
       <eAnnotations source="http://www.eclipse.org/OCL/Collection">
@@ -180,14 +174,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="modifier" lowerBound="1"
         eType="#//VariableModifier" volatile="true" transient="true" derived="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Event" eSuperTypes="#//NamedElement">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Events"/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="broadcast" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//TypedNamedElement #//NamedExpression">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Functions"/>
@@ -247,11 +233,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="OperationRef" eSuperTypes="#//Operation #//Reference">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1" eType="#//GeneralOperation"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Interface" eSuperTypes="#//NamedElement #//BasicContext">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Interfaces"/>
-    </eAnnotations>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BasicContext" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="variableList" ordered="false"
         upperBound="-1" eType="#//VariableList" containment="true">
@@ -261,12 +242,6 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="operations" ordered="false"
         upperBound="-1" eType="#//OperationSig" containment="true">
-      <eAnnotations source="http://www.eclipse.org/OCL/Collection">
-        <details key="nullFree" value="false"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="events" ordered="false"
-        upperBound="-1" eType="#//Event" containment="true">
       <eAnnotations source="http://www.eclipse.org/OCL/Collection">
         <details key="nullFree" value="false"/>
       </eAnnotations>
@@ -284,26 +259,7 @@
     </eAnnotations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RoboticPlatformDef" eSuperTypes="#//Context #//RoboticPlatform"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Context" abstract="true" eSuperTypes="#//BasicContext">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="pInterfaces" ordered="false"
-        unique="false" upperBound="-1" eType="#//Interface">
-      <eAnnotations source="http://www.eclipse.org/OCL/Collection">
-        <details key="nullFree" value="false"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="rInterfaces" ordered="false"
-        unique="false" upperBound="-1" eType="#//Interface">
-      <eAnnotations source="http://www.eclipse.org/OCL/Collection">
-        <details key="nullFree" value="false"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="interfaces" ordered="false"
-        unique="false" upperBound="-1" eType="#//Interface">
-      <eAnnotations source="http://www.eclipse.org/OCL/Collection">
-        <details key="nullFree" value="false"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Context" abstract="true" eSuperTypes="#//BasicContext"/>
   <eClassifiers xsi:type="ecore:EClass" name="RoboticPlatformRef" eSuperTypes="#//RoboticPlatform #//Reference">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1" eType="#//RoboticPlatformDef"/>
   </eClassifiers>
@@ -372,7 +328,6 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Communication">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="event" lowerBound="1" eType="#//Event"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="_from" eType="#//Variable"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="_predicate" eType="#//Expression"
         containment="true"/>
@@ -428,8 +383,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="Connection">
     <eStructuralFeatures xsi:type="ecore:EReference" name="from" lowerBound="1" eType="#//ConnectionNode"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//ConnectionNode"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="efrom" lowerBound="1" eType="#//Event"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="eto" lowerBound="1" eType="#//Event"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="async" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bidirec" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -857,10 +810,6 @@
         eType="#//Context" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ANNController" eSuperTypes="#//ANN #//GeneralController"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ANNOperation" eSuperTypes="#//ANN #//GeneralOperation">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="rInterfaces" upperBound="-1"
-        eType="#//Interface"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ActivationFunction">
     <eLiterals name="NOTSPECIFIED"/>
     <eLiterals name="RELU"/>

@@ -1,0 +1,26 @@
+diagram Segway 
+
+module Segway {
+	controller SegwayController {
+		uses HallSensorsI uses IMUI requires MotorsI requires InterruptsI 
+		opref op_ref0 = AnglePID
+		opref op_ref1 = SpeedPID
+		opref op_ref2 = RotationPID
+	sref stm_ref0 = BalanceSTM
+		connection SegwayController on leftMotorVelocity to stm_ref0 on leftMotorVelocity
+		connection SegwayController on rightMotorVelocity to stm_ref0 on rightMotorVelocity
+		connection SegwayController on angle to stm_ref0 on angle
+		connection SegwayController on gyroX to stm_ref0 on gyroX
+		connection SegwayController on gyroY to stm_ref0 on gyroY
+		connection SegwayController on gyroZ to stm_ref0 on gyroZ
+	}
+
+	connection rp_ref0 on angle to SegwayController on angle ( _async )
+	connection rp_ref0 on gyroX to SegwayController on gyroX ( _async )
+	connection rp_ref0 on gyroY to SegwayController on gyroY ( _async )
+	connection rp_ref0 on gyroZ to SegwayController on gyroZ ( _async )
+connection rp_ref0 on leftMotorVelocity to SegwayController on leftMotorVelocity ( _async )
+	connection rp_ref0 on rightMotorVelocity to SegwayController on rightMotorVelocity ( _async )
+	rref rp_ref0 = SegwayRP
+	}
+

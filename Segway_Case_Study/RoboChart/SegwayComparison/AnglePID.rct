@@ -1,0 +1,25 @@
+diagram AnglePID
+
+interface AnglePIDVars {
+	var angleOutput : real = 0
+}
+
+operation AnglePID ( newError : real
+, diff : real
+) {
+	requires AnglePIDVars const P : real , D : real
+	initial i0
+	state UpdateOutput {
+		entry angleOutput = newError * P + diff * D
+	}
+	final f0
+	transition t0 {
+		from i0
+		to UpdateOutput
+	}
+	transition t1 {
+		from UpdateOutput
+		to f0
+	}
+}
+

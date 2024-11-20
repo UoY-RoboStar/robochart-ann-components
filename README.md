@@ -25,4 +25,4 @@ The `M2MValidation` directory contains our first validation files for the Epsilo
 The `Validation` directory contains a Java implementation of our CSP semantics, written using the JCSP library. The directory `JCSP_JML_Previous_Version` contains 
 an old version of our JCSP implementation with Java Modelling Language (JML) annotations.
 
-The `Semantics` directory contains our denotational semantic rules in Circus.  
+The `Semantics` directory contains our denotational semantic rules in Circus. 

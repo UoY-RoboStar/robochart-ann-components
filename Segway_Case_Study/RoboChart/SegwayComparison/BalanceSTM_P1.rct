@@ -1,0 +1,195 @@
+diagram BalanceSTM_P1
+
+stm BalanceSTM_P1 {
+	uses HallSensorsI uses IMUI uses AnglePIDVars_S uses SpeedPIDVars_S uses RotationPIDVars_S requires MotorsI requires InterruptsI const maxAngle : real
+	const loopTime : real
+	var currAngle : real , currGyroX : real , currGyroY : real , currGyroZ : real , currLeftVel : real , currRightVel : real
+	const startupDelay : nat
+	var speedCount : nat , rotationCount : nat
+	const speedUpdate : nat , rotationUpdate : nat
+	
+
+	const motorBudget : nat
+	const angleBudget : nat , speedBudget : nat , rotationBudget : nat
+	var angleOutput:real, speedOutput:real, rotationOutput:real
+	var speedSent:boolean, angleSent:boolean, rotationSent:boolean
+	var angleReceived:boolean
+	
+	clock loopTimer
+	
+	initial i0
+	
+	state Initialisation {
+		entry speedCount = 0 ; rotationCount = 0 ; wait ( startupDelay ) ; # loopTimer ; speedSent = false; angleSent = false; rotationSent = false
+	}
+
+	state WaitForNextIteration {
+		
+	}
+	
+	state Setup {
+		entry enableInterrupts();
+		rotationCount = rotationCount + 1;
+		speedCount = speedCount + 1;
+		angleReceived = false
+		
+	}
+	
+	state ReceiveInput {
+		
+	}
+	
+	transition t6 { 
+		from ReceiveInput
+		to j2
+		condition (angleReceived == true) /\ ( ( speedCount == 0 ) \/ ( speedCount < speedUpdate ) ) /\ ( ( rotationCount == 0 ) \/ ( rotationCount < rotationUpdate ) )
+		}
+	
+	transition t5 {
+		from ReceiveInput
+		to ReceiveInput
+		trigger 
+		angleOutputE ? angleOutput
+		condition (angleSent == true /\ angleReceived == false)
+		action 
+		angleSent = false;
+		angleReceived = true
+	}
+
+	transition t8 {
+		from ReceiveInput
+		to SendAngle
+		condition ( angleSent == false /\ ( angleReceived == false ) )
+	}
+	transition t7 {
+		from SendAngle
+		to ReceiveInput
+		action angleSent = true
+	}
+
+	transition t11 {
+		from ReceiveInput
+		to ReceiveInput
+		trigger
+		speedOutputE ? speedOutput
+		condition speedSent == true 
+		action speedSent = false
+	}
+	
+	transition t13 {
+		from ReceiveInput
+		to SendSpeed
+		condition ( speedSent == false /\ ( speedCount >= speedUpdate /\ speedCount > 0 ) )
+	}
+
+	transition t14 {
+		from SendSpeed
+		to ReceiveInput
+		action speedSent = true
+	}
+	
+
+	transition t15 {
+		from ReceiveInput
+		to ReceiveInput
+		trigger
+		rotationOutputE ? rotationOutput
+		condition rotationSent == true 
+		action rotationSent = false
+	}
+
+	transition t16 {
+		from ReceiveInput
+		to SendRotation
+		condition ( rotationSent == false /\ ( rotationCount >= rotationUpdate /\ rotationCount > 0 ) )
+	}
+
+	transition t17 {
+		from SendRotation
+		to ReceiveInput
+		action rotationSent = true
+	}
+	
+	state SendSpeed {
+		entry leftMotorVelocity ? currLeftVel <{ 0 } ;
+		rightMotorVelocity ? currRightVel <{ 0 } ; 
+		snewError!(currLeftVel + currRightVel);
+		speedCount = 0;
+		wait([0, rotationBudget])
+	
+	}
+
+	state SendAngle {
+		entry angle ? currAngle <{ 0 } ; gyroX ? currGyroX <{ 0 } ; anewError ! currAngle <{ 0 } ; adiff ! currGyroX <{ 0 } ; wait ( [ 0 , angleBudget ] )
+	}
+	
+	state SendRotation {
+		entry gyroZ ? currGyroZ <{ 0 } ;
+		rdiff!currGyroZ;
+		rotationCount = 0;
+		wait([0, rotationBudget])
+	}
+	
+	
+	
+	state SetMotors {
+		entry setLeftMotorSpeed ( angleOutput + speedOutput - rotationOutput ) ; setRightMotorSpeed ( angleOutput + speedOutput + rotationOutput ) ; wait ( [ 0 , motorBudget ] )
+	}
+	
+	
+	state StopMotors {
+		entry setLeftMotorSpeed ( 0 ) ; setRightMotorSpeed ( 0 ) ; wait ( [ 0 , motorBudget ] )
+	}
+	
+	
+	
+	transition t1 {
+		from i0 
+		to Initialisation
+	}
+	
+	
+	transition t4 {
+		from Initialisation
+		to WaitForNextIteration
+	}
+	
+	
+	transition t12 {
+		from WaitForNextIteration
+		to Setup
+		condition since ( loopTimer ) >= loopTime
+		action disableInterrupts ( )
+	}
+	transition t18 {
+		from Setup
+		to ReceiveInput
+	}
+	
+	transition t9 {
+		from j2
+		to SetMotors
+		condition currAngle <= maxAngle /\ currAngle >= - maxAngle
+	}
+	transition t10 {
+		from j2
+		to StopMotors
+		condition currAngle > maxAngle \/ currAngle < - maxAngle
+	}
+	
+	transition t19 {
+		from SetMotors
+		to WaitForNextIteration
+	}
+	transition t20 {
+		from StopMotors
+		to WaitForNextIteration
+	}
+	
+
+	
+	
+	junction j2
+	
+}
+

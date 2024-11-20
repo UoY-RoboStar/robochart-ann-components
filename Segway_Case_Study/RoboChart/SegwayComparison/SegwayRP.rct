@@ -1,0 +1,29 @@
+interface MotorsI {
+	setLeftMotorSpeed ( speed : real )
+	setRightMotorSpeed ( speed : real )
+}
+
+interface HallSensorsI {
+	event leftMotorVelocity : real
+	event rightMotorVelocity : real
+}
+
+interface IMUI {
+	event angle : real
+	event gyroX : real
+	event gyroY : real
+	event gyroZ : real
+}
+
+interface InterruptsI {
+	enableInterrupts ( )
+	disableInterrupts ( )
+}
+
+robotic platform SegwayRP {
+	uses HallSensorsI
+	uses IMUI
+	provides MotorsI
+	provides InterruptsI
+}
+

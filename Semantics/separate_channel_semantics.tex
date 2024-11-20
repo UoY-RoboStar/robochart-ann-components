@@ -1,0 +1,398 @@
+
+
+We specify our translation rules as functions from RoboChart types to \Circus \ types. We use the \Circus \ types as presented in Appendix A of Oliveira's thesis \cite{Oli06} in BNF form. We require a minimal subset of types of RoboChart to specify our translation rules, and we specify these in Z, displayed in Figure \ref{fig:robochart-ann-types}. These are to establish a clear basis for the translation rules in our meta-language and to define some helpful shorthand to simplify the description of these rules. 
+
+\begin{figure}
+    \begin{zed}
+	[ Context ] \\
+	ActivationFunction ::= RELU | LINEAR | NOTSPECIFIED \\
+	Value == \arithmos \\
+	SeqExp ::= null\_ seq | list \ldata \seq \nat \rdata | matrix \ldata \seq \seq Value \rdata | tensor \ldata \seq \seq \seq Value \rdata
+\end{zed}
+
+\begin{schema}{ANNParameters}
+\\
+ layerstructure : SeqExp \\
+ weights : SeqExp \\
+ biases : SeqExp \\
+ activationfunction : ActivationFunction \\
+ inputContext : Context \\
+ outputContext : Context \\
+\end{schema}
+
+\begin{schema}{ANN} 
+   annparameters : ANNParameters
+\end{schema} 
+
+\begin{schema}{ANNController}
+\\
+ANN
+\end{schema}
+    \caption{RoboChart types for ANN translations, specified in Z.} 
+    \label{fig:robochart-ann-types}
+\end{figure}
+
+First, declare the type $Context$ to represent the RoboChart \RC{Context} class; we do not require any information from this type apart from its declaration for our translation rules. We also declare this type to link to the $allEvents$ functions defined in the RoboChart reference manual \cite{RoboChart}. Next, we define \RC{ActivationFunction} using a simple free type in Z with three constants. We define $Value$ as a type synonym for the type of values communicated by our abstract ANNs, known as the arithmos type. We consider the real numbers functionally, but we define a general form of ANN, which can operate on any arithmetic type. We define $SeqExp$, a type in RoboChart representing a sequence expression, using three constructors: $list$, $matrix$, and $tensor$. For convenience, we define $list$ as a sequence of natural numbers, as we only require natural number sequences for our ANN components. We use $matrix$ and $tensor$ as shorthand for double or triple nested sequences, as we capture matrices and (3D) tensors using nested sequences. Defining $SeqExp$ this way enables a more convenient representation of our translation rules. 
+
+We capture the types of our ANN classes using simple Z schemas, which we use to enable syntax matching with our EMF models defining the RoboChart metamodel. First, $ANNParameters$ is a schema with a declared variable for each element of \RC{ANNParameters}. Finally, we define $ANN$ and $ANNController$ as schemas to support syntax close to the RoboChart metamodel. 
+
+
+%We can now define our syntax translation rules using a meta-language using these types. In this language, elements of the meta-language are underlined, and elements of the target language, \Circus \, are in italics. The elements of the meta-language are evaluated by further calls to rules or resolving variables of the meta-language into the target language, while elements of the target can be seen as constants elements of the functions. We have implemented these functions using the Epsilon EOL language for model-to-model transformations \footnote{\url{eclipse.dev/epsilon/doc/eol/}}.
+
+\begin{TRule}[Semantics of ANNs \\]{ \meta{\lsem c : ANNController \rsem_{
+    \mathscr{ANN}} : Program =}}
+  \begin{array}[t]{l}
+    \meta{ANNChannelDecl(c)} \\%
+    \meta{ANNProc(c)} \\%
+  \end{array} \\%
+  \label{rule:ANNsemantics}
+\end{TRule} 
+
+We begin with Rule \ref{rule:ANNsemantics}, our top-level rule. This rule uses the semantic brackets, takes any $ANNController$, and returns semantics that may be any number of \Circus \ paragraphs, such as channel declarations, channel set declarations, and process declarations. We represent this using the $Program$ type, the top-level element of the \Circus \ AST. This rule calls two further meta-language rules: $ANNChannelDecl$ and $ANNProc$. 
+
+
+\begin{TRule}[Function ANNChannelDecl \\]{\meta{ANNChannelDecl(c : ANNController) : Program =}}
+  \begin{array}[t]{l}
+    \meta{ANNChannels(c, layerNo(c), lastLayerS)} \\
+    \circchannel terminate \\%
+    \circchannelset ANNHiddenEvts == \lchanset \meta{hiddenEvts} \rchanset
+  \end{array} \\%
+  
+  \meta{\bf where} \\%
+  \begin{array}[t]{l}
+    \meta{hiddenEvts = \{ l, n : \nat | (0 < l < layerNo) \land n \in 1 \upto layerSize(l) \spot layerRes(l,n) \} } \\%
+     \meta{lastLayerS = last~ ((list \inv) c.annparameters.layerstructure)} \\%
+  \end{array} 
+  \label{rule:annchanneldecl}
+\end{TRule} 
+
+Rule \ref{rule:annchanneldecl} is the top-level rule for defining the channels required by our semantics. We first call the meta-language rule $ANNChannels$, which represents the variable channels: the channels that are specific to each ANN component. We declare one channel, $terminate$, that can be seen as a constant channel in our meta-language function and represents termination. An ANN component can never choose to engage in this event itself, but it needs to be able to engage in it to synchronise with other RoboChart components. We also declare a channel set $ANNHiddenEvts$, representing all the channels that should be hidden in the complete behaviour of our semantics. It is defined by a variable in our meta-language: $hiddenEvts$. 
+
+We define the variable $hiddenEvts$ using a set comprehension expression. This variable defines all channels associated with the hidden layers that should be hidden in the overall behaviour of the process. We define this variable using a set comprehension expression, using local variables $l$ representing the layer and $n$ representing the node index. We limit the values $l$ and $n$, which can be taken using the predicate part of this set comprehension expression, and the expression we form defines our channel using the $layerRes$ meta-language rule, which returns a channel declaration. Using this, we obtain all the channels that should be hidden in our semantics. 
+
+We define the variable $lastLayerS$, the size of the last layer, using the inverse of the $list$ constructor of our free type for sequence expressions in Figure \ref{fig:robochart-ann-types}. We use this to obtain a sequence of natural numbers, and we then get the last element using the $last$ function, itself defined in the Z mathematical toolkit. 
+
+\begin{TRule}[Function ANNChannels \\]{\meta{ANNChannels(c : ANNController, l, n : \nat) : Program =}}
+  \begin{array}[t]{l}
+    \meta{\bf{if (l == 0) \land (n == 1)}} \\
+      
+    \meta{\bf{then}} \\
+    \t1 %
+    \begin{array}[t]{l}
+      \circchannel \meta{layerRes(l, n)}
+    \end{array} \\%
+    \meta{\bf{else}}  \\%
+    \t1 %
+    \begin{array}[t]{l}
+      \circchannel \meta{layerRes(1, n)} \\%
+      \meta{if(l \neq 0)} \\%
+      \t1 % 
+      \meta{NodeOutChannels(l, n, LStructure(c, (l - 1)))} \\%
+      \meta{if (n > 1)} \\%
+      \t1 %
+      \begin{array}[t]{l}
+        \meta{ANNChannels(l, (n-1))}
+      \end{array}  \\
+      
+      \meta{else} \\
+      \t1 %
+      \begin{array}[t]{l}
+        \meta{ANNChannels((l-1), LStructure(c, (l-1))}
+      \end{array} \\
+    \end{array} \\
+    
+  \end{array} \\%
+  \label{rule:annchannels}
+\end{TRule} 
+
+Rule \ref{rule:annchannels} defines the function that represents all the variable channels in our semantics as a recursive meta-language function. This function has three parameters: $c$, an $ANNController$, $l$, representing the layer of the ANN component we are considering, and $n$, the node index of the ANN component. This function computes all channels by proceeding backwards from the output layer and the last node back to the first node in the input layer. 
+
+The base case is when $l$ is $0$, and $n$ is $1$ because we use $0$ to represent the input layer, which has defined channels but no behaviour. We capture the input layer in a similar way to an interface. We use one-based indexed for the nodes, as we do not have the concept of an input node. In the base case, we return just the channel $layerRes.0.1$, as this is the channel associated with the first node of the input layer. 
+
+In the recursive case, we first define the channel representing the layer output of the current layer and node, $layerRes(l,n)$. Then, if we do not consider the channels of an input layer, that is, if $l \neq 0$, then we need to consider the channels of the node itself, which we define through the meta-language function $NodeOutChannels$, which operates in a similar way to this function. The recursive call changes if we call the previous node in this layer, $n > 1$, or if we call the previous layer when $n = 0$. 
+
+
+\begin{TRule}[Function NodeOutChannels \\]{\meta{NodeOutChannels(l, n, i : \nat) : Program =}}
+  \begin{array}[t]{l}
+    \meta{\bf{if (i == 1)}} \\%
+    \meta{\bf{then}} \\
+    \t1 %
+    \begin{array}[t]{l}
+      \circchannel \meta{nodeOut(l, n, i)}
+    \end{array} \\%
+    \meta{\bf{else}}  \\%
+    \t1 %
+    \begin{array}[t]{l}
+      \circchannel \meta{nodeOut(1, n, i)} \\%
+      \meta{NodeOutChannels(l, n, (i-1))} \\%
+    \end{array} \\%
+    
+  \end{array} \\%
+  \label{rule:nodeoutchannels}
+\end{TRule} 
+
+Rule \ref{rule:nodeoutchannels} functions in a very similar way to Rule \ref{rule:annchannels}. We need these channels to enable intra-node communication between the processes representing the input to this node and the collator of this node. Here, $i$ represents the input index, the size of the previous layer's output, used to transmit the results from the last layer to the next layer. 
+
+
+\begin{TRule}[Function ANNProc \\]{\meta{ANNProc(c : ANNController) : ProcDecl =}}
+  \begin{array}[t]{l} 
+    \circprocess \meta{c.name} \circdef \\%
+    \t1 %
+    \begin{array}[t]{l}
+      \circbegin \\%
+      Collator \circdef l, n, i : \nat; sum : Value \circspot %
+      \begin{array}[t]{l}
+	    \meta{Collator(c)} \\%
+      \end{array} \\%
+      NodeIn \circdef l, n, i : \nat \circspot %
+      \begin{array}[t]{l}
+	    \meta{NodeIn(c)} \\%
+      \end{array} \\%
+      Node \circdef l, n, inpSize : \nat \circspot %
+      \begin{array}[t]{l}
+	    \meta{Node(c)} \\%
+      \end{array} \\%
+      HiddenLayer \circdef l, s, inpSize : \nat \circspot %
+      \begin{array}[t]{l} 
+        \meta{HiddenLayer(c)}
+      \end{array} \\%
+      HiddenLayers \circdef \meta{HiddenLayers(c, layerNo(c) - 1)} \\%
+      OutputLayer \circdef \meta{OutputLayer(c)} \\% 
+      ANN \circdef %
+      \begin{array}[t]{l}
+        ((HiddenLayers \lpar | \meta{IndexedLayerRes(layerNo(c)-1)} | \rpar OutputLayer) \\%
+         \circhide ANNHiddenEvts) \circseq ANN \\% 
+      \end{array} \\%
+      
+      ANNRenamed \circdef \meta{ANNRenamed(c)} \\%
+      
+      \circspot ANNRenamed \\%
+      
+      \circend \\
+    \end{array}
+    
+  \end{array} \\%
+        
+  \label{rule:annproc}
+\end{TRule} 
+
+We now consider the rules defining our ANN model's process paragraph. We start with the top-level process rule $ANNProc$ in Rule \ref{rule:annproc}. In a paragraph, we define multiple actions, similar to CSP processes, then a main action after the syntax $\circspot$, which represents the behaviour of this process. We name our process using the $name$ attribute of our $ANNController$. We have access to this attribute as an \RC{ANNController} is a \RC{NamedElement} in RoboChart. In our first four actions, $Collator$, $NodeIn$, $Node$, and $HiddenLayer$, we have fixed local variables represented by non-underlined syntax in our meta-language, followed by a meta-language function representing the ANN-specific definition of this action. 
+
+For the last four definitions, we do not use local variable definitions as the behaviour of these actions represents the overall structure of an ANN pattern; their behaviour is less influenced by the hyperparameters of an ANN model. $HiddenLayers$ and $OutputLayer$ are each defined by a meta-language function capturing the composition of the hidden layers and the behaviour of just the output layer in isolation. The action $ANN$ defines an ANN component's main behaviour: the repeating parallel composition of $HiddenLayers$ and $OutputLayer$, with $ANNHiddenEvts$ hidden. We capture the synchronisation set of this parallel composition using the $IndexedLayerRes(layerNo(c) - 1)$ meta-function, which returns all channels in the penultimate layer, where $layerNo(c)$ is the number of layers in the ANN model. We use the function $ANNRenamed$ to capture the contextual renaming of our ANN component to events of the RoboChart model. Finally, our main action is defined as $ANNRenamed$, which captures the behaviour of our ANN semantics. 
+
+\begin{TRule}[Function Collator \\]{\meta{Collator(c : ANNController) :\\%
+ CSPAction =}}
+  \begin{array}[t]{l} 
+    \meta{ \Extchoice l : 1 \upto layerNo(c); n : 1 \upto LStructure(c, l); i : 0 \upto LStructure(c, (l-1))} \\%
+    \t1 %
+    \begin{array}[t]{l}
+      
+      \meta{ @} %
+      \lcircguard l = \meta{l} \land n = \meta{n} \land i = \meta{i} \rcircguard \circguard \\%
+      \t1 %
+      \begin{array}[t]{l}
+        \meta{\bf{if (i == 0)}}  \\
+        \meta{\bf{then}} \\
+        \t1 %
+          \meta{layerRes(l,n)}!relu(sum + (\meta{bias(c, l, n)})) \then \Skip \\%
+    \meta{\bf{else}} \\%
+    \t1 %
+        \meta{nodeOut(l, n, i)}?x \then Collator(l, n, (i-1), (sum + x))
+      \end{array}
+    \end{array}
+  \end{array} \\%
+  \label{rule:collator}
+\end{TRule} 
+
+Rule \ref{rule:collator} defines the rule for the behaviour of the $Collator$ action, represented using the $CSPAction$ AST element. This rule defines, at its core, a recursive action that sums all values communicated by the channel $nodeOut$ and then communicates these results through the $layerRes(l,n)$ channel as its base case, with the $bias$ from the $bias$ meta-function. In the target language, this recursive action is also called \textit{Collator} and is shown here as a constant element in the recursive case in this rule. The constructs surrounding this behaviour are a distributed external choice over $l$, the layer size, $n$, the node size, and $i$, the input size, the size of the previous layer. Each is guarded by checking that the target language variable is equal to the meta-language variable, meaning only one behaviour is possible at every parameter instantiation. This structure is only needed to support the creation of distinct channels for every layer, node, and input size, as is required in \Circus. 
+
+
+
+\begin{TRule}[Function NodeIn \\]{\meta{NodeIn(c : ANNController) :\\%
+ CSPAction =}}
+  \begin{array}[t]{l} 
+    \meta{ \Extchoice l : 1 \upto layerNo(c); n : 1 \upto LStructure(c, l); i : 1 \upto LStructure(c, (l-1))} \\%
+    \t1 %
+    \begin{array}[t]{l}
+      
+      \meta{ @} %
+      \lcircguard l = \meta{l} \land n = \meta{n} \land i = \meta{i} \rcircguard \circguard \\%
+      \t1 %
+      \meta{layerRes(l-1,i)}?x \then \meta{nodeOut(l, n, i)}!(x * \meta{weight(c, l, n, i)}) \then \Skip 
+    \end{array}
+  \end{array} \\%
+  \label{rule:nodein}
+\end{TRule} 
+
+Rule \ref{rule:nodein} defines the behaviour of the $NodeIn$ action: to receive the value communicated through the channel $layerRes(l-1, i)$, then to transmit a modified version of this using the channel $nodeOut(l,n,i)$. It is a buffer that applies the appropriate weight to the value communicated by the previous layer's event. It is a modifying buffer. In our \Circus \ model of an ANN's behaviour, each $NodeIn$ action is used to transmit the result from the previous layer onto the current layer. We use the $nodeOut$ channel as an intermediate communication channel, on which every $Collator$ process synchronises to obtain the weighted output of the previous layer. We use a surrounding structure identical to that of Rule \ref{rule:collator} to support distinct channel naming. 
+ 
+\begin{TRule}[Function Node \\]{\meta{Node(c : ANNController) : CSPAction =}}
+  \begin{array}[t]{l} 
+    \meta{ \Extchoice l : 1 \upto layerNo(c); n : 1 \upto LStructure(c, l) } \\%
+    \t1 %
+    \begin{array}[t]{l}
+      
+      \meta{ @} %
+      \lcircguard l = \meta{l} \land n = \meta{n} \rcircguard \circguard %
+      
+	  \begin{array}[t]{l} 
+        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset \meta{IndexedNodeOut(l, n)} \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset \meta{IndexedNodeOut(l, n)} \rchanset )
+      \end{array}
+      
+    \end{array}
+  \end{array} \\%
+  \label{rule:node}
+\end{TRule} 
+
+Similar to Rule \ref{rule:nodein} and Rule \ref{rule:collator}, Rule \ref{rule:node} uses the external choice and guarding considering the $l$ and $n$ indices to support the distinct channel naming. The parallel composition of two actions defines this rule. First, a distributed interleaving of all $NodeIn$ processes indexed by the layer, node, and considering every input from $inpSize$. Here, $inpSize$ is one of the parameters for $Node$ in the target language; see Rule \ref{rule:annproc}. This entire action is defined in the target language, as its definition does not change based on the parameters of $Node$. The second action is the $Collator$ action to receive all communications from the $NodeIn$ interleavings and transmit the result on the $layerRes$ channel. We use $IndexedNodeOut(l,n)$ to define the channels we synchronise on. This meta-function returns all $nodeOut$ channels associated with this node: $nodeOut.l.n.i$ where $i$ is the size of the previous layer. We use the channel set operator, denoted using $\lchanset \rchanset$, of these channels to define all events that can be communicated using this set of channels. Finally, we hide this synchronisation set from the resultant process, so the internal communication channel $nodeOut$ is not visible in the $Node$ action. 
+
+\begin{TRule}[Function HiddenLayer \\]{\meta{HiddenLayer(c : ANNController) : CSPAction =}}
+  \begin{array}[t]{l} 
+    \meta{ \Extchoice l : 1 \upto layerNo(c)} \\%
+    \t1 %
+    \begin{array}[t]{l}
+      
+      \meta{ @} %
+      \lcircguard l = \meta{l} \rcircguard \circguard %
+        (\lpar \lchanset \meta{IndexedLayerRes(l-1)} \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize))
+    \end{array}
+  \end{array} \\%
+  \label{rule:hiddenlayer}
+\end{TRule} 
+
+Rule \ref{rule:hiddenlayer} defines the behaviour of our $HiddenLayer$ action. We define this using a replicated parallel, synchronised on the channel set of all $layerRes$ channels associated with this layer, captured by the meta-function $IndexedLayerRes(l-1)$. A layer in an ANN model synchronises with the previous layer's result ($l-1$) because these events are shared across every node in this layer. Each node process engages with a single event indexed by $layerRes.l$ to communicate its output; these communications do not need to be synchronised as each node has a unique output channel. Using this rule, Rule \ref{rule:hiddenlayers} defines the behaviour of an arbitrary number of hidden numbers as a recursive composition of parallel actions. 
+
+\begin{TRule}[Function HiddenLayers \\]{\meta{HiddenLayers(c : ANNController, l : \nat) : CSPAction =}}
+  \begin{array}[t]{l} 
+      \meta{\bf{if(l == 1)}} \\%
+      \meta{\bf{then}} \\%
+      \t1 %
+      \begin{array}[t]{l}
+        (HiddenLayer(\meta{l}, \meta{LStructure(l)}, \meta{LStructure(l-1)}))
+      \end{array} \\%
+      \meta{\bf{else}} \\%
+      \t1 %
+      \begin{array}[t]{l}
+        (\meta{HiddenLayers(c, (l-1))} \\%
+        \lpar | \lchanset \meta{IndexedLayerRes(c, l-1)} \rchanset | \rpar \\%
+        HiddenLayer(\meta{l}, \meta{LStructure(l)}, \meta{LStructure(l-1)})
+      \end{array}
+  \end{array} \\%
+  \label{rule:hiddenlayers}
+\end{TRule} 
+
+\begin{TRule}[Function OutputLayer \\]{\meta{OutputLayer(c : ANNController) : CSPAction =}}
+  \begin{array}[t]{l} 
+    \lpar \lchanset \meta{IndexedLayerRes(layerNo(c)-1)} \rchanset \rpar i : 1 \upto \meta{LStructure(layerNo(c))} \circspot \\%
+   \t1 Node(l, i, \meta{LStructure(layerNo(c)-1)}))
+  \end{array} \\%
+  \label{rule:outputlayer}
+\end{TRule} 
+
+Rule \ref{rule:outputlayer} defines the output layer for our ANN model. This layer can be defined as a layer whose parameters are constant, using the meta-function $layerNo(c)$ as a constant to define the shape of our output layer. We separate the hidden and output layers of an ANN model to capture the standard pattern used when designing an ANN model. There is a fixed shape to the hidden layers, for example, $6$ layers with $50$ nodes in each \cite{CAV2019}, and the shape of both the input and output layers are distinct from this shape, for example, $5$ and $5$. Moreover, the shape of the input and output layers are defined by the context where an ANN model is used, but the shape of the hidden layers is defined by the complexity of the desired relation, which is independent of context and is a training consideration. Finally, output layers often have probabilistic interpretations, and their results are subject to additional external analysis, which we can support easier with a separate defined output layer action in \Circus. 
+
+\begin{TRule}[Function ANNRenamed \\]{\meta{ANNRenamed(c : ANNController) : CSPAction) = }} 
+  \begin{array}[t]{l}
+    (ANN) %
+        \begin{array}[t]{l}
+          \lcircrename \meta{orderedLayerRes} := \meta{eventList} \rcircrename %
+          \circinterrupt ~ terminate \then \Skip \\%
+        \end{array} \\%
+  \end{array} \\%
+  \meta{\bf{where}}  \\%
+  \begin{array}[t]{l}
+    \meta{orderedLayerRes =} \\%
+    \t1 \meta{order(\{ l : \{0, layerNo(c)\} ; n : 1 \upto LStructure(c, l)} \meta{ @ layerRes(l,n)\})} \\%
+    \meta{eventList = order(allEvents(c.annparameters.inputContext)) \cat }\\%
+    \t1 \meta{order(allEvents(c.annparameters.outputContext)) }
+  \end{array}
+  \label{rule:annrenamed}
+\end{TRule}
+
+We present the last of our functional rules that define the process presented in Rule \ref{rule:annproc}, in Rule \ref{rule:annrenamed}. This rule defines the target language action $ANN$, see Rule \ref{rule:annproc}, where a renaming is applied, is interrupted ($\circinterrupt$) by the action $terminate \then \Skip$. This is to support if the other components in the system terminate, represented by the event $terminate$, then the ANN component should terminate and behave as $\Skip$. The renaming operation is to rename the $layerRes$ channels to the contextual channels defined by the user in the $inputContext$ and $outputContext$ in RoboChart. We define that all events in $orderedLayerRes$ are renamed to the events from $eventList$, the contextual events. Here, we define $orderedLayerRes$ by a set comprehension expression $layerRes(l,n)$, where $l$ is either $0$ or $layerNo$ (input or output layer), and $n$ is all nodes in these layers. We define $eventList$ as all events, using the $allEvents$ meta-function \cite{RoboChart}, of the input context concatenated with the events of the output context. The $order$ function is then applied to both of these sets, here we assume this function takes a set and creates a sequence ordering this set, we can implement this function in EMF as the references of an object is defined using lists. In other words, our implementation is based on the order in which the events appear in the textual language for RoboChart, so in our current implementation, the ordering of events is an important consideration for ANN components. 
+
+\begin{TRule}[Function LStructure \\]{\meta{LStructure(c : ANNController, i : \nat) : \nat =}}
+  \begin{array}[t]{l}
+    \meta{\bf{if(i == 0)}} \\
+    \meta{\bf{then}} \\
+    \t1 %
+	  \meta{ \# allEvents(c.annparameters.inputContext) } \\
+    \meta{\bf{else}} \\
+    \t1 %
+      \meta{((list \inv) c.annparameters.layerstructure)~i}
+  \end{array} 
+  \label{rule:lstructure}
+\end{TRule} 
+
+The explanation of the rules that define the functional behaviour of the semantics for our ANN components is now complete. Rules \ref{rule:layerres} through to our final rule \ref{rule:indexednodeout} present helper functions for values, channels, and channel sets used to define the behaviour of our rules. These rules also enable a cleaner syntax for presenting the functional rules. 
+
+Rule \ref{rule:lstructure} and Rule \ref{rule:layerno} define constants about our ANN model. We define $LStructure$ as the size of each layer, using the inverse of the $list$ free type constructor indexed by $i$ and the number of events in the input context if we refer to the input layer ($l = 0$). The function $layerNo$ defines the number of layers in our model, simply the size of the $layerstructure$ sequence in our $ANNController$. 
+
+Next, we discuss our helper rules that refer to channels, a $CSExp$ in \Circus. Our basic channels are defined in Rule \ref{rule:layerres} and Rule \ref{rule:nodeout}, defining $layerRes$ with $l$ and $n$, and $nodeOut$ indexed with $l$, $n$, and $i$. We define the indexed versions of these channels in Rules \ref{rule:indexedlayerres} and \ref{rule:indexednodeout}. The indexed versions take all but the last parameter and return the channel set containing all channels constructed using the $l$ parameter for $layerRes$ and the $l$ and $n$ parameters for $nodeOut$. Finally, for the $nodeOut$ channel only, we define $AllNodeOut$ in Rule \ref{rule:allnodeout}. This function is a shorthand for the channel set of $nodeOut$ channels used by the $ANNController$ $c$. To describe this, we define the number of layers, for $l$, by $layerNo$, the size of each layer, for $n$, by $LStructure(l)$, and the size of the previous layer, for the index $i$, set by $LStructure(l-1)$. 
+
+
+
+\begin{TRule}[layerRes Channel \\]{\meta{layerRes(l : \nat, n : \nat) : CSExp =}}
+  \begin{array}[t]{l}
+    layerRes\meta{ln} : Value
+  \end{array} 
+  \label{rule:layerres}
+\end{TRule} 
+
+\begin{TRule}[Function IndexedLayerRes \\]{\meta{IndexedLayerRes(l : \nat) : CSExp =}}
+  \begin{array}[t]{l}
+    \lchanset \meta{\{ n : 1 \upto {LStructure(l)} @ layerRes(l, n)\}}
+    \rchanset 
+  \end{array} 
+  \label{rule:indexedlayerres}
+\end{TRule} 
+
+\begin{TRule}[nodeOut Channel \\]{\meta{nodeOut(l : \nat, n : \nat, i : \nat) : CSExp =}}
+  \begin{array}[t]{l}
+    nodeOut\meta{lni} : Value
+  \end{array} 
+  \label{rule:nodeout}
+\end{TRule} 
+
+\begin{TRule}[Function layerNo (number of layers) \\]{\meta{layerNo(c : ANNController) : \nat =}}
+  \begin{array}[t]{l}
+    \meta{\# ((list \inv)~c.annparameters.layerstructure)}
+  \end{array} 
+  \label{rule:layerno}
+\end{TRule} 
+
+\begin{TRule}[Function weight \\]{\meta{weight(c : ANNController; l, n, i : \nat) : Value =}}
+  \begin{array}[t]{l}
+    \meta{((tensor \inv)~c.annparameters.weights)~l~n~i}
+  \end{array} 
+  \label{rule:weight}
+\end{TRule} 
+
+\begin{TRule}[Function bias \\]{\meta{bias(c : ANNController; l, n : \nat) : Value =}}
+  \begin{array}[t]{l}
+    \meta{((matrix \inv)~c.annparameters.biases)~l~n}
+  \end{array} 
+  \label{rule:bias}
+\end{TRule} 
+
+\begin{TRule}[Function AllNodeOut \\]{\meta{AllNodeOut(c : ANNController) : CSExp =}}
+  \begin{array}[t]{l}
+    \lchanset \meta{\{l : 1 \upto layerNo(c) ; n : 1 \upto LStructure(c, l) ; i : 1 \upto LStructure(c, (l-1)) @} \\
+    \t1 %
+    \meta{nodeOut(l,n,i) \}} \rchanset 
+  \end{array} \\%
+  \label{rule:allnodeout}
+\end{TRule} 
+
+\begin{TRule}[Function IndexedNodeOut \\]{\meta{IndexedNodeOut(c : ANNController, l, n : \nat) : CSExp =}}
+  \begin{array}[t]{l}
+    \lchanset \meta{ \{i : 1 \upto LStructure(c, l-1) @ nodeOut(l,n,i) \} } \rchanset
+  \end{array}
+  \label{rule:indexednodeout}
+\end{TRule} 
+
+Finally, we define our trained parameters, the weights and biases, in Rule \ref{rule:weight} and Rule \ref{rule:bias}. The definition of these uses the inverse of the $tensor$ and $matrix$ constructors, as discussed in our Z assumptions, and each is indexed by $l$, $n$, and $i$ for the weight values. 
+
+This concludes our description of our semantic rules, that defines any ANN component in RoboChart in \Circus, next, we conclude this section with final considerations.

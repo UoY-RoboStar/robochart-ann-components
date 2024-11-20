@@ -1,0 +1,38 @@
+diagram Segway_P1
+
+module Segway_P1 {
+	controller SegwayController {
+		uses HallSensorsI uses IMUI requires MotorsI requires InterruptsI
+		
+	sref stm_ref0 = BalanceSTM_P1
+		connection SegwayController on leftMotorVelocity to stm_ref0 on leftMotorVelocity
+		connection SegwayController on rightMotorVelocity to stm_ref0 on rightMotorVelocity
+		connection SegwayController on angle to stm_ref0 on angle
+		connection SegwayController on gyroX to stm_ref0 on gyroX
+		connection SegwayController on gyroY to stm_ref0 on gyroY
+		connection SegwayController on gyroZ to stm_ref0 on gyroZ
+		
+	sref stm_ref1 = AnglePID_S
+		connection stm_ref1 on angleOutputE to stm_ref0 on angleOutputE
+		connection stm_ref0 on anewError to stm_ref1 on anewError
+		connection stm_ref0 on adiff to stm_ref1 on adiff
+		
+	sref stm_ref2 = SpeedPID_S
+		connection stm_ref2 on speedOutputE to stm_ref0 on speedOutputE
+		connection stm_ref0 on snewError to stm_ref2 on snewError
+		
+	sref stm_ref3 = RotationPID_S
+		connection stm_ref3 on rotationOutputE to stm_ref0 on rotationOutputE
+		connection stm_ref0 on rdiff to stm_ref3 on rdiff
+	}
+	
+	connection rp_ref0 on angle to SegwayController on angle ( _async )
+	connection rp_ref0 on gyroX to SegwayController on gyroX ( _async )
+	connection rp_ref0 on gyroY to SegwayController on gyroY ( _async )
+	connection rp_ref0 on gyroZ to SegwayController on gyroZ ( _async )
+	connection rp_ref0 on leftMotorVelocity to SegwayController on leftMotorVelocity ( _async )
+	connection rp_ref0 on rightMotorVelocity to SegwayController on rightMotorVelocity ( _async )
+	
+	rref rp_ref0 = SegwayRP
+	}
+

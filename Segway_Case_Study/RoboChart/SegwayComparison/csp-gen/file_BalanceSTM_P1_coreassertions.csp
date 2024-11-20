@@ -1,0 +1,37 @@
+
+--
+-- RoboChart generator version 3.0.0.202306261132
+-- Automatically generated on 22-08-2023 01:53:00
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "file_BalanceSTM_P1.csp"
+
+-- generate BalanceSTM_P1
+P_BalanceSTM_P1 = let
+	id__ = 0
+	
+	
+	
+within
+	BalanceSTM_P1::O__(
+		id__,
+		const_BalanceSTM_P1_maxAngle,
+		const_BalanceSTM_P1_loopTime,
+		const_BalanceSTM_P1_startupDelay,
+		const_BalanceSTM_P1_speedUpdate,
+		const_BalanceSTM_P1_rotationUpdate,
+		const_BalanceSTM_P1_motorBudget,
+		const_BalanceSTM_P1_angleBudget,
+		const_BalanceSTM_P1_speedBudget,
+		const_BalanceSTM_P1_rotationBudget
+	)
+assert P_BalanceSTM_P1 :[deadlock-free]	
+assert P_BalanceSTM_P1;RUN({r__}) :[deadlock-free]
+assert P_BalanceSTM_P1 :[deterministic]
+assert P_BalanceSTM_P1 :[divergence-free]
+
+
+

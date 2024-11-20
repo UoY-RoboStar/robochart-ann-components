@@ -1,0 +1,31 @@
+diagram SpeedPID interface SpeedPIDVars {
+	var speedIntegral : real = 0
+	var speedOutput : real = 0
+}
+
+operation SpeedPID ( newError : real
+) {
+	requires SpeedPIDVars const P : real , I : real
+	const maxIntegral : real
+	initial i0
+	state UpdateIntegral {
+		entry speedIntegral = speedIntegral + newError ; speedIntegral = if speedIntegral > maxIntegral then maxIntegral else if speedIntegral < - maxIntegral then - maxIntegral else speedIntegral end end
+	}
+	state UpdateOutput {
+		entry speedOutput = newError * P + speedIntegral * I
+	}
+	final f0
+	transition t0 {
+		from i0
+		to UpdateIntegral
+	}
+	transition t1 {
+		from UpdateIntegral
+		to UpdateOutput
+	}
+	transition t2 {
+		from UpdateOutput
+		to f0
+	}
+}
+

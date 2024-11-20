@@ -1,0 +1,16 @@
+diagram RotationPID interface RotationPIDVars {
+	var rotationOutput : real = 0
+}
+
+operation RotationPID ( diff : real
+) {
+	requires RotationPIDVars const D : real
+	initial i0
+	final f0
+	transition t0 {
+		from i0
+		to f0
+		action rotationOutput = D * diff
+	}
+}
+

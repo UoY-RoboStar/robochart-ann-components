@@ -1,0 +1,43 @@
+diagram SpeedPID_S
+
+interface SpeedPIDVars_S {
+	event snewError:real
+	event speedOutputE:real
+	var speedIntegral : real = 0
+}
+
+stm SpeedPID_S {
+	uses SpeedPIDVars_S const P : real , I : real
+	const maxIntegral : real
+	var currNewError:real, currSpeedOutput:real 
+	initial i0
+	state Read {
+		
+	}
+	state UpdateIntegral {
+		entry speedIntegral = speedIntegral + currNewError ; speedIntegral = if speedIntegral > maxIntegral then maxIntegral else if speedIntegral < - maxIntegral then - maxIntegral else speedIntegral end end
+	}
+	state UpdateOutput {
+		entry currSpeedOutput = currNewError * P + speedIntegral * I
+	}
+	
+	transition t0 {
+		from i0
+		to Read
+	}
+	transition t1 {
+		from UpdateIntegral
+		to UpdateOutput
+	}
+	transition t2 {
+		from UpdateOutput
+		to Read
+		action speedOutputE!currSpeedOutput
+	}
+	transition t3 {
+		from Read
+		to UpdateIntegral
+		trigger snewError?currNewError
+	}
+}
+

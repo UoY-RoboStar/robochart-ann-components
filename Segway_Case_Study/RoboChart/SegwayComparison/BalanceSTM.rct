@@ -1,0 +1,116 @@
+diagram BalanceSTM
+
+interface PIDs {
+	AnglePID ( newError : real , diff : real )
+	SpeedPID ( newError : real )
+	RotationPID ( diff : real )
+}
+
+stm BalanceSTM {
+	uses HallSensorsI uses IMUI uses AnglePIDVars uses SpeedPIDVars uses RotationPIDVars requires MotorsI requires InterruptsI requires PIDs const maxAngle : real
+	const loopTime : real
+	var currAngle : real , currGyroX : real , currGyroY : real , currGyroZ : real , currLeftVel : real , currRightVel : real
+	const startupDelay : nat
+	var speedCount : nat , rotationCount : nat
+	const speedUpdate : nat , rotationUpdate : nat
+	const angleBudget : nat , speedBudget : nat , rotationBudget : nat , motorBudget : nat
+	initial i0
+	state CalculateAngle {
+		entry enableInterrupts ( ) ; angle ? currAngle <{ 0 } ; gyroX ? currGyroX <{ 0 } ; AnglePID ( currAngle , currGyroX ) ; wait ( [ 0 , angleBudget ] )
+	}
+	state CalculateSpeed {
+		entry leftMotorVelocity ? currLeftVel <{ 0 } ; rightMotorVelocity ? currRightVel <{ 0 } ; SpeedPID ( currLeftVel + currRightVel ) ; speedCount = 0 ; wait ( [ 0 , speedBudget ] )
+	}
+	state CalculateRotation {
+		entry gyroZ ? currGyroZ <{ 0 } ; RotationPID ( currGyroZ ) ; rotationCount = 0 ; wait ( [ 0 , rotationBudget ] )
+	}
+	state SetMotors {
+		entry setLeftMotorSpeed ( angleOutput + speedOutput - rotationOutput ) ; setRightMotorSpeed ( angleOutput + speedOutput + rotationOutput ) ; wait ( [ 0 , motorBudget ] )
+	}
+	junction j0
+	junction j1
+	junction j2
+	state StopMotors {
+		entry setLeftMotorSpeed ( 0 ) ; setRightMotorSpeed ( 0 ) ; wait ( [ 0 , motorBudget ] )
+	}
+	state WaitForNextIteration {
+	}
+	state Initialisation {
+		entry speedCount = 0 ; rotationCount = 0 ; wait ( startupDelay ) ; # loopTimer
+	}
+	junction j3
+	transition t1 {
+		from j0
+		to CalculateSpeed
+		condition speedCount >= speedUpdate
+	}
+	transition t2 {
+		from CalculateSpeed
+		to j1
+	}
+	transition t3 {
+		from CalculateAngle
+		to j0
+		action speedCount = speedCount + 1
+	}
+	transition t4 {
+		from j0
+		to j1
+		condition speedCount < speedUpdate
+	}
+	transition t8 {
+		from CalculateRotation
+		to j2
+	}
+	transition t9 {
+		from j2
+		to SetMotors
+		condition currAngle <= maxAngle /\ currAngle >= - maxAngle
+	}
+	transition t10 {
+		from j2
+		to StopMotors
+		condition currAngle > maxAngle \/ currAngle < - maxAngle
+	}
+	transition t12 {
+		from WaitForNextIteration
+		to CalculateAngle
+		# loopTimer
+		condition since ( loopTimer ) >= loopTime
+		action disableInterrupts ( )
+	}
+	transition t7 {
+		from StopMotors
+		to WaitForNextIteration
+	}
+	transition t11 {
+		from SetMotors
+		to WaitForNextIteration
+	}
+	transition t0 {
+		from i0
+		to Initialisation
+	}
+	transition t13 {
+		from Initialisation
+		to WaitForNextIteration
+	}
+	transition t5 {
+		from j1
+		to j3
+		action rotationCount = rotationCount + 1
+
+	}
+	transition t6 {
+		from j3
+		to CalculateRotation
+		condition rotationCount >= rotationUpdate
+	}
+	transition t14 {
+		from j3
+		to j2
+		condition rotationCount < rotationUpdate
+	}
+	clock loopTimer
+}
+

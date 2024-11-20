@@ -5,13 +5,43 @@
 
 
 \begin{zsection}
-  \SECTION AnglePIDANN2 \parents roboworld\_2d\_toolkit 
+  \SECTION AnglePIDANN2 \parents roboworld\_2d\_toolkit\_withval 
 \end{zsection}
 
 
-\begin{zed}
-  Value ~~==~~ \nat
-\end{zed}
+\begin{circus}
+  \circchannel layerRes: \nat \cross \nat \cross Value \\
+  \circchannel nodeOut: \nat \cross \nat \cross \nat \cross Value \\
+  \circchannel\ terminate \\
+\end{circus}
+
+\begin{circus}
+  \circchannelset ANNHiddenEvts == \lchanset layerRes \rchanset
+\end{circus}
+
+\begin{circus}
+  \circchannel adiff\_in : \real \\
+  \circchannel anewError\_in : \real \\
+  \circchannel angleOutputE\_out : \real \\
+\end{circus}
+
+
+\begin{axdef}
+  relu : Value \fun Value %
+  \where %
+  \forall x : Value @ \\%
+  \t1 %
+  (x < 0 \implies (x,0) \in relu) \land \\% 
+  (x \geq 0 \implies (x,x) \in relu)
+\end{axdef}
+
+
+\begin{circus}
+  \circchannelset ANNHiddenEvts == \lchanset layerRes \rchanset
+\end{circus}
+
+
+
 
 \begin{circus}
   \circchannel layerRes01: Value \\
@@ -229,6 +259,8 @@ Just changing the types of the input and output.
     \circspot ANNRenamed \\%
   \circend
 \end{circus}    
+
+
 
 
 \end{document}

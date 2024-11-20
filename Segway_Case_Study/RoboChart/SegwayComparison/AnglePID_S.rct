@@ -1,0 +1,39 @@
+diagram AnglePID_S
+
+interface AnglePIDVars_S {
+	event angleOutputE : real
+	event anewError: real
+	event adiff: real
+}
+
+stm AnglePID_S {
+	uses AnglePIDVars_S
+	var currAngleOut:real, currNewError:real, currDiff:real
+	const P : real , D : real
+	initial i0
+	
+	state Read {
+		entry anewError?currNewError;
+		adiff?currDiff
+	}
+	state UpdateOutput {
+		entry currAngleOut = currNewError * P + currDiff * D
+		}
+
+	transition t1 {
+		from Read
+		to UpdateOutput
+	}
+	transition t2 {
+		from UpdateOutput 
+		to Read
+		action angleOutputE!currAngleOut
+	}
+	
+transition t3 {
+		from i0
+		to Read
+	}
+	
+}
+

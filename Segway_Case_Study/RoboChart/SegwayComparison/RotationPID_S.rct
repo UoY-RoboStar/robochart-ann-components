@@ -1,0 +1,34 @@
+diagram RotationPID_S
+
+interface RotationPIDVars_S {
+	event rdiff:real
+	event rotationOutputE:real
+}
+
+stm RotationPID_S {
+	uses RotationPIDVars_S const D : real
+	var currRotationOut:real, currDiff:real
+	
+	initial i0
+	state Read {
+		
+	}
+	state UpdateOutput {
+		entry currRotationOut = D * currDiff
+	}
+	transition t0 {
+		from i0
+		to Read
+	}
+	transition t1 {
+		from Read
+		to UpdateOutput
+		trigger rdiff?currDiff
+	}
+	transition t2 {
+		from UpdateOutput 
+		to Read
+		action rotationOutputE!currRotationOut
+	}
+}
+
