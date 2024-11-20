@@ -8,6 +8,23 @@
   \SECTION AnglePIDANN2 \parents roboworld\_2d\_toolkit\_withval 
 \end{zsection}
 
+\begin{definition}[Conformance Relation]\label{def:conformance}
+  \begin{axdef}
+    conf: \real \pfun Proc \rel Proc %
+    \where%
+    \forall \epsilon: \mathbb{R}; P, Q: Proc | \epsilon >= 0  @ 
+    \\
+        Q conf(e) P 
+        \\
+        \iff 
+        \\
+        \exists s: seq~ Event; a: \power Event |  tt \mathrel{seqapprox(\epsilon)} s \land (\alpha P \setminus ref') \mathrel{setapprox(\epsilon)} a @
+        \\
+        \t1
+          P[s, (\alpha P \setminus a) / tt,ref'] \mathrel{\sqsubseteq} Q
+      \end{array}  
+  \end{axdef}
+\end{definition}
 
 \begin{circus}
   \circchannel layerRes: \nat \cross \nat \cross Value \\
