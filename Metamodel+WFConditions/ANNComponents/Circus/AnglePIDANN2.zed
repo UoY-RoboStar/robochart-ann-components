@@ -8,23 +8,7 @@
   \SECTION AnglePIDANN2 \parents roboworld\_2d\_toolkit\_withval 
 \end{zsection}
 
-\begin{definition}[Conformance Relation]\label{def:conformance}
-  \begin{axdef}
-    conf: \real \pfun Proc \rel Proc %
-    \where%
-    \forall \epsilon: \mathbb{R}; P, Q: Proc | \epsilon >= 0  @ 
-    \\
-        Q conf(e) P 
-        \\
-        \iff 
-        \\
-        \exists s: seq~ Event; a: \power Event |  tt \mathrel{seqapprox(\epsilon)} s \land (\alpha P \setminus ref') \mathrel{setapprox(\epsilon)} a @
-        \\
-        \t1
-          P[s, (\alpha P \setminus a) / tt,ref'] \mathrel{\sqsubseteq} Q
-      \end{array}  
-  \end{axdef}
-\end{definition}
+
 
 \begin{circus}
   \circchannel layerRes: \nat \cross \nat \cross Value \\
@@ -33,14 +17,74 @@
 \end{circus}
 
 \begin{circus}
-  \circchannelset ANNHiddenEvts == \lchanset layerRes \rchanset
-\end{circus}
-
-\begin{circus}
   \circchannel adiff\_in : \real \\
   \circchannel anewError\_in : \real \\
   \circchannel angleOutputE\_out : \real \\
 \end{circus}
+
+
+\begin{circus}
+  \circchannelset ANNHiddenEvts == \lchanset layerRes \rchanset
+\end{circus}
+
+\begin{axdef}
+  relu : Value \fun Value %
+  \where %
+  \forall x : Value @ \\%
+  \t1 %
+  (x < 0 \implies (x,0) \in relu) \land \\% 
+  (x \geq 0 \implies (x,x) \in relu)
+\end{axdef}
+
+\begin{axdef}
+  weights : \seq \seq \seq Value; 
+  biases : \seq \seq Value
+  \where %
+  weights = \langle \langle \langle 0 \rangle \rangle, \langle \langle 0 \rangle \rangle \rangle \land 
+  biases = \langle \langle 0 \rangle, \langle 0 \rangle \rangle
+\end{axdef}
+
+
+\begin{circus}
+  \circprocess\ AnglePIDANN \circdef \ \circbegin \\%
+      Collator \circdef l, n, i : \nat; sum : Value \circspot \\%
+      \lcircguard i = 0 \rcircguard \circguard layerRes.l.n~!(relu(sum + ( biases(l)(n)))) \then \Skip \\%
+      \extchoice
+      \lcircguard i > 0 \rcircguard \circguard nodeOut.l.n.i~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      
+       NodeIn \circdef l, n, i : \nat \circspot layerRes.(l-1).i~?x \then nodeOut.l.n.i~!(x * (weights(l)(n)(i))) \then \Skip \\%
+      
+    
+      Node \circdef l, n, inpSize : \nat \circspot \\%
+        (\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut \rchanset \\%
+        
+      HiddenLayer \circdef l, s, inpSize : \nat \circspot \\%
+      (\lpar \lchanset layerRes \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize)) \\%
+        
+      HiddenLayers \circdef \\%
+      HiddenLayer(1, 1, 2) \\%
+      
+      OutputLayer \circdef \\%
+      \lpar \lchanset layerRes \rchanset \rpar i : 1 \upto 1 \circspot Node(2, i, 1) \\%
+      
+      ANN \circdef \\%
+      ((HiddenLayers \lpar | \lchanset layerRes \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
+      
+      ANNRenamed \circdef \\%
+      (ANN) \lcircrename layerRes := layerRes \rcircrename \circinterrupt terminate \then \Skip \\%
+      
+    \circspot ANNRenamed \\%
+  \circend
+\end{circus}    
+
+
+\begin{circus}
+  \circchannelset ANNHiddenEvts == \lchanset layerRes \rchanset
+\end{circus}
+
+
 
 
 \begin{axdef}

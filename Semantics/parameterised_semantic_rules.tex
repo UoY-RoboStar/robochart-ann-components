@@ -40,12 +40,13 @@ First, declare the type $Context$ to represent the RoboChart \RC{Context} class,
 
 We capture the types of our ANN classes using simple Z schemas, we use this to enable syntax matching with our EMF models defining the RoboChart metamodel. First, $ANNParameters$ is a schema with a declared variable for each element of \RC{ANNParameters}. Finally, we define $ANN$ and $ANNController$ as schemas to support syntax close to the RoboChart metamodel. 
 
-%We can now define our syntax translation rules  using a meta-language using these types. In this language, elements of the meta-langauge itself are underlined and elements of the target language, \Circus \, are in italics. The elements of the meta-language are evaluated by further calls to rules or resolving variables of the meta-language into the target language, while elements of the target target can be seen as constants elements of the functions. We have implemented these functions using the Epsilon EOL language for model-to-model transformations \footnote{\url{eclipse.dev/epsilon/doc/eol/}}.
+We can now define our syntax translation rules  using a meta-language using these types. In this language, elements of the meta-langauge itself are underlined and elements of the target language, \Circus \, are in italics. The elements of the meta-language are evaluated by further calls to rules or resolving variables of the meta-language into the target language, while elements of the target target can be seen as constants elements of the functions. We have implemented these functions using the Epsilon EOL language for model-to-model transformations \footnote{\url{eclipse.dev/epsilon/doc/eol/}}.
 
 \begin{TRule}[Semantics of ANNs \\]{ \meta{\lsem c : ANNController \rsem_{
     \mathscr{ANN}} : Program =}}
   \begin{array}[t]{l}
     \meta{ANNChannelDecl(c)} \\%
+    \meta{ANNConstants(c)} \\%
     \meta{ANNProc(c)} \\%
   \end{array} \\%
   \label{rule:ANNsemantics}
@@ -64,8 +65,7 @@ We begin with Rule \ref{rule:ANNsemantics}, our top-level rule. This rule uses t
   
   \meta{\bf where} \\%
   \begin{array}[t]{l}
-    \meta{hiddenEvts = \{ l, n : \nat | (0 < l < layerNo) \land n \in 1 \upto layerSize(l) \spot layerRes(l,n) \} } \\%
-     \meta{lastLayerS = last~ ((list \inv) c.annparameters.layerstructure)} \\%
+    \meta{hiddenEvts = \{ l, n : \nat | (0 < l < layerNo) \land n \in 1 \upto LStructure(c, l) \spot layerRes.l.n \}} \\%
   \end{array} 
   \label{rule:annchanneldecl}
 \end{TRule} 
@@ -85,6 +85,25 @@ In the recursive case, we first define the channel representing the layer output
 
 Rule \ref{rule:nodeoutchannels} functions in a very similar way to Rule \ref{rule:annchannels}. We need these channels to enable intra-node communication between the processes representing the input to this node, and the collator of this node. Here, $i$ represents the input index, that is, the size of the previous layers output, used to transmit the results from the previous layer to the next layer. 
 
+\begin{TRule}[Function ANNConstants \\]{\meta{ANNConstants(c : ANNController) : Par =}}
+  \begin{array}[t]{l}
+      weights : \seq \seq \seq Value; \\%
+      biases : \seq \seq Value; \\%
+      relu : Value \fun Value %
+  \end{array} \\%
+  \where %
+  \begin{array}[t]{l}
+      weights = \meta{((tensor \inv)~c.annparameters.weights)} \land \\%
+      biases = \meta{((matrix \inv)~c.annparameters.biases)~l~n} \land \\%
+      \forall x : Value @ \\%
+      \t1 %
+      \begin{array}[t]{l}
+        (x < 0 \implies (x,0) \in relu) \land \\% 
+        (x \geq 0 \implies (x,x) \in relu)
+      \end{array}
+   \end{array} \\%
+  \label{rule:annconstants}
+\end{TRule} 
 
 \begin{TRule}[Function ANNProc \\]{\meta{ANNProc(c : ANNController) : ProcDecl =}}
   \begin{array}[t]{l} 
@@ -95,14 +114,14 @@ Rule \ref{rule:nodeoutchannels} functions in a very similar way to Rule \ref{rul
       Collator \circdef l, n, i : \nat; sum : Value \circspot \\%
       \begin{array}[t]{l}
           \begin{array}[t]{l}
-              \lcircguard i == 0 \rcircguard \circguard layerRes.l.n!relu(sum + bias(l,n)) \then \Skip \ \extchoice \\%
-            \lcircguard i > 0 \rcircguard \circguard nodeOut.l.n.i?x \then Collator(l, n, (i-1), (sum + x))
+              \lcircguard i = 0 \rcircguard \circguard layerRes.l.n~!(relu(sum + ( biases(l)(n)))) \then \Skip \\% \extchoice \\%
+            \lcircguard i > 0 \rcircguard \circguard nodeOut.l.n.i~?x \then Collator(l, n, (i-1), (sum+x))
         \end{array}
       \end{array} \\%
       NodeIn \circdef l, n, i : \nat \circspot \\%
       \begin{array}[t]{l}
         \begin{array}[t]{l} 
-             layerRes.(l-1).i?x \then nodeOut.l.n.i!(x * weight(l,n,i)) \then \Skip 
+             layerRes.(l-1).i~?x \then nodeOut.l.n.i~!(x * (weights(l)(n)(i))) \then \Skip 
         \end{array} \\%
       \end{array} \\%
       Node \circdef l, n, inpSize : \nat \circspot \\%
@@ -122,12 +141,12 @@ Rule \ref{rule:nodeoutchannels} functions in a very similar way to Rule \ref{rul
       HiddenLayers \circdef \meta{HiddenLayers(c, layerNo(c) - 1)} \\%
       OutputLayer \circdef \\%
         \begin{array}[t]{l} 
-          \lpar \lchanset \meta{IndexedLayerRes(layerNo(c)-1)} \rchanset \rpar i : 1 \upto \meta{LStructure(layerNo(c))} \circspot \\%
-         \t1 Node(l, i, \meta{LStructure(layerNo(c)-1)}))
+          \lpar \lchanset layerRes.\meta{(layerNo(c)-1)} \rchanset \rpar i : 1 \upto \meta{LStructure(c, layerNo(c))} \circspot \\%
+         \t1 Node(l, i, \meta{LStructure(c, layerNo(c)-1)}))
         \end{array} \\%
       ANN \circdef %
       \begin{array}[t]{l}
-        ((HiddenLayers \lpar | \meta{IndexedLayerRes(layerNo(c)-1)} | \rpar OutputLayer) \\%
+        ((HiddenLayers \lpar | layerRes.\meta{layerNo(c)-1)} | \rpar OutputLayer) \\%
          \circhide ANNHiddenEvts) \circseq ANN \\% 
       \end{array} \\%
       
@@ -161,25 +180,17 @@ Rule \ref{rule:hiddenlayer} defines the behaviour of our $HiddenLayer$ action. W
       \meta{\bf{then}} \\%
       \t1 %
       \begin{array}[t]{l}
-        (HiddenLayer(\meta{l}, \meta{LStructure(l)}, \meta{LStructure(l-1)}))
+        (HiddenLayer(\meta{l}, \meta{LStructure(c, l)}, \meta{LStructure(c, l-1)}))
       \end{array} \\%
       \meta{\bf{else}} \\%
       \t1 %
       \begin{array}[t]{l}
         (\meta{HiddenLayers(c, (l-1))} \\%
-        \lpar | \lchanset \meta{IndexedLayerRes(c, l-1)} \rchanset | \rpar \\%
-        HiddenLayer(\meta{l}, \meta{LStructure(l)}, \meta{LStructure(l-1)})
+        \lpar | \lchanset layerRes.\meta{(l-1)} \rchanset | \rpar \\%
+        HiddenLayer(\meta{l}, \meta{LStructure(c, l)}, \meta{LStructure(c, l-1)})
       \end{array}
   \end{array} \\%
   \label{rule:hiddenlayers}
-\end{TRule} 
-
-\begin{TRule}[Function OutputLayer \\]{\meta{OutputLayer(c : ANNController) : CSPAction =}}
-  \begin{array}[t]{l} 
-    \lpar \lchanset \meta{IndexedLayerRes(layerNo(c)-1)} \rchanset \rpar i : 1 \upto \meta{LStructure(layerNo(c))} \circspot \\%
-   \t1 Node(l, i, \meta{LStructure(layerNo(c)-1)}))
-  \end{array} \\%
-  \label{rule:outputlayer}
 \end{TRule} 
 
 Rule \ref{rule:outputlayer} defines the output layer for our ANN model. This layer can be seen as the definition of a layer whose parameters are constant, using the meta-function $layerNo(c)$ as a constant to define the shape of our output layer. We separate the hidden layers and the output layer of an ANN model to capture the common pattern used when designing an ANN model: there is a fixed shape to the hidden layers, for example $6$ layers with $50$ nodes in each \cite{CAV2019}, and the shape of both the input and output layers are distinct from this shape, for example $5$ and $5$. Moreover, the shape of the input and output layers are defined by the context where an ANN model is used, but the shape of the hidden layers is defined by the complexity of the desired relation, which is independent of context and is a training consideration. Finally, output layers often have probabilistic interpretations, and their results are subject to additional external analysis, that we can support easier with a separate defined output layer action in \Circus. 
@@ -192,10 +203,12 @@ Rule \ref{rule:outputlayer} defines the output layer for our ANN model. This lay
           \circinterrupt ~ terminate \then \Skip \\%
         \end{array} \\%
   \end{array} \\%
+  
   \meta{\bf{where}}  \\%
+  
   \begin{array}[t]{l}
     \meta{orderedLayerRes =} \\%
-    \t1 \meta{order(\{ l : \{0, layerNo(c)\} ; n : 1 \upto LStructure(c, l)} \meta{ @ layerRes(l,n)\})} \\%
+    \t1 \meta{order(\{ l : \{0, layerNo(c)\} ; n : 1 \upto LStructure(c, l)} \meta{ @ layerRes.l.n\})} \\%
     \meta{eventList = order(allEvents(c.annparameters.inputContext)) \cat }\\%
     \t1 \meta{order(allEvents(c.annparameters.outputContext)) }
   \end{array}
@@ -217,6 +230,13 @@ We present the last of our functional rules, that defines the process presented 
   \label{rule:lstructure}
 \end{TRule} 
 
+\begin{TRule}[Function layerNo (number of layers) \\]{\meta{layerNo(c : ANNController) : \nat =}}
+  \begin{array}[t]{l}
+    \meta{\# ((list \inv)~c.annparameters.layerstructure)}
+  \end{array} 
+  \label{rule:layerno}
+\end{TRule} 
+
 The explanation of the rules that define the functional behaviour of the semantics for our ANN components now complete. Rules \ref{rule:layerres} through to our final rule \ref{rule:indexednodeout} present helper functions for values, channels, and channel sets used to define the behaviour of our rules. These rules also enable a cleaner syntax for the presentation of the functional rules. 
 
 Rule \ref{rule:lstructure} and Rule \ref{rule:layerno} define constants about our ANN model. We define $LStructure$ to be the size of each layer, using the inverse of the $list$ free type constructor indexed by $i$, and the number of events in the input context if we are referring to the input layer ($l = 0$). The function $layerNo$ defines the number of layers in our model, which is simply the size of the $layerstructure$ sequence in our $ANNController$. 
@@ -225,62 +245,6 @@ Next, we discuss our helper rules that refer to channels, a $CSExp$ in \Circus. 
 
 
 
-\begin{TRule}[layerRes Channel \\]{\meta{layerRes(l : \nat, n : \nat) : CSExp =}}
-  \begin{array}[t]{l}
-    layerRes.\meta{l}.\meta{n}
-  \end{array} 
-  \label{rule:layerres}
-\end{TRule} 
-
-\begin{TRule}[Function IndexedLayerRes \\]{\meta{IndexedLayerRes(l : \nat) : CSExp =}}
-  \begin{array}[t]{l}
-    \lchanset layerRes.\meta{l}
-    \rchanset 
-  \end{array} 
-  \label{rule:indexedlayerres}
-\end{TRule} 
-
-\begin{TRule}[nodeOut Channel \\]{\meta{nodeOut(l : \nat, n : \nat, i : \nat) : CSExp =}}
-  \begin{array}[t]{l}
-    nodeOut.\meta{l}.\meta{n}.\meta{i}
-  \end{array} 
-  \label{rule:nodeout}
-\end{TRule} 
-
-\begin{TRule}[Function layerNo (number of layers) \\]{\meta{layerNo(c : ANNController) : \nat =}}
-  \begin{array}[t]{l}
-    \meta{\# ((list \inv)~c.annparameters.layerstructure)}
-  \end{array} 
-  \label{rule:layerno}
-\end{TRule} 
-
-\begin{TRule}[Function weight \\]{\meta{weight(c : ANNController; l, n, i : \nat) : Value =}}
-  \begin{array}[t]{l}
-    \meta{((tensor \inv)~c.annparameters.weights)~l~n~i}
-  \end{array} 
-  \label{rule:weight}
-\end{TRule} 
-
-\begin{TRule}[Function bias \\]{\meta{bias(c : ANNController; l, n : \nat) : Value =}}
-  \begin{array}[t]{l}
-    \meta{((matrix \inv)~c.annparameters.biases)~l~n}
-  \end{array} 
-  \label{rule:bias}
-\end{TRule} 
-
-\begin{TRule}[Function AllNodeOut \\]{\meta{AllNodeOut(c : ANNController) : CSExp =}}
-  \begin{array}[t]{l}
-    \lchanset nodeOut \rchanset 
-  \end{array} \\%
-  \label{rule:allnodeout}
-\end{TRule} 
-
-\begin{TRule}[Function IndexedNodeOut \\]{\meta{IndexedNodeOut(c : ANNController, l, n : \nat) : CSExp =}}
-  \begin{array}[t]{l}
-    \lchanset nodeOut.\meta{l}.\meta{n} \rchanset
-  \end{array}
-  \label{rule:indexednodeout}
-\end{TRule} 
 
 Finally, we define our trained parameters, the weights and biases, in Rule \ref{rule:weight} and Rule \ref{rule:bias}. The definition of these using the inverse of the $tensor$ and $matrix$ constructors, as discussed in our Z assumptions, and each are indexed by $l$, $n$, and $i$ for the weight values. 
 
