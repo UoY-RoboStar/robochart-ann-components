@@ -350,6 +350,17 @@ InactivationLogic(edge_results, bias) =
 	(not ( member(active, edge_results) ) and (bias == inactive))
 	
 
+--Only need one, other is the complement, inactivation, makes sense. For positive nodes, 
+
+--Translates to, the same, 
+
+--Need to propagate this, need to travel backwards. through network. 
+
+--Need to flip it first. 
+
+
+
+
 --If both are false, then behave nondeterministically. 
 --Function, we can 
 --Edge Phase collator, 
@@ -408,6 +419,7 @@ InputLayer = (||| i : {1..insize} @ ( (NodePhase.0.i.active -> SKIP) [] (NodePha
 
 --Can't put uncertain, because assuming it is a number, not a nondeterminism. 
 
+--No input, if we have no input, find the first layers activation pattern, that you need, 
 ANN = (( ( InputLayer [| {| NodePhase.0 |} |] HiddenLayers ) [| {| NodePhase.(layerNo-1) |} |] OutputLayer) \ ANNHiddenEvts) ; ANN 
 
 --Check the output nodes, perhaps? 

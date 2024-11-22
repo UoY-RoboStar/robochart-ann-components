@@ -17,6 +17,75 @@ active,active,active,inactive,active
 inactive,inactive,inactive,active,inactive,
 inactive,active,active,active,inactive,
 
+ASSUMING -1, 1 normalisation. 
+
+Assume 1 max, in previous; 
+
+
+Layer 1 maximums: 
+
+Max bias is: 
+2.27630e-01
+
+positive, SO MOST NEGATIVE WEIGHT: 
+-2.61
+
+NEGATIVE. 
+
+All you get, you don't get ranges, not output range analysis, you get dependencies. 
+
+Minimal predicate, for activations. 
+
+Reduced, just what nodes need to be false. 
+
+If we can't guarantee, we can remove those that we have guaranteed to be inactive .
+
+Generate a new network, just on the uncertain nodes, or even remove the active and assume? 
+
+Then we can reduce the network, give it the right sequence, 
+
+INACTIVATION CONDITIONS: 
+N2 (and all others negative). 
+-1.8 + -2.61, NEGATIVE. 
+
+N3
+
+N3 ^ N2. 
+
+N1. 
+
+Bias is graeter. 
+
+N3 IS NOT A CONDIITON. 
+
+N3 ^ N2 IS A CONDITION. 
+
+N3 ^ N1 IS A CONDITION. 
+
+N4 is NOT. 
+
+
+
+
+
+
+
+
+
+Node 1: 
+absolute value, because -1, 1:
+
+MAX: 3.2285542
+
+Node 2: 
+1.54253919
+
+Node 3: 
+
+
+
+
+
 Layer 2: 
 
 -3.41918e-02,1.49570e+00,-1.53371e+00,4.05053e-02,1.64350e-01,
