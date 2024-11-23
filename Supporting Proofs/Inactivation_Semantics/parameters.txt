@@ -17,70 +17,150 @@ active,active,active,inactive,active
 inactive,inactive,inactive,active,inactive,
 inactive,active,active,active,inactive,
 
-ASSUMING -1, 1 normalisation. 
+ASSUMING -0.5, 0.5 NORMALISATION. 
 
-Assume 1 max, in previous; 
+Conditions, are, 
+
+how many inputs? 5. 
+
+5 inputs, -0.5..0.5. 
+
+What are the inactivation conditions for node 1, of layer 1? 
+
+Weights are: 5.40062e-02,-2.61092e+00,-1.80027e-01,2.42194e-01,1.41407e-01,
+
+Bias is: 2.27630e-01,
+
+Predicate on inputs, abstracted the inputs as, 
+
+-2..2, represents, -0.5, 0.25, 0, 0.25, 0.5
+
+Negative numbers, is pairs, so it will ignore them. 
+
+Enumerate, for every possibility, 
+
+Start lowest, 
+
+lowest weight: 
+-2.61092e+00
+
+Given the most negative, 
+-1.3, bias, THAT IS NEGATIVE. 
+
+Uncertain, already. 
+
+Predicate needs to be on not just the POSITION OF THE WEIGHTED SUM, ON THE VALUE, this time. 
+
+Predicate on, when it is INACTIVE, very complicated, for the first layer. 
+
+When it is guaranteed to be inactive, 
+
+Look for the LOWEST NORMALISED VALUES, if the input can be negative. 
+-2.61, not lowest noramlised. 
+lowest weight: -0.5 and 0.5, can't guarantee inactivity. -1.3--1.3, UNCERTAIN. 
+next weight: -0.18, 0.09 - (-0.09) - bias is: 0.22763, HAS TO BE ACTIVE, CANNOT BE INACTIVE. 
+next weight: 0.0054, guarantees ACTIVITY, 
+
+Given a 0 mean. 
+Take the absolute value of the weight * range, if that is < bias, then ACTIVITY GUARANTEED. 
+
+absolute value of |weight| + |weight2| * range if that is < bias, ACTIVTY GUARANTEED. 
+
+that represents the MAXIMUM VALUE THAT WE CAN OBTAIN. 
+
+minimal value, |weight| + |weight2| * (-range), if that is > bias, INACTIIVTY GUARANTEED. 
+
+Take the combinations of all, to find your activity and inactivity conditions for the first layer. 
+
+Maximum value of a node, for the input layer, is: 
+| SUM (weights) | * range (same as * NODE MAX). 
+
+for a 0 mean. 
+
+For every other layer. You have max of all of the nodes, calculated by 
+
+Don't need minimum, minium is always 0, traversal, 
+but we only record the maximum value of every node. 
+
+MAXIMUM NETWORK TRAVERSAL. 
+
+SUM (weight(i) * NODE_MAX(l, i)) 
 
 
-Layer 1 maximums: 
 
-Max bias is: 
-2.27630e-01
 
-positive, SO MOST NEGATIVE WEIGHT: 
--2.61
+| SUM(weights) | * 
 
-NEGATIVE. 
+just need, 
 
-All you get, you don't get ranges, not output range analysis, you get dependencies. 
+start lowest weight, take the maximal value, under the MAXIMAL 
 
-Minimal predicate, for activations. 
+Take LOWEST WEIGHT * MAX, if that is > BIAS, then 
 
-Reduced, just what nodes need to be false. 
+Negative bias: 
 
-If we can't guarantee, we can remove those that we have guaranteed to be inactive .
+LOOK AT POSITIVE CONNECTIONS FIRST, 
+negative connections, MUST BE NEGATIVE. 
 
-Generate a new network, just on the uncertain nodes, or even remove the active and assume? 
+Have inactivity FOR ALL COMBINATIONS OF NEGATIVE CONNECTIONS BECAUSE OF RELU. 
 
-Then we can reduce the network, give it the right sequence, 
+ASSUMING THAT the input is [0..x] 
 
-INACTIVATION CONDITIONS: 
-N2 (and all others negative). 
--1.8 + -2.61, NEGATIVE. 
+SO IF YOU HAVE A NEGATIVE CONNECTION, ALL COMBINATIONS ARE AUTOMATICALLY NEGATIVE, DON'T NEED TO WORRY ABOUT THEM
 
-N3
+THEY WILL ALWAYS BE NEGATIVE. 
 
-N3 ^ N2. 
+Look at the POSITIVE CONNECTION: 
 
-N1. 
+The Smallest positive connection: 
 
-Bias is graeter. 
+lowest weight * max is < bias, then YOU HAVE AN INACTIVITY CONDITION. 
 
-N3 IS NOT A CONDIITON. 
+if any weight * max is > bias, HAVE AN ACTIVITY CONDITION. 
+Then al combinations of weights * max that is < bias, have more inactivity conditions. 
 
-N3 ^ N2 IS A CONDITION. 
+Positive bias: 
 
-N3 ^ N1 IS A CONDITION. 
+Find those, that, if active, THE NEGATIVE CONNECTIONS. 
 
-N4 is NOT. 
+lowest weight * max is > 
+
+(-0.18), (0.2) 
 
 
 
 
 
 
+-1, 1
+
+under {-1,1}
+
+max is 
+1, 1
+
+min is: 
+-1, -1. 
+
+Look at the absolute values 
+
+
+Combination: 
+
+Every weight with every other weight, weight ^ 2, complexity for handling the network, one time though. Weight matrix, 
+
+INACTIVITY IS FOR when we get to bounded by 0, before that, we can guarantee acitivyt. 
+
+INACTIVITY CONDITIONS; 
+- -0.180027, input 3, GUARANTEES ACTIVITY. 
+
+Or just, ignore this, say that 
+p(in_val, 
+
+When we get to every other layer, its just maximum, and 0. 
 
 
 
-Node 1: 
-absolute value, because -1, 1:
-
-MAX: 3.2285542
-
-Node 2: 
-1.54253919
-
-Node 3: 
 
 
 

@@ -1,0 +1,33 @@
+WEights of the first 10 nodes in layer 1. 
+
+Rearrange them into two symmetric layers of 5 nodes each: 
+
+Layer 1: 
+
+5.40062e-02,-2.61092e+00,
+-1.12374e+00,2.63619e-02,
+
+Layer 2: 
+
+-3.41918e-02,1.49570e+00,
+4.02002e-01,2.24022e-01,
+
+inactive,active,
+active,active,
+
+Biases for layer 1: 
+2.27630e-01,
+-1.88762e-01,
+
+active,
+inactive,
+
+Biases for layer 2: 
+
+-5.88651e-01,
+7.46065e-02,
+
+inactive,
+active,
+
+

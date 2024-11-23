@@ -1,0 +1,81 @@
+
+insize = 2
+outsize = 2
+
+core_real = { -3..3}
+
+--Don't even need to change this, but it makes it clearer, its just an interpretation: 
+--Separation, makes it clearer. 
+--We definitely need to rename with the real semantics though. 
+--Normalise to: 
+norm_real = { 0..6}
+
+--Doesn't need to be indexed, it does, because the renaming function. 
+--ANNRenamed will rename all to a different contextual channel, 
+--Assuming renaming is to a different channel, 
+--We want the inputs to be different channels, to make it easier, it could be
+--the same channel, give it all inputs at once, why have it be different events, if it needs all
+--inputs in order to operate? Depend on the type of sensors though, 
+--For now have it as one channel, can change it easily: 
+channel context_input:{1..insize}.core_real
+--Instead of many indexed channels, one with a single decision. 
+--We need an output interpreter. 
+channel context_output:{1..outsize}.core_real
+
+channel norm_input:{1..insize}.norm_real
+channel norm_output:{1..outsize}.norm_real 
+
+channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
+
+--This is the intermediate channel, weight concatenation channel, 
+channel EdgePhase:{1..layerNo}.{1..maxSize}.{1..maxSize}.Phases
+
+channel end 
+
+--TEST FOR NORMALISATION VIA RENAMING: 
+
+--What are we turning it into? 
+
+--Want it to be numeric? Node
+--Some logic on norm_real channel. 
+
+--Buffer for now: 
+P = norm_input.1?x -> norm_output.1!x -> SKIP
+
+--On what channel? normed channels are those with active, inactive, etc. 
+--needs to behave, nondeterminsistically
+--In an abstract ANN, WE WON'T HAVE REAL, we will have decisions. 
+
+--Map, norm_real to core_real. 
+--Run this, on both the input and output? No difference? 
+--REality, you need a different normalisation, for each of the inputs and outputs. 
+--different channel type, different way of dealing with each channel type. 
+norm(0) = -3
+norm(1) = -2
+norm(2) = -1
+norm(3) = 0
+norm(4) = 1
+norm(5) = 2
+norm(6) = 3
+
+--Functional norm, will be different for each input and output. 
+in_norm(x, y) = norm(y)
+out_norm(x, y) = norm(y)
+--For now they are the same, but they will be different each time. 
+
+--Treat inputs and output differently. 
+--Idea is, that you give this, you interact and get results entirely with the normalised values. 
+--you need to rename its inputs to be in terms, lifting its inputs, from -1..1 to outside range. 
+--inner range, smaller, but should have a mapping, 
+--Need to number inputs, 
+
+--If its the same, make the renaming function, if the input and output channels carry the same values. 
+--They should, 
+--Need an output interpreter, behaves as nondeter
+--Inputs on separate channels, outputs on one channel, ONE DECISION, ONE OUTPUT. 
+--It works, add this to ANNRenamed. While we are renaming to the contextual channels, also add the norm function. 
+--Indexed by number of inputs and outputs, generate these from constants. 
+--One output, many inputs, one output. 
+N_P = P [[norm_input.i.x <- context_input.i.in_norm(i, x),
+		  norm_output.j.x <- context_output.j.out_norm(j, x)
+	      | x <- norm_real, i <- {1..insize}, j <- {1..outsize} ]]

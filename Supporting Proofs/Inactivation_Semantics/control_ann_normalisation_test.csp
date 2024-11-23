@@ -1,0 +1,140 @@
+
+insize = 2
+outsize = 2
+
+--For control, we have NORMAL core_real inputs. 
+
+--We have DECISIONS as outputs, which can be a datatype. 
+--Channel that carries a certain decision, that is then used by other components. 
+--A number of decisions, same as the outsize. 
+datatype decisions = a | b
+
+--To match with the outisze. 
+
+--Inputs, still be numbers? They can be, yes, we will have our first layer will be predicates on these 
+--numbers, on the abstracted numbers, or on the real numbers for Circus. 
+--For the inactivation conditions, then every other layer will be on active, inactive. 
+
+--We need to translate the network of output decisions, into a single channel, 
+
+core_real = { -3..3}
+
+norm_real = { 0..6}
+
+--Normalisation? We still need it, JUST FOR THE INPUTS THOUGH. 
+--For the outputs, we model as decisions, instead of the number. 
+
+--Just need decisions, 
+--This is the EXTERNAL VALUES, EXTERNAL REAL VALUES, THAT ARE GIVEN TO THE ANN. 
+--Even in inactivation semantics, we still have real values, that are normalised. 
+channel context_input:{1..insize}.core_real
+
+--This is a channel that is VISIBLE TO THE ANN, the ANN USES THE SAME CHANNEL, UNMODIFIED. 
+--This represents the decisions that an ann makes, discrete set of decisions. 
+--These can be a set, or a datatype, doesn't matter, can carry anything related to the context. 
+--An ANN outputs one value, on this single channel. 
+channel context_output:decisions
+
+--These are the NORAMLISED VALUES, used for the first layer, in inactivation semantics. 
+--Given to the first layer, 
+channel network_input:{1..insize}.norm_real
+--Output will not be normed, it will be active inactive or uncertain. 
+
+datatype Phases = active | inactive | uncertain
+
+--Point is, for the network to choose n number of phases. 
+
+--These are the phases, they will be the NodePhases channel, what EVERY LAYER APART FROM 
+--THE FIRST LAYER OPERATES ON. 
+--These are i
+channel network_output:{1..outsize}.Phases
+
+
+--Node, a single node: 
+Node = network_input.1?x -> ( (x > 0) & network_output.1!active -> SKIP [] 
+							  (x <= 0) & network_output.1!inactive -> SKIP )
+
+Node2 = network_input.2?x -> ( (x > 0) & network_output.2!active -> SKIP [] 
+							  (x <= 0) & network_output.2!inactive -> SKIP )
+
+context_translation(1) = a
+context_translation(2) = b
+
+emptylogic(false, _) = false 
+emptylogic(true, x) = if (x == active) then false else true 
+
+--Easiest way is a boolean flag, if no node is active, behave as all of them. 
+--Remove the guard if we have an empty list. 
+--Could offer STOP, 
+Output_Interpreter = let	
+	C(0, network_results, empty) = 
+		((empty) &
+		|~| i : {1..outsize} @ context_output.context_translation(i) -> SKIP )
+		[]
+		((not empty) & 
+		|~| e : { j |
+					j <- {1..#network_results}, extract_sequence(j, network_results) == active}
+				@ context_output.context_translation(e) -> SKIP )
+	
+	C(index, network_results, empty) = network_output.index?output -> 
+										C((index-1), <output>^network_results, emptylogic(empty, output))
+										
+	within 
+		C(outsize, <>, true)
+
+--Both need to be in parallel with Output_Interpreter 
+
+Network = ((Node ||| Node2) [| {| network_output |} |] Output_Interpreter)
+
+--On what channel? normed channels are those with active, inactive, etc. 
+--needs to behave, nondeterminsistically
+--In an abstract ANN, WE WON'T HAVE REAL, we will have decisions. 
+
+--Map, norm_real to core_real. 
+--Run this, on both the input and output? No difference? 
+--REality, you need a different normalisation, for each of the inputs and outputs. 
+--different channel type, different way of dealing with each channel type. 
+norm(0) = -3
+norm(1) = -2
+norm(2) = -1
+norm(3) = 0
+norm(4) = 1
+norm(5) = 2
+norm(6) = 3
+
+--Functional norm, will be different for each input and output. 
+in_norm(x, y) = norm(y)
+--We shouldn't need an output norm now: 
+--out_norm(x, y) = norm(y)
+--For now they are the same, but they will be different each time. 
+
+--Treat inputs and output differently. 
+--Idea is, that you give this, you interact and get results entirely with the normalised values. 
+--you need to rename its inputs to be in terms, lifting its inputs, from -1..1 to outside range. 
+--inner range, smaller, but should have a mapping, 
+--Need to number inputs, 
+
+--If its the same, make the renaming function, if the input and output channels carry the same values. 
+--They should, 
+--Need an output interpreter, behaves as nondeter
+--Inputs on separate channels, outputs on one channel, ONE DECISION, ONE OUTPUT. 
+--It works, add this to ANNRenamed. While we are renaming to the contextual channels, also add the norm function. 
+--Indexed by number of inputs and outputs, generate these from constants. 
+--One output, many inputs, one output. 
+
+--Then we just hide the network_output, don't need to hide network input, we've renamed that. 
+
+--We need to hide, these will be the node phases, in the final model, nothing else. 
+N_P = ( Network [[network_input.i.x <- context_input.i.in_norm(i, x)
+	      | x <- norm_real, i <- {1..insize} ]] \ {| network_output |} ) ; N_P 
+		 
+assert N_P:[deadlock-free[FD]]
+assert N_P:[divergence-free]
+--Non-deterministic, as expected. 
+assert N_P:[deterministic]
+--Make it repeat. 
+
+
+
+extract_sequence(1, sequence) = head(sequence)
+extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
