@@ -47,11 +47,8 @@ def gen_layer_conditions(layer):
     condition_strings = []
     for n in range(0, len(biases)): 
         if(biases[n] < 0):
-            print("inactivation conditions")
-            print(biases[n])
             condition_strings.append(neg_weight_extraction(layer, n, weights[n], biases[n]))
         else:
-            print("activation conditions")
             condition_strings.append(pos_weight_extraction(layer, n, weights[n], biases[n]))
     for s in condition_strings:
         print(s)
@@ -81,8 +78,8 @@ def gen_input_conditions():
         input_conditions(0, 1, i, weights[i], biases[i], conditions)
     
     #Print all of them, by the biases: Order them manaully.
-    #for i in range(0, len(biases)): 
-        #print(conditions[i])
+    for i in range(0, len(biases)): 
+        print(conditions[i])
     
 #Make this a function for one: 
 def input_conditions(mean, ran, node, weights, bias, conditions):
@@ -121,32 +118,20 @@ def input_conditions(mean, ran, node, weights, bias, conditions):
 #1 or 0 indexed, for the sequence? 1-indexed, we need to add one.  
 #Cuz were using sequences, we need to be using sets, check that the rest of them, we need to check all of them. 
 #We need to group all of them for FDR. 
+
+#NO BASE INSECURITY. 
 def activation_print_conversion(activation_lists, layer, node, no_weights):
     s = "ActivationLogic(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
     #The constant formula, for all of them, for the activity semantics: 
     
-    s += "("
-    for i in range(0, no_weights):
-        s += "(extract_sequence("+str(i+1)+", edge_results) == active or extract_sequence("+str(i+1)+", edge_results) == uncertain)"
-        if(i != no_weights-1): 
-            s += " and "
-    s += ")"
-    if(len(activation_lists) > 0):
-       s += " or \n"
-    
     for i in range(0, len(activation_lists)):
         #New DNF for every list, 
         s += "("
-        for j in range(0, no_weights): 
-            #If the index is in the list, active, otherwise, inactive. 
-            if(j in activation_lists[i]): 
-                #We need to add one because sequences in FDR are 1-indexed, 
-                s += "extract_sequence(" + str(j+1) + "," + "edge_results) == active"
-            else: 
-                #These are conditions, if any are unsure, we can only do the basic checks, need them to be active or inactive"
-                s += "extract_sequence(" + str(j+1) + "," + "edge_results) == inactive"
-                
-            if(j != no_weights-1):
+        for j in range(0, len(activation_lists[i])): 
+            #We need to add one because sequences in FDR are 1-indexed, 
+            s += "extract_sequence(" + str(activation_lists[i][j]+1) + "," + "edge_results) == active"
+            
+            if(j != len(activation_lists[i])-1):
                 s += " and "
             
         if(i != len(activation_lists)-1):
@@ -154,33 +139,20 @@ def activation_print_conversion(activation_lists, layer, node, no_weights):
         else: 
             s += ") \n"
     return s
-        
+
+#No base insecurity either, 
 def inactivation_print_conversion(activation_lists, layer, node, no_weights):
     s = "InActivationLogic(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
     #The constant formula, for all of them, for the activity semantics: 
-    
-    s += "("
-    for i in range(0, no_weights):
-        s += "(extract_sequence("+str(i+1)+", edge_results) == inactive)"
-        if(i != no_weights-1): 
-            s += " and "
-    s += ")"
-    if(len(activation_lists) > 0):
-        s += "or \n"
-    
+
     for i in range(0, len(activation_lists)):
         #New DNF for every list, 
         s += "("
-        for j in range(0, no_weights): 
-            #If the index is in the list, active, otherwise, inactive. 
-            if(j in activation_lists[i]): 
-                #We need to add one because sequences in FDR are 1-indexed, 
-                s += "extract_sequence(" + str(j+1) + "," + "edge_results) == active"
-            else: 
-                #These are conditions, if any are unsure, we can only do the basic checks, need them to be active or inactive"
-                s += "extract_sequence(" + str(j+1) + "," + "edge_results) == inactive"
-                
-            if(j != no_weights-1):
+        for j in range(0, len(activation_lists[i])): 
+            #We need to add one because sequences in FDR are 1-indexed, 
+            s += "extract_sequence(" + str(activation_lists[i][j]+1) + "," + "edge_results) == active"
+            
+            if(j != len(activation_lists[i])-1):
                 s += " and "
             
         if(i != len(activation_lists)-1):
@@ -196,20 +168,28 @@ def indexify_list(activation_lists, weights):
     for i in range(0, len(activation_lists)):
         for j in range(0, len(activation_lists[i])):
             activation_lists[i][j] = weights.index(activation_lists[i][j])
-            
+
+#If the sum is STRICTLY GREATER, otherwise, who cares.
+#This is now WHEN WE ARE UNSURE ABOUT THE INACTIVATION, when it could be positive, but we aren't sure.  
 def is_inactivation_condition(l, bias):
 	#true, if the sum is less than or equal to the bias, the absolute value, then it must be inactive, still, 
-	if(sum(l) <= abs(bias)):
+	if(sum(l) > abs(bias)):
 		return True
 	else:
 		return False
 		
 #positive? if the absolute value of sum is greater tham the bias, calls a different function
 
-#will be all the NEGATIVE WEIGHTS, SUM THEN ABSOLUTE VALUE, LESS THAN SRRICTLY THE WEIGHT, 0 IS INACTIVE.
-#for positive biases:
+#This is actually, what are those conditions under which WE ARE UNSURE. 
+
+#bias is positive. 0.8
+#if the absolute sum of all is less than the bias, we must have activation.
+#Why the absolulte value? because its negative, a bunch of negate numbers together. 
+#We need to encode the UNSURE SEMANTICS. 
+#When, This is the UNSURE CONDITIONS. 
+#Now these are THE ONLY CONDITIONS UNDER WHICH WE ARE UNSURE, EVERY OTHER CONDITOIN WE ARE SURE OF, FALSE MEANS ACTIVE HERE. 
 def is_activation_condition(l, bias):
-		if(abs(sum(l)) < bias):
+		if(abs(sum(l)) >= bias):
 			return True
 		else:
 			return False
@@ -218,24 +198,19 @@ def pos_weight_extraction(layer, node, weights, bias):
 		mod_list = list(weights)
 		#need to collect different values, just the negative values, for positive weights
 		mod_list = list(filter(lambda x: x <= 0, mod_list))
-		print("mod list: ", mod_list)
 		powerlists = list_powset(mod_list)
-		print(powerlists)
 		#remove empty list from powerset, we dont need it.
 		activation_cons = [is_activation_condition(l, bias) for l in powerlists]
-		print(activation_cons)
 		
 		#print all sequences
 		
 		#translate them into indicies.
 		activation_lists = [powerlists[i] for i in range(0, len(powerlists)) if activation_cons[i] == True]
-		print(activation_lists)
 		
 		#convert to index of original list
 		for i in range(0, len(activation_lists)):
 			for j in range(0, len(activation_lists
 			[i])):
-				print("weight: ", weights.index(activation_lists[i][j]))
 				activation_lists[i][j] = weights.index(activation_lists[i][j])
 		return activation_print_conversion(activation_lists, layer, node, len(weights))        
 		
@@ -247,23 +222,18 @@ def neg_weight_extraction(layer, node, weights, bias):
 		mod_list = list(weights)
 		#need to collect different values, just the negative values, for positive weights
 		mod_list = list(filter(lambda x: x > 0, mod_list))
-		print("mod list: ", mod_list)
 		powerlists = list_powset(mod_list)
-		print(powerlists)
 		inactivation_cons = [is_inactivation_condition(l, bias) for l in powerlists ]
-		print(inactivation_cons)
 		
 		#print all sequences
 		
 		#translate them into indicies.
 		inactivation_lists = [powerlists[i] for i in range(0, len(powerlists)) if inactivation_cons[i] == True]
-		print(inactivation_lists)
-		
+
 		#convert to index of original list
 		for i in range(0, len(inactivation_lists)):
 			for j in range(0, len(inactivation_lists
 			[i])):
-				print("weight: ", weights.index(inactivation_lists[i][j]))
 				inactivation_lists[i][j] = weights.index(inactivation_lists[i][j])
 		return inactivation_print_conversion(inactivation_lists, layer, node, len(weights))
 
@@ -296,5 +266,5 @@ def list_powset(l):
 
 
 if(__name__ == "__main__"):
-	#gen_input_conditions()
-    gen_layer_conditions(2)
+	gen_input_conditions()
+	gen_layer_conditions(2)
