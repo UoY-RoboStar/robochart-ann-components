@@ -109,155 +109,412 @@ NodeEdge(layer, node, index) =
 
 --FOr now, check why activationlogic(1,4) ever was being called: 
 
-
-
 ActivationLogic(1,1,edge_results) =
- (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+ (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
 (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
 (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
 (extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active)
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive)
+
 
 ActivationLogic(1,3,edge_results) =
- (extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+ (extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
 (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
 (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
 (extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active)
-
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active)
 
 ActivationLogic(2,2,edge_results) =
- (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active)
+ (extract_sequence(3,edge_results) == active) or
+(extract_sequence(5,edge_results) == active) or
+(extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active)
 
 
 ActivationLogic(l,n,edge_results) = false
 
 
 
-
 InActivationLogic(1,2,edge_results) =
- (extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+ (extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
 (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active)
-
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive)
 
 InActivationLogic(1,4,edge_results) =
- (extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active)
+ (extract_sequence(1,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(5,edge_results) == active)
 
 InActivationLogic(1,5,edge_results) =
- (extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+ (extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
 (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
 (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
 (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active)
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(1,edge_results) == active and extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(1,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(3,edge_results) == active) or
+(extract_sequence(3,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
+(extract_sequence(3,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(4,edge_results) == active) or
+(extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive)
 
 InActivationLogic(2,1,edge_results) =
- (extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == inactive) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == inactive and extract_sequence(5,edge_results) == active) or
-(extract_sequence(1,edge_results) == inactive and extract_sequence(2,edge_results) == active and extract_sequence(3,edge_results) == inactive and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active)
+ (extract_sequence(2,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(5,edge_results) == active) or
+(extract_sequence(2,edge_results) == active and extract_sequence(4,edge_results) == active and extract_sequence(5,edge_results) == active)
 
---FOr now, check why activationlogic(1,4) ever was being called: 
 InActivationLogic(2,3,edge_results) = false
 
 InActivationLogic(2,4,edge_results) = false
@@ -411,7 +668,7 @@ assert ANNRenamed \ {NodePhase.2.1.active, NodePhase.2.1.uncertain} [T= ANNRenam
 --2.3, 2.4, 2.5 are always inactive: 
 assert ANNRenamed \ {NodePhase.2.3.active, NodePhase.2.3.uncertain,
 					NodePhase.2.4.active, NodePhase.2.4.uncertain,
-					NodePhase.2.5.active, NodePhase.2.5.uncertain,
+					NodePhase.2.5.active, NodePhase.2.5.uncertain
 					} [T= ANNRenamed
 
 				

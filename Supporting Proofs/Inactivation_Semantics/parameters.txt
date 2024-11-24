@@ -9,8 +9,26 @@ Layer 1:
 1.96019e-01,2.42159e-01,6.38452e-01,-4.78265e-01,1.42577e-01,
 -1.63015e+00,-3.44447e-02,-6.05492e-03,1.12076e-02,-1.04997e-02,
 -3.55133e-01,5.65969e-01,2.28267e-01,1.77342e-01,-2.08078e-01, 
+
+5 is inactive, -8.12531e-02, should be in trouble, not if 5 is active. 
+
+Backwards, 
+
+No its not, activations are, if the original is in the list, 
+
+If the original is in the list, 
  
- 2: 
+Edge results, need to be different: 
+
+active input and active weight -> active weight, positive. 
+
+active input and inactive weight -> inactive weight, negative. 
+
+inactive input (-) and active weight -> inactive weight, 
+
+inactive input (-) and inactive weight -> positive
+
+Make a condition on the weighted input, don't make it on the absolute value,  
 
 
 TRANSLATION: 

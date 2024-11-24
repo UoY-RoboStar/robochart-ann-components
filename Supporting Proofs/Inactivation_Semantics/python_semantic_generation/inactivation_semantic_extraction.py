@@ -83,34 +83,161 @@ def gen_input_conditions():
     
 #Make this a function for one: 
 def input_conditions(mean, ran, node, weights, bias, conditions):
-	maxi = ran / 2
-	#we now need only to look at the absolute value of every node, under max, this represents the maximum poositive and negative values the weights could take.
-	#these are what we model, the conditions, so WE JUST CARE IF THEY ARE > 0, ACTIVE, OR <= 0, INACTIVE, THATS HOW WE MODEL THEM.
-	#weights = [5.40062e-02,-2.61092e+00,-1.80027e-01,2.42194e-01,1.41407e-01]
-	#bias = 2.27630e-01
-	#absolute value
-	#max is always the same
-	
-	for i in range(0, len(weights)):
-		weights[i] = abs(weights[i]) * maxi
-	#now we have maximums, if we now take powersets, compare to bias
-	#is it the same? yes, it should be. 
-	powerlists = list_powset(weights)
-	#remove empty list from powerset, we dont need it.
-	cons = []
-	if(bias > 0):
-		cons = [is_activation_condition(l, bias) for l in powerlists]
-	else:
-		cons = [is_inactivation_condition(l, bias) for l in powerlists]
-        
-	activation_lists = [l for l in powerlists if cons[powerlists.index(l)] == True]
-	indexify_list(activation_lists, weights)
-	activation_lists = list(filter(lambda x: len(x) > 0, activation_lists))
-	if(bias > 0): 
-		conditions.append(activation_print_conversion(activation_lists, 1, node, len(weights)))
-	else: 
-		conditions.append(inactivation_print_conversion(activation_lists, 1, node, len(weights)))
+    maxi = ran / 2
+    #Make a copy, need what the original sign was: 
+    original_weights = list(weights)
+    
+    for i in range(0, len(weights)):
+        weights[i] = abs(weights[i]) * maxi
+    #now we have maximums, if we now take powersets, compare to bias
+    #is it the same? yes, it should be. 
+    powerlists = list_powset(weights)
+    #remove empty list from powerset, we dont need it.
+    cons = []
+    actual_lists = []
+    #If it is a combination we need to worry about, find out what phases each must be in. 
+    #We need to test, for every combination, we need to test 
+    #They are ALL POSITIVE NOW, we need to just flip each to negative, test what need to be negative. 
+    #DOESN'T WORK, that filter, because it assumes they are all negative, they might not be. 
+    #We may not have true counterexamples here, just possible:
+    if(bias > 0):
+        for z in range(0, len(powerlists)): 
+            cons_testing = list(powerlists[z])
+            for i in range(0, len(cons_testing)): 
+                cons_testing[i] *= -1
+                for j in range(0, len(cons_testing)): 
+                    cons_testing[j] *= -1
+                    #Now, we need to test: 
+                    sum_cons = sum(cons_testing)
+                    #If this beats the bias, we are positive, then we may have a condition.
+                    #No, this is for when the sum is going to make the whole thing negative. when the sum + bias < 0 
+                    if((sum_cons + bias) < 0):
+                        #Make a new copy, I think it is changing this: 
+                        actual_lists.append(list(cons_testing))
+    else:
+        cons = [is_inactivation_condition(l, bias) for l in powerlists]
+        for z in range(0, len(powerlists)): 
+            if(cons[z]): 
+                cons_testing = list(powerlists[z])
+                for i in range(0, len(cons_testing)): 
+                    cons_testing[i] *= -1
+                    for j in range(0, len(cons_testing)): 
+                        cons_testing[j] *= -1
+                        #Now, we need to test: 
+                        sum_cons = sum(cons_testing)
+                        #If this beats the bias, we are positive, then we may have a condition.
+                        if((sum_cons + bias) >= 0):
+                            actual_lists.append(list(cons_testing))
+    #Because of the duplicates. 
+    
+    #Negative, inactive ones, only need to worry if that INPUT IS ACTUALLY INACTIVE.
+    #Translate to not, or is: 
+    for i in range(0, len(actual_lists)):
+        for j in range(0, len(actual_lists[i])):
+            #We don't know the original value of all of them. 
+            if(actual_lists[i][j] <= 0.0):
+                index_of_weight = weights.index(abs(actual_lists[i][j]))
+                #IF the original weight, was positive, such that it HAS been flipped, then: 
+                #active corresponds to a POSITIVE node, which means a NEGATIVE, ORIGINAL
+                #ACTIVE MEANS THE ORIGINAL VALUE OF THE WEIGHTS, INACTIVE, -, MEANS THE FLIPPED VALUE. 
+                if(original_weights[index_of_weight] > 0):
+                    actual_lists[i][j] = -(weights.index(abs(actual_lists[i][j]))+1)
+                else: 
+                    actual_lists[i][j] = (weights.index(abs(actual_lists[i][j]))+1)
+            else: 
+                index_of_weight = weights.index(abs(actual_lists[i][j]))
+                #WE need to check if the weightw as negative originally. Then we need to add the predicate, on the FLIPPED. 
+                #On the INACTIVE node, because, was negative origially, but the positie value matters. 
+                if(original_weights[index_of_weight] <= 0):
+                    actual_lists[i][j] = -(weights.index(abs(actual_lists[i][j]))+1)
+                else: 
+                    actual_lists[i][j] = (weights.index(abs(actual_lists[i][j]))+1)
+
+    #Remove duplicates of lists, 
+    
+    import itertools
+    actual_lists.sort()
+    actual_lists = list(k for k,_ in itertools.groupby(actual_lists))
+    print("Indexified lists: ")
+    #Printing out all combinations, of lists, in reality, which ones are not 
+    #If ALL of these indicies are contained within one of the actual_lists, then must be unsafe. 
+    list1 = [1,2,3,4,5]
+    #Powerlist, used as indicies, 
+    #Test if any of these, if it satisfies the condition, sublist, 
+    print("list1:")
+    invalid = 0
+    for x in range(0,5):
+        list1[x] *= -1
+        for y in range(0,5):
+            list1[y] *= -1
+            found = False
+            for l in actual_lists:
+                if(set(l).issubset(list1) and not found):
+                    invalid+=1
+                    found = True
+    #print("number of invalid lists:", invalid)
+                
+            
+    #What are the combinations, that we actually accept? That we don't return unsure on? 
+    #for l in actual_lists:
+        #print(l)
+    #print("number of conditions", len(actual_lists))
+    if(bias > 0): 
+        conditions.append(input_activation_print_conversion(actual_lists, 1, node, len(weights)))
+    else: 
+        conditions.append(input_inactivation_print_conversion(actual_lists, 1, node, len(weights)))
 	    
+
+
+def input_inactivation_print_conversion(activation_lists, layer, node, no_weights):
+    s = "InActivationLogic(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
+    #The constant formula, for all of them, for the activity semantics: 
+    
+    for i in range(0, len(activation_lists)):
+        #New DNF for every list, 
+        s += "("
+        for j in range(0, len(activation_lists[i])): 
+            #We need to add one because sequences in FDR are 1-indexed, 
+            #If its negative it denotes an inactive condition: 
+            if(activation_lists[i][j] < 0): 
+                s += "extract_sequence(" + str(abs(activation_lists[i][j])) + "," + "edge_results) == inactive"
+            else: 
+                s += "extract_sequence(" + str(activation_lists[i][j]) + "," + "edge_results) == active"
+            
+            if(j != len(activation_lists[i])-1):
+                s += " and "
+            
+        if(i != len(activation_lists)-1):
+            s += ") or \n"
+        else: 
+            s += ") \n"
+    return s
+
+
+def input_activation_print_conversion(activation_lists, layer, node, no_weights):
+    s = "ActivationLogic(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
+    #The constant formula, for all of them, for the activity semantics: 
+    
+    for i in range(0, len(activation_lists)):
+        #New DNF for every list, 
+        s += "("
+        for j in range(0, len(activation_lists[i])): 
+            #We need to add one because sequences in FDR are 1-indexed, 
+            #If its negative it denotes an inactive condition: 
+            if(activation_lists[i][j] < 0): 
+                s += "extract_sequence(" + str(abs(activation_lists[i][j])) + "," + "edge_results) == inactive"
+            else: 
+                s += "extract_sequence(" + str(activation_lists[i][j]) + "," + "edge_results) == active"
+            
+            if(j != len(activation_lists[i])-1):
+                s += " and "
+            
+        if(i != len(activation_lists)-1):
+            s += ") or \n"
+        else: 
+            s += ") \n"
+    return s
+
 
 #Print conversion, to FDR, for the activation logic: will be because we do have a positive bias. 
 #Positive or negative, these are ACTIVE, if they are ACTIVE. 
@@ -266,5 +393,5 @@ def list_powset(l):
 
 
 if(__name__ == "__main__"):
-	gen_input_conditions()
+	#gen_input_conditions()
 	gen_layer_conditions(2)
