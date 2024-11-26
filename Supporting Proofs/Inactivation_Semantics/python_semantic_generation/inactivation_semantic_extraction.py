@@ -144,23 +144,14 @@ def input_conditions(mean, ran, node, weights, bias, conditions):
     for i in range(0, len(actual_lists)):
         for j in range(0, len(actual_lists[i])):
             #We don't know the original value of all of them. 
+            index_of_weight = weights.index(abs(actual_lists[i][j]))
+            #Always the same, because if negative, inactivity means NEGATIVE, in an edge. 
+            #Even if the weight is negative, NEEDS TO BE NEGATIVE. Positive input, doesn't matter. 
+            #IF THE END RESULT, its about the end result. 
             if(actual_lists[i][j] <= 0.0):
-                index_of_weight = weights.index(abs(actual_lists[i][j]))
-                #IF the original weight, was positive, such that it HAS been flipped, then: 
-                #active corresponds to a POSITIVE node, which means a NEGATIVE, ORIGINAL
-                #ACTIVE MEANS THE ORIGINAL VALUE OF THE WEIGHTS, INACTIVE, -, MEANS THE FLIPPED VALUE. 
-                if(original_weights[index_of_weight] > 0):
-                    actual_lists[i][j] = -(weights.index(abs(actual_lists[i][j]))+1)
-                else: 
-                    actual_lists[i][j] = (weights.index(abs(actual_lists[i][j]))+1)
+               actual_lists[i][j] = -(weights.index(abs(actual_lists[i][j]))+1)
             else: 
-                index_of_weight = weights.index(abs(actual_lists[i][j]))
-                #WE need to check if the weightw as negative originally. Then we need to add the predicate, on the FLIPPED. 
-                #On the INACTIVE node, because, was negative origially, but the positie value matters. 
-                if(original_weights[index_of_weight] <= 0):
-                    actual_lists[i][j] = -(weights.index(abs(actual_lists[i][j]))+1)
-                else: 
-                    actual_lists[i][j] = (weights.index(abs(actual_lists[i][j]))+1)
+                actual_lists[i][j] = (weights.index(abs(actual_lists[i][j]))+1)
 
     #Remove duplicates of lists, 
     
@@ -402,5 +393,5 @@ def list_powset(l):
 
 
 if(__name__ == "__main__"):
-	#gen_input_conditions()
-	gen_layer_conditions(2)
+	gen_input_conditions()
+	#gen_layer_conditions(2)
