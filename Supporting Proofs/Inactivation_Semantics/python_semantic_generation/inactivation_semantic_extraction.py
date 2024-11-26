@@ -12,7 +12,7 @@ def calculate_input_layer_max(weights, biases, max_val):
     #Can be negative, maximum is sum of the absolute value of all of them. Maximum under any conditions. 
     maximums = []
     for i in range(0, len(biases)):
-        maximums.append( (sum(list([abs(x) for x in weights[i]]))) + biases[i])
+        maximums.append( (sum(list([(abs(x) * max_val) for x in weights[i]]))) + biases[i])
     return maximums
   
 #FOr a layer, we need maximum from previous layers. Has to be positive now. 
@@ -28,7 +28,8 @@ def gen_layer_conditions(layer):
 5.34094e-02,
 -3.77861e-01,
 -8.12531e-02]
-    maximums = calculate_input_layer_max(input_weights, input_biases, 0.5)
+    #Hiding the maximums for now. 
+    #maximums = calculate_input_layer_max(input_weights, input_biases, 0.5)
     #Apply the maximum weighting we can, to the weights, from previous layer:
     
     weights = [[-3.41918e-02,1.49570e+00,-1.53371e+00,4.05053e-02,1.64350e-01],
@@ -39,10 +40,12 @@ def gen_layer_conditions(layer):
     
     biases = [-5.88651e-01,7.46065e-02,-3.92887e-01,-3.56303e-01,-1.67712e-01]
     
+    maximums = calculate_input_layer_max(input_weights, input_biases, 0.5)
     #Yes, all of them for the layer, by the appropriate maximum, 
     for i in range(0, len(weights)):
             for j in range(0, len(weights[i])):
                 weights[i][j] *= maximums[j]
+                print("maximums: ", maximums[j])
     
     condition_strings = []
     for n in range(0, len(biases)): 
@@ -75,7 +78,7 @@ def gen_input_conditions():
     #We will have a bunch of strings, one per line, we need to group all of them, for FDR, one at a time: 
     conditions = []
     for i in range(0, len(weights)):
-        input_conditions(0, 1, i, weights[i], biases[i], conditions)
+        input_conditions(0, 1.0, i, weights[i], biases[i], conditions)
     
     #Print all of them, by the biases: Order them manaully.
     for i in range(0, len(biases)): 
@@ -91,43 +94,49 @@ def input_conditions(mean, ran, node, weights, bias, conditions):
         weights[i] = abs(weights[i]) * maxi
     #now we have maximums, if we now take powersets, compare to bias
     #is it the same? yes, it should be. 
-    powerlists = list_powset(weights)
     #remove empty list from powerset, we dont need it.
-    cons = []
+    weight_powerset = list_powset(weights)
     actual_lists = []
     #If it is a combination we need to worry about, find out what phases each must be in. 
     #We need to test, for every combination, we need to test 
     #They are ALL POSITIVE NOW, we need to just flip each to negative, test what need to be negative. 
     #DOESN'T WORK, that filter, because it assumes they are all negative, they might not be. 
     #We may not have true counterexamples here, just possible:
+    #All possibilities, because, could be negative, 
     if(bias > 0):
-        for z in range(0, len(powerlists)): 
-            cons_testing = list(powerlists[z])
-            for i in range(0, len(cons_testing)): 
-                cons_testing[i] *= -1
-                for j in range(0, len(cons_testing)): 
-                    cons_testing[j] *= -1
-                    #Now, we need to test: 
-                    sum_cons = sum(cons_testing)
+        #Test every combination: 
+        #Every combination of the powerlists, yes, 
+        for i in range(0,len(weight_powerset)):
+            l = list(weight_powerset[i])
+            for i in range(0, len(l)):
+                l[i] *= -1
+                for j in range(0,len(l)):
+                    l[j] *= -1
+                    sum_cons = sum(l)
                     #If this beats the bias, we are positive, then we may have a condition.
                     #No, this is for when the sum is going to make the whole thing negative. when the sum + bias < 0 
+                    #If the maximum value, evaluated, is less than 0, then THERE IS A CHANCE
+                    #THAT THIS PATTERN IS A FAILURE CASE, IF IT ISN'T, THERE IS NO RISK, IT IS RISKY IF THIS 
+                    #HOLDS. 
                     if((sum_cons + bias) < 0):
                         #Make a new copy, I think it is changing this: 
-                        actual_lists.append(list(cons_testing))
+                         actual_lists.append(list(l))
     else:
-        cons = [is_inactivation_condition(l, bias) for l in powerlists]
-        for z in range(0, len(powerlists)): 
-            if(cons[z]): 
-                cons_testing = list(powerlists[z])
-                for i in range(0, len(cons_testing)): 
-                    cons_testing[i] *= -1
-                    for j in range(0, len(cons_testing)): 
-                        cons_testing[j] *= -1
-                        #Now, we need to test: 
-                        sum_cons = sum(cons_testing)
-                        #If this beats the bias, we are positive, then we may have a condition.
-                        if((sum_cons + bias) >= 0):
-                            actual_lists.append(list(cons_testing))
+        for i in range(0,len(weight_powerset)):
+            l = list(weight_powerset[i])
+            for i in range(0, len(l)):
+                l[i] *= -1
+                for j in range(0,len(l)):
+                    l[j] *= -1
+                    sum_cons = sum(l)
+                    #If this beats the bias, we are positive, then we may have a condition.
+                    #No, this is for when the sum is going to make the whole thing negative. when the sum + bias < 0 
+                    #If the maximum value, evaluated, is less than 0, then THERE IS A CHANCE
+                    #THAT THIS PATTERN IS A FAILURE CASE, IF IT ISN'T, THERE IS NO RISK, IT IS RISKY IF THIS 
+                    #HOLDS. 
+                    if((sum_cons + bias) >= 0):
+                        #Make a new copy, I think it is changing this: 
+                        actual_lists.append(list(l))
     #Because of the duplicates. 
     
     #Negative, inactive ones, only need to worry if that INPUT IS ACTUALLY INACTIVE.
@@ -190,7 +199,7 @@ def input_conditions(mean, ran, node, weights, bias, conditions):
 
 
 def input_inactivation_print_conversion(activation_lists, layer, node, no_weights):
-    s = "InActivationLogic(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
+    s = "Activation(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
     #The constant formula, for all of them, for the activity semantics: 
     
     for i in range(0, len(activation_lists)):
@@ -215,7 +224,7 @@ def input_inactivation_print_conversion(activation_lists, layer, node, no_weight
 
 
 def input_activation_print_conversion(activation_lists, layer, node, no_weights):
-    s = "ActivationLogic(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
+    s = "InActivation(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
     #The constant formula, for all of them, for the activity semantics: 
     
     for i in range(0, len(activation_lists)):
@@ -248,7 +257,7 @@ def input_activation_print_conversion(activation_lists, layer, node, no_weights)
 
 #NO BASE INSECURITY. 
 def activation_print_conversion(activation_lists, layer, node, no_weights):
-    s = "ActivationLogic(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
+    s = "InActivation(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
     #The constant formula, for all of them, for the activity semantics: 
     
     for i in range(0, len(activation_lists)):
@@ -256,7 +265,7 @@ def activation_print_conversion(activation_lists, layer, node, no_weights):
         s += "("
         for j in range(0, len(activation_lists[i])): 
             #We need to add one because sequences in FDR are 1-indexed, 
-            s += "extract_sequence(" + str(activation_lists[i][j]+1) + "," + "edge_results) == active"
+            s += "extract_sequence(" + str(activation_lists[i][j]+1) + "," + "edge_results) == inactive"
             
             if(j != len(activation_lists[i])-1):
                 s += " and "
@@ -269,7 +278,7 @@ def activation_print_conversion(activation_lists, layer, node, no_weights):
 
 #No base insecurity either, 
 def inactivation_print_conversion(activation_lists, layer, node, no_weights):
-    s = "InActivationLogic(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
+    s = "Activation(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
     #The constant formula, for all of them, for the activity semantics: 
 
     for i in range(0, len(activation_lists)):
