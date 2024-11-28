@@ -671,8 +671,6 @@ extract_weights(layer, node, index) = extract_sequence(index,
 					(extract_sequence(node, 
 						(extract_sequence(layer, weights)))))
 --Extract weights of node
-extract_weights_node(layer, node) = extract_sequence(node, 
-							(extract_sequence(layer, weights)))
 extract_biases(layer, node) = (extract_sequence(node, 
 											(extract_sequence(layer, biases))))
 											
