@@ -1,0 +1,14 @@
+
+
+channel SetTransfer: Set({1..5})
+
+
+P = SetTransfer!{2,3} -> SKIP
+
+Test = if (True)
+		then (False)
+	   else if (False)
+		then
+	     (if True then False else False)
+	   else 
+		False 
