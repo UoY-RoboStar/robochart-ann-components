@@ -2,7 +2,9 @@
 import random
 import statistics
 from itertools import chain, combinations
+from Nnet_file_format_external import NNet
 import copy
+import numpy as np
 
 def main():
     print("")
@@ -14,66 +16,68 @@ def calculate_input_layer_max(weights, biases, max_val):
     for i in range(0, len(biases)):
         maximums.append( (sum(list([(abs(x) * max_val) for x in weights[i]]))) + biases[i])
     return maximums
+
+#Claculate layer max, assuming max val is 0.5. 
+
+#given a list of all weights and biases, including input layer? 
+#Just need the max of the previous layer. 
+#Maximum, need to filter out negative weights, THEY CAN NEVER BE POSITIVE FOR RELU. 
+#needs to be per node. 
+#always given the complete. 
+def calculate_layer_max(layer, weights, biases): 
+    #Recursive,  
+    maximums = []
+    #previous layers maximums, calculated recursively if layer is greater than 1. 
+    previous_maximums = []
+    if(layer == 1):
+        previous_maximums = calculate_input_layer_max(weights[0], biases[0], 0.5)
+    else: 
+        previous_maximums = calculate_layer_max((layer-1), weights, biases)
+        
+    
+    #for every node, in a layer. 
+    #    
+    for i in range(0, len(biases[layer])):
+        pos_weights = list(filter(lambda x: x > 0, weights[layer][i]))
+        node_max = ( (sum(list([(x * previous_maximums[i]) for x in pos_weights]))) + biases[layer][i])
+        if(node_max < 0): 
+            node_max = 0
+        maximums.append(node_max)
+    return maximums
   
-#FOr a layer, we need maximum from previous layers. Has to be positive now. 
-def gen_layer_conditions(layer): 
-    input_weights = [[5.40062e-02,-2.61092e+00,-1.80027e-01,2.42194e-01,1.41407e-01],
-[-1.12374e+00,2.63619e-02,-9.17929e-03,5.56230e-02,-3.27635e-01],
-[1.96019e-01,2.42159e-01,6.38452e-01,-4.78265e-01,1.42577e-01],
-[-1.63015e+00,-3.44447e-02,-6.05492e-03,1.12076e-02,-1.04997e-02],
-[-3.55133e-01,5.65969e-01,2.28267e-01,1.77342e-01,-2.08078e-01]]
+
+#Gen for any other layers, layer above 2. 
+#need the complete weights and biases. 
+#always given full weights of model. 
+def gen_layer_conditions(layer, weights, biases): 
+    #this is the first. 
+    maximums = calculate_layer_max((layer-1), weights, biases)
     
-    input_biases = [2.27630e-01,
--1.88762e-01,
-5.34094e-02,
--3.77861e-01,
--8.12531e-02]
-    #Hiding the maximums for now. 
-    #maximums = calculate_input_layer_max(input_weights, input_biases, 0.5)
-    #Apply the maximum weighting we can, to the weights, from previous layer:
-    
-    weights = [[-3.41918e-02,1.49570e+00,-1.53371e+00,4.05053e-02,1.64350e-01],
-[4.02002e-01,2.24022e-01,-4.67160e-02,1.63890e-01,-1.60826e-01],
-[-1.41575e+00,-7.47429e-02,6.04386e-02,4.82656e-02,-5.60096e-02],
-[-1.44498e+00,4.48403e-02,8.88916e-03,-2.50230e-01,6.53312e-02],
-[-1.12740e+00,2.39891e-02,-9.56711e-03,8.92796e-03,-4.58007e-03]]
-    
-    biases = [-5.88651e-01,7.46065e-02,-3.92887e-01,-3.56303e-01,-1.67712e-01]
-    
-    maximums = calculate_input_layer_max(input_weights, input_biases, 0.5)
-    #Yes, all of them for the layer, by the appropriate maximum, 
-    for i in range(0, len(weights)):
-            for j in range(0, len(weights[i])):
-                weights[i][j] *= maximums[j]
-                print("maximums: ", maximums[j])
+    for i in range(0, len(weights[layer])):
+        for j in range(0, len(weights[layer][i])):
+            weights[layer][i][j] *= maximums[j]
     
     condition_strings = []
+    print("PROGRESS:")
     for n in range(0, len(biases)): 
-        if(biases[n] < 0):
-            condition_strings.append(neg_weight_extraction(layer, n, weights[n], biases[n]))
+        print("starting node ", n)
+        if(biases[layer][n] < 0):
+            condition_strings.append(neg_weight_extraction(layer, n, weights[layer][n], biases[layer][n]))
         else:
-            condition_strings.append(pos_weight_extraction(layer, n, weights[n], biases[n]))
+            condition_strings.append(pos_weight_extraction(layer, n, weights[layer][n], biases[layer][n]))
+        print("done node ", n)
     for s in condition_strings:
         print(s)
-
+    
+    
+        
 
 #these define, assume as is standard, 0 mean and an even range, -0.5..0.5
 #statistical properties.
 #we dont care how many, were not genetating slices ^ slices clnditions, we just care about the MAX VALUE THE INPUT COULD TAKE
 
 
-def gen_input_conditions(): 
-    weights = [[5.40062e-02,-2.61092e+00,-1.80027e-01,2.42194e-01,1.41407e-01],
-[-1.12374e+00,2.63619e-02,-9.17929e-03,5.56230e-02,-3.27635e-01],
-[1.96019e-01,2.42159e-01,6.38452e-01,-4.78265e-01,1.42577e-01],
-[-1.63015e+00,-3.44447e-02,-6.05492e-03,1.12076e-02,-1.04997e-02],
-[-3.55133e-01,5.65969e-01,2.28267e-01,1.77342e-01,-2.08078e-01]]
-    
-    biases = [2.27630e-01,
--1.88762e-01,
-5.34094e-02,
--3.77861e-01,
--8.12531e-02]
+def gen_first_layer_conditions(weights, biases): 
     calculate_input_layer_max(weights, biases, 0.5)
     #We will have a bunch of strings, one per line, we need to group all of them, for FDR, one at a time: 
     conditions = []
@@ -144,14 +148,14 @@ def input_conditions(mean, ran, node, weights, bias, conditions):
     for i in range(0, len(actual_lists)):
         for j in range(0, len(actual_lists[i])):
             #We don't know the original value of all of them. 
-            index_of_weight = weights.index(abs(actual_lists[i][j]))
+            index_of_weight = list(weights).index(abs(actual_lists[i][j]))
             #Always the same, because if negative, inactivity means NEGATIVE, in an edge. 
             #Even if the weight is negative, NEEDS TO BE NEGATIVE. Positive input, doesn't matter. 
             #IF THE END RESULT, its about the end result. 
             if(actual_lists[i][j] <= 0.0):
-               actual_lists[i][j] = -(weights.index(abs(actual_lists[i][j]))+1)
+               actual_lists[i][j] = -(list(weights).index(abs(actual_lists[i][j]))+1)
             else: 
-                actual_lists[i][j] = (weights.index(abs(actual_lists[i][j]))+1)
+                actual_lists[i][j] = (list(weights).index(abs(actual_lists[i][j]))+1)
 
     #Remove duplicates of lists, 
     
@@ -294,7 +298,7 @@ def inactivation_print_conversion(activation_lists, layer, node, no_weights):
 def indexify_list(activation_lists, weights): 
     for i in range(0, len(activation_lists)):
         for j in range(0, len(activation_lists[i])):
-            activation_lists[i][j] = weights.index(activation_lists[i][j])
+            activation_lists[i][j] = list(weights).index(activation_lists[i][j])
 
 #If the sum is STRICTLY GREATER, otherwise, who cares.
 #This is now WHEN WE ARE UNSURE ABOUT THE INACTIVATION, when it could be positive, but we aren't sure.  
@@ -316,10 +320,10 @@ def is_inactivation_condition(l, bias):
 #When, This is the UNSURE CONDITIONS. 
 #Now these are THE ONLY CONDITIONS UNDER WHICH WE ARE UNSURE, EVERY OTHER CONDITOIN WE ARE SURE OF, FALSE MEANS ACTIVE HERE. 
 def is_activation_condition(l, bias):
-		if(abs(sum(l)) >= bias):
-			return True
-		else:
-			return False
+	if(abs(sum(l)) >= bias):
+		return True
+	else:
+		return False
 			
 def pos_weight_extraction(layer, node, weights, bias):
 		mod_list = list(weights)
@@ -336,9 +340,8 @@ def pos_weight_extraction(layer, node, weights, bias):
 		
 		#convert to index of original list
 		for i in range(0, len(activation_lists)):
-			for j in range(0, len(activation_lists
-			[i])):
-				activation_lists[i][j] = weights.index(activation_lists[i][j])
+			for j in range(0, len(activation_lists[i])):
+				activation_lists[i][j] = list(weights).index(activation_lists[i][j])
 		return activation_print_conversion(activation_lists, layer, node, len(weights))        
 		
 
@@ -350,6 +353,7 @@ def neg_weight_extraction(layer, node, weights, bias):
 		#need to collect different values, just the negative values, for positive weights
 		mod_list = list(filter(lambda x: x > 0, mod_list))
 		powerlists = list_powset(mod_list)
+		print(len(powerlists))
 		inactivation_cons = [is_inactivation_condition(l, bias) for l in powerlists ]
 		
 		#print all sequences
@@ -361,7 +365,7 @@ def neg_weight_extraction(layer, node, weights, bias):
 		for i in range(0, len(inactivation_lists)):
 			for j in range(0, len(inactivation_lists
 			[i])):
-				inactivation_lists[i][j] = weights.index(inactivation_lists[i][j])
+				inactivation_lists[i][j] = list(weights).index(inactivation_lists[i][j])
 		return inactivation_print_conversion(inactivation_lists, layer, node, len(weights))
 
 		#find all powersets of these, get those combinations whose 
@@ -391,7 +395,41 @@ def list_powset(l):
 	powlist = [list(x) for x in listpow]
 	return powlist
 
+def complete_weights(): 
+  return [
+            [
+                [5.40062e-02,-2.61092e+00,-1.80027e-01,2.42194e-01,1.41407e-01],
+                [-1.12374e+00,2.63619e-02,-9.17929e-03,5.56230e-02,-3.27635e-01],
+                [1.96019e-01,2.42159e-01,6.38452e-01,-4.78265e-01,1.42577e-01],
+                [-1.63015e+00,-3.44447e-02,-6.05492e-03,1.12076e-02,-1.04997e-02],
+                [-3.55133e-01,5.65969e-01,2.28267e-01,1.77342e-01,-2.08078e-01]
+            ], 
 
+            [
+                [-3.41918e-02,1.49570e+00,-1.53371e+00,4.05053e-02,1.64350e-01],
+                [4.02002e-01,2.24022e-01,-4.67160e-02,1.63890e-01,-1.60826e-01],
+                [-1.41575e+00,-7.47429e-02,6.04386e-02,4.82656e-02,-5.60096e-02],
+                [-1.44498e+00,4.48403e-02,8.88916e-03,-2.50230e-01,6.53312e-02],
+                [-1.12740e+00,2.39891e-02,-9.56711e-03,8.92796e-03,-4.58007e-03]
+            ], 
+        ]
+
+def complete_biases(): 
+  return [
+            [2.27630e-01,-1.88762e-01,5.34094e-02,-3.77861e-01,-8.12531e-02],
+            [-5.88651e-01,7.46065e-02,-3.92887e-01,-3.56303e-01,-1.67712e-01]
+        ]
+    
 if(__name__ == "__main__"):
-	gen_input_conditions()
+	#gen_input_conditions()
 	#gen_layer_conditions(2)
+    acasxu = NNet("ACASXU_experimental_v2a_1_1.nnet")
+    weights = acasxu.weights
+    biases = acasxu.biases 
+    
+    gen_first_layer_conditions(weights[0], biases[0])
+    gen_layer_conditions(2, weights, biases)
+    #print(calculate_input_layer_max(complete_weights()[0], complete_biases()[0], 0.5))
+    #print(calculate_layer_max(7, weights, biases))
+    
+    
