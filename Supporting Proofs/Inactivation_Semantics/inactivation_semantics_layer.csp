@@ -1,0 +1,202 @@
+--Inactivation semantics, where each layer is captured instead of each node. 
+--We represent the edges using functions, instead of processes. 
+
+--SEMANTIC CONSTANTS--
+insize = 2
+outsize = 1
+layerstructure = <1, 1>
+layerNo = #layerstructure 
+maxSize = 2
+
+
+--CHANNELS AND DATA TYPES: 
+
+--Context channel: 
+
+core_real = { -1..1}
+
+--Decisions: 
+
+datatype decisions = coc | wl | wr | sl | sr 
+
+channel context_input:{1..insize}.core_real
+
+channel context_output:Set({coc, wl, wr, sl, sr})
+
+
+datatype Phases = active | inactive | zero | uncertain
+--This only works for ALL NODES ACTIVE, or inactive, or uncertain, NOT A COMBINATION OF THEM.
+
+channel LayerPhase:{0..layerNo}.{ { (n, p) | n <- {1..l} } | l <- {1, 2}, p <- Phases} 
+
+--These are the internal communications now. 
+channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
+
+channel end 
+
+weights = 
+{
+	( (1,1,1), active),
+	( (1,1,2), active),
+	( (2,1,1), active)
+}
+	
+biases = 
+{
+	( (1,1), active), 
+	( (2,1), active)
+}
+
+InputNode(n) = (NodePhase.0.n.active -> SKIP) [] (NodePhase.0.n.inactive -> SKIP)
+
+InputNodeCollator(node) = let
+	C(0, NodeResults) = 
+		LayerPhase.0.NodeResults -> SKIP
+		
+	C(node, NodeResults) = NodePhase.0.node?node_phase -> 
+										C((node-1), union({(node, node_phase)}, NodeResults))
+	within 
+		C(node, {})
+
+
+InputLayer = 
+	(||| i : {1..insize} @ InputNode(i)) 
+	[| {| NodePhase.0 |} |] 
+	InputNodeCollator(insize)
+	
+	
+EdgeLogic(input_phase, weight, first) = 
+	if(first == true) then 
+		if(input_phase == inactive)
+			then 
+				if(weight == inactive)
+					then 
+						active
+					else
+						inactive
+			else
+				if(weight == inactive)
+					then
+						inactive
+					else
+						active
+	else 
+		if(input_phase == inactive)
+			then 
+				zero
+			else if (input_phase == active)
+				then 
+				(if(weight == inactive)
+					then
+						inactive
+					else
+						active)
+			else
+				(if(weight == inactive)
+					then
+						inactive
+					else
+						active)
+
+--Needed to extract a value from singleton set. 
+--If its empty, return? Should never be empty, make sure by construction 
+--it thinks that the result could be > 1, but it isn't. We need a base case for layer extraction. 
+--When creating the channels, FDR thinks that it could be wrong, but it never is, add this pattern to prevent this.
+--we use pick for weights, biases, and activations, inactive, is the base case, this should never happen though.
+pick({}) = inactive
+pick({x}) = x
+
+--This should always return a singleton set, because every index should be unique.
+--Weights is a function, not a relation. 
+--Make sure this is never out of range, otherwise will error.
+WeightExtraction(layer, node, index) = 
+	pick({weight | (weight_index, weight) <- weights, weight_index == (layer,node,index)})
+	
+BiasExtraction(layer, node) = 
+	pick({bias | (bias_index, bias) <- biases, bias_index == (layer,node)})
+	
+--Applies a weight to a input, this replaces the edge process. 
+--If we are on the first layer, we need to extract the weights considering the output of the input nodes could be negative. 
+--Every other node, use ReLU law, cannot be negative. 
+WeightApplicationSingle((prev_node,result), layer, node) = 
+	if(layer == 1)
+		then 
+			( (prev_node), 
+				EdgeLogic(result, WeightExtraction(layer, node, prev_node), true)
+			)
+		else 
+			( (prev_node), 
+				EdgeLogic(result, WeightExtraction(layer, node, prev_node), false)
+			)
+
+--Need to do this for an entire set of 
+--Set comprehension, because this should return the modified set. 
+--Set comprehension, we want a modified set, which is weightapplicationsingle. 
+--How do we get layer and node? 
+
+WeightApplicationFunction(layer_input, layer, node) = 
+	{ WeightApplicationSingle((prev_node,result), layer, node) | 
+		(prev_node, result) <- layer_input
+	}
+
+
+--Extracts the node indexed by node, the first argument, from the set of tuples weightedinputs.
+--Assumes that weightedinputs is a function, will fail otherwise. 
+--If we GET THE EMPTY SET, WE NEED A BASE CASE: 
+--This should never happen in reality, when we are running the node, but because 
+--we use a parameteric type, the type will allow for different sizes. 
+--we will know, if it tries to evaluate node which is greater than weighted inputs. 
+--Assumed that the pairs are constructed correctly.
+
+ExtractActivation(node, weightedinputs) = 
+	if(node>card(weightedinputs)) 
+		then
+			inactive 
+		else 
+			pick({activation | (node_index, activation) <- weightedinputs, node_index == node})
+	
+--Have it the same for now, benefits, check really easily if any are, activation is when, bias is negative, if it 
+--can't be activated, inactive. If no weighted nodes are active, 
+--Check if is the empty set. for the entire set, 
+--If any AREN'T active, uncertain? if any are uncertain, then we might activate, 
+--Uncertainty ALWAYS REMOVED BY THE WEIGHTING, CAN ONLY BE ZERO, ACTIVE, OR INACTIVE HERE. Take worst case for uncertainty in weight logic. 
+ActivationLogic(weightedinputs) = 
+	if (card({ (node_index, activation) | (node_index, activation) <- weightedinputs, activation == active}) > 0)
+		then 
+			true
+		else
+			false
+
+InActivationLogic(weightedinputs) = 
+	if (card({ (node_index, activation) | (node_index, activation) <- weightedinputs, activation == inactive}) > 0)
+		then 
+			true
+		else
+			false
+
+--First layer nodes need to be different, 
+Node(l, n) = LayerPhase.(l-1)?layer_input -> (
+				( BiasExtraction(l, n) == inactive & ( 
+						( ActivationLogic(WeightApplicationFunction(layer_input, l, n)) == false & 
+							NodePhase.l.n!inactive -> SKIP)
+						[]
+						( ActivationLogic(WeightApplicationFunction(layer_input, l, n)) == true & 
+							NodePhase.l.n!uncertain -> SKIP )
+							) )
+				[]
+				( BiasExtraction(l,n) == active & (
+					( InActivationLogic(WeightApplicationFunction(layer_input, l, n)) == false & 
+						NodePhase.l.n!active -> SKIP)
+					[]
+					( InActivationLogic(WeightApplicationFunction(layer_input, l, n)) == true & 
+						NodePhase.l.n!uncertain -> SKIP )
+					) )
+				)
+
+
+				
+
+
+
+
+	
