@@ -18,6 +18,14 @@ core_real = { -1..1}
 --Decisions: 
 
 datatype decisions = coc | wl | wr | sl | sr 
+--We want product type 
+--For every pair, we need n-ary pairs, don't we? 
+
+--this helps, this is all combinations, need for all x and ys, to run this: 
+--For all combinations, FOR EVERYTHING
+--Need n-ary version of this, or, for every combination, 
+--this is what we need, 
+--
 
 channel context_input:{1..insize}.core_real
 
@@ -26,8 +34,36 @@ channel context_output:Set({coc, wl, wr, sl, sr})
 
 datatype Phases = active | inactive | zero | uncertain
 --This only works for ALL NODES ACTIVE, or inactive, or uncertain, NOT A COMBINATION OF THEM.
+--{ { (n, p) | n <- {1..l} } | l <- {1, 2}, p <- Phases} 
 
-channel LayerPhase:{0..layerNo}.{ { (n, p) | n <- {1..l} } | l <- {1, 2}, p <- Phases} 
+--if there is two xs that are the same, check a set, 
+--recursive, choose any value, 
+--STARTS AS FALSE, TURNS TRUE if we find one that is the same? 
+--for every element, 
+
+--For a set, 
+
+--make a set of each number, if any number, card greater than 1. 
+--For 
+distinct(i, set_pairs) = 
+	if card( { x | (x,y) <- set_pairs, x == i}) > 1 
+		then 
+			false 
+		else 
+			true 
+
+--IF ANY IS FALSE, ENTIRE THING IS FALSE. 
+distinct_set(set_pairs) = 
+	if member(false, { distinct(i, set_pairs) | i <- {1..card(set_pairs)}})
+		then 
+			false 
+		else 
+			true 
+
+channel LayerPhase:{0..layerNo}.{ x | x <- Set({(n,p) | n <- {1..maxSize}, p <- Phases}), 
+							card(x) == 1 or card(x) == 2 and 
+							distinct_set(x)
+							}
 
 --These are the internal communications now. 
 channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
@@ -104,7 +140,9 @@ EdgeLogic(input_phase, weight, first) =
 --When creating the channels, FDR thinks that it could be wrong, but it never is, add this pattern to prevent this.
 --we use pick for weights, biases, and activations, inactive, is the base case, this should never happen though.
 pick({}) = inactive
+--pick if there is multiple, only possible in theory: 
 pick({x}) = x
+pick(x) = inactive
 
 --This should always return a singleton set, because every index should be unique.
 --Weights is a function, not a relation. 
@@ -193,9 +231,52 @@ Node(l, n) = LayerPhase.(l-1)?layer_input -> (
 					) )
 				)
 
+--We just need NodeCollator, that is the layer, then to compose the input layers together, then rename them to the context.
+--Then done. 
 
-				
 
+NodeCollator(l) = let
+	C(l,0,NodeResults) = 
+		LayerPhase.l!NodeResults -> SKIP
+		
+	C(l,n,NodeResults) = 
+		NodePhase.l.n?node_phase -> C(l, (n-1), union({(n, node_phase)}, NodeResults))
+		
+	within 
+		C(l, layerSize(l), {})
+
+
+--They all need to synchronise, on the layeroutput from previous layer, 
+
+Layer(l) = 
+	(([| {| LayerPhase.(l-1) |} |]  i : {1..layerSize(l)} @ Node(l, i) )
+	[| {| NodePhase.l |} |] 
+	NodeCollator(l))
+
+assert Layer(1):[ deadlock-free[FD]]
+
+HiddenLayers = 
+	|| i : {1..(layerNo-1)} @
+		[ {| LayerPhase.(i-1), LayerPhase.i, NodePhase.i |} ] 
+		Layer(i)
+		
+
+OutputLayer = Layer(layerNo)
+
+ANN_Visible = ( (InputLayer [| {| LayerPhase.0 |} |] Layer(1)) [| {| LayerPhase.1 |} |] 
+	   OutputLayer) ; ANN_Visible
+
+assert ANN_Visible :[deadlock-free[FD]]
+assert ANN_Visible :[divergence-free]
+assert ANN_Visible :[deterministic]
+
+--No hiding for now. 
+
+layerSize(0) = insize
+layerSize(layer) = extract_sequence(layer, layerstructure)
+
+extract_sequence(1, sequence) = head(sequence)
+extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
 
 
 
