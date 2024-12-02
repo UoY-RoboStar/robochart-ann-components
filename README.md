@@ -17,7 +17,7 @@ The `Segway_Case_Study` directory contains files relevant to the Segway case stu
 The `Supporting Proofs` directory contains additional files supporting our verification strategy:
 - CSPM documents supporting 
 - An implementation of the ANN semantics in Isabelle/UTP. 
-- Files to use Marabou to prove that an ANN component (`AnglePIDANN`) conforms to a controller (`AnglePID_C`). 
+- In a directory `Marabou_Input_Files`, files to use Marabou to prove that an ANN component (`AnglePIDANN`) conforms to a controller (`AnglePID_C`). 
 - CSPM documents that show our ANN Circus semantics are equivalent to our CSPM semantics. 
 
 The `M2MValidation` directory contains our first validation files for the Epsilon M2M translation.
