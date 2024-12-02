@@ -4,9 +4,11 @@
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5
-layerstructure = <10, 10>
+layerstructure = <50, 5>
 layerNo = #layerstructure 
-maxSize = 10
+
+--maxSize is now the MAXIMUM layerPhase CHANNEL SIZE. 
+maxSize = 15
 
 
 --CHANNELS AND DATA TYPES: 
@@ -25,63 +27,29 @@ channel context_input:{1..insize}.core_real
 channel context_output:Set({coc, wl, wr, sl, sr})
 
 
-datatype Phases = active | inactive | zero | uncertain
+datatype Phases = active | inactive
 
-total_indicies = {1..10}
-
-active_val = {(n,x) | n <- total_indicies, x <- {active}}
-inactive_val = {(n,x) | n <- total_indicies, x <- {inactive}}
-uncertain_val = {(n,x) | n <- total_indicies, x <- {uncertain}}
-zero_val = {(n,x) | n <- total_indicies, x <- {zero}}
+active_val(size) = {(n,x) | n <- {1..size}, x <- {active}}
+inactive_val(size) = {(n,x) | n <- {1..size}, x <- {inactive}}
 
 --This is actually what we need, see how long it is scalable for. 
 --Extract from the four sets of pairs. 
-pair_extract(set_indexes) = union(
-						{(n,x) | (n,x) <- active_val, member(n, set_indexes)},
-						{(n,x) | (n,x) <- inactive_val, member(n, diff(total_indicies, set_indexes))})
+--Parameter of how long. 
+pair_extract(set_indexes, size) = union(
+						{(n,x) | (n,x) <- active_val(size), member(n, set_indexes)},
+						{(n,x) | (n,x) <- inactive_val(size), member(n, diff({1..size}, set_indexes))})
 
-four_extract(s, s2, s3) = 
-	Union({
-		{(n,x) | (n,x) <- active_val, member(n, s)},
-		{(n,x) | (n,x) <- inactive_val, member(n, s2)},
-		{(n,x) | (n,x) <- uncertain_val, member(n, s3)},
-		{(n,x) | (n,x) <- zero_val, member(n, diff(diff(diff(total_indicies, s), s2), s3))}
-	})
 	
+--We need to do this, for sets of length 15, and 5. 
+all_pairs = union(
+			{ pair_extract(s, 15) | s <- Set({1..15})},
+			{ pair_extract(s, 5) | s <- Set({1..5})})
+			 
 
---Scalability, is that we need to calculate Set(1..10), 2 times, then the complement of one,
---May need the set of 3? 
---Recursive, we need to start with empty set, then for every powerset, 
---do it for two for now. 
---Does this immedately.
---We need a for all, 3 times, with the last one, being the complement of all of them. 
-all_pairs = { pair_extract(s) | s <- Set(total_indicies)}
-
-all_four_pairs = { four_extract(s, s2, s3) | s <- Set(total_indicies), s2 <- Set(total_indicies),
-					s3 <- Set(total_indicies)}
 --The actual one, we need is: 
 
 
-
-distinct(i, set_pairs) = 
-	if card( { x | (x,y) <- set_pairs, x == i}) > 1 
-		then 
-			false 
-		else 
-			true 
-
---IF ANY IS FALSE, ENTIRE THING IS FALSE. 
-distinct_set(set_pairs) = 
-	if member(false, { distinct(i, set_pairs) | i <- {1..card(set_pairs)}})
-		then 
-			false 
-		else 
-			true 
-
-channel LayerPhase:{0..layerNo}.{ x | x <- Set({(n,p) | n <- {1..maxSize}, p <- Phases}), 
-							card(x) == 5 and
-							distinct_set(x)
-							}
+channel LayerPhase:{0..layerNo}.all_pairs
 							
 --These are the internal communications now. 
 channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
@@ -102,6 +70,18 @@ biases =
 }
 
 InputNode(n) = (NodePhase.0.n.active -> SKIP) 
+
+--Channel need to have, ceiling(maxSize / layerSize) number of sub channels. 
+--We have the full, real, set. 
+--We need to split this, return a sequence, so we can just use head(s)
+--then head(tail(s) then head(tail(tail(s)), lazy but it works. 
+--ALways needs to be a sequence of 3 sets, the empty set is fine. 
+--When we recieve, need to just recieve, then take union of all, in each node. 
+--we can know the size of the layer, with layerSize()
+--need to know how many elements we have. 
+split_set(s, 
+
+--returns <s1, s2, s3>
 
 InputNodeCollator(node) = let
 	C(0, NodeResults) = 
@@ -137,7 +117,7 @@ EdgeLogic(input_phase, weight, first) =
 	else 
 		if(input_phase == inactive)
 			then 
-				zero
+				inactive
 			else if (input_phase == active)
 				then 
 				(if(weight == inactive)
@@ -240,7 +220,10 @@ Node(l, n) = LayerPhase.(l-1)?layer_input -> (
 							NodePhase.l.n!inactive -> SKIP)
 						[]
 						( ActivationLogic(WeightApplicationFunction(layer_input, l, n)) == true & 
-							NodePhase.l.n!uncertain -> SKIP )
+							NodePhase.l.n!active -> SKIP
+							|~|
+							NodePhase.l.n!inactive -> SKIP
+							)
 							) )
 				[]
 				( BiasExtraction(l,n) == active & (
@@ -248,7 +231,9 @@ Node(l, n) = LayerPhase.(l-1)?layer_input -> (
 						NodePhase.l.n!active -> SKIP)
 					[]
 					( InActivationLogic(WeightApplicationFunction(layer_input, l, n)) == true & 
-						NodePhase.l.n!uncertain -> SKIP )
+						NodePhase.l.n!active -> SKIP
+						|~|
+						NodePhase.l.n!inactive -> SKIP )
 					) )
 				)
 
