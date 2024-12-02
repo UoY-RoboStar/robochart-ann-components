@@ -218,6 +218,55 @@ def input_inactivation_print_conversion(activation_lists, layer, node, no_weight
     return s
 
 
+
+def print_converted_weights(weights):
+    s = "weights = \n "
+    #The constant formula, for all of them, for the activity semantics: 
+    s += "<"
+    for l in range(0, len(weights)):
+        #New DNF for every list, 
+        s += "<"
+        for n in range(0, len(weights[l])): 
+            s += "<" 
+            for i in range(0, len(weights[l][n])):
+                if(weights[l][n][i] > 0):
+                    s += "active"
+                else:
+                    s += "inactive"
+                if(i != len(weights[l][n])-1):
+                     s += ","
+                else:
+                     s += ">"
+            if(n != len(weights[l])-1):
+                 s += ","
+            else:
+                 s += ">"
+        if(l != len(weights)-1):
+             s += ","
+        else:
+             s += ">"
+    return s
+    
+def print_converted_biases(biases):
+    s = "biases = \n "
+    s += "<"
+    for l in range(0, len(biases)):
+        s += "<"
+        for n in range(0, len(biases[l])): 
+            if(biases[l][n] > 0):
+                s += "active"
+            else:
+                s += "inactive"
+            if(n != len(biases[l])-1):
+                s += ","
+            else:
+                s += ">"
+        if(l != len(biases)-1):
+            s += ","
+        else:
+            s += ">"
+    return s
+
 def input_activation_print_conversion(activation_lists, layer, node, no_weights):
     s = "InActivation(" + str(layer) + "," + str(node+1) + ",edge_results) = \n "
     #The constant formula, for all of them, for the activity semantics: 
@@ -426,9 +475,10 @@ if(__name__ == "__main__"):
     acasxu = NNet("ACASXU_experimental_v2a_1_1.nnet")
     weights = acasxu.weights
     biases = acasxu.biases 
-    
-    gen_first_layer_conditions(weights[0], biases[0])
-    gen_layer_conditions(2, weights, biases)
+    #print(print_converted_weights(list(weights)))
+    print(print_converted_biases(list(biases)))
+    #gen_first_layer_conditions(weights[0], biases[0])
+    #gen_layer_conditions(2, weights, biases)
     #print(calculate_input_layer_max(complete_weights()[0], complete_biases()[0], 0.5))
     #print(calculate_layer_max(7, weights, biases))
     

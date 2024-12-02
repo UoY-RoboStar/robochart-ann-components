@@ -1,0 +1,2 @@
+channel x:{1..2}
+test(n) = [] i : {1..2} @ x.i -> (test(n);SKIP)

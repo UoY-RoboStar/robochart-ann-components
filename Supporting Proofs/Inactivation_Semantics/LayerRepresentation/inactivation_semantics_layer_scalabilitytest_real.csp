@@ -40,6 +40,7 @@ pair_extract(set_indexes) = union(
 						{(n,x) | (n,x) <- active_val, member(n, set_indexes)},
 						{(n,x) | (n,x) <- inactive_val, member(n, diff(total_indicies, set_indexes))})
 
+--Even for 10 nodes, THIS IS NOT SCALABLE, 32+ GB OF ram, not usable at all.
 four_extract(s, s2, s3) = 
 	Union({
 		{(n,x) | (n,x) <- active_val, member(n, s)},
@@ -48,6 +49,7 @@ four_extract(s, s2, s3) =
 		{(n,x) | (n,x) <- zero_val, member(n, diff(diff(diff(total_indicies, s), s2), s3))}
 	})
 	
+
 
 --Scalability, is that we need to calculate Set(1..10), 2 times, then the complement of one,
 --May need the set of 3? 
@@ -59,29 +61,10 @@ all_pairs = { pair_extract(s) | s <- Set(total_indicies)}
 
 all_four_pairs = { four_extract(s, s2, s3) | s <- Set(total_indicies), s2 <- Set(total_indicies),
 					s3 <- Set(total_indicies)}
---The actual one, we need is: 
 
 
 
-distinct(i, set_pairs) = 
-	if card( { x | (x,y) <- set_pairs, x == i}) > 1 
-		then 
-			false 
-		else 
-			true 
-
---IF ANY IS FALSE, ENTIRE THING IS FALSE. 
-distinct_set(set_pairs) = 
-	if member(false, { distinct(i, set_pairs) | i <- {1..card(set_pairs)}})
-		then 
-			false 
-		else 
-			true 
-
-channel LayerPhase:{0..layerNo}.{ x | x <- Set({(n,p) | n <- {1..maxSize}, p <- Phases}), 
-							card(x) == 5 and
-							distinct_set(x)
-							}
+channel LayerPhase:{0..layerNo}.all_four_pairs
 							
 --These are the internal communications now. 
 channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
