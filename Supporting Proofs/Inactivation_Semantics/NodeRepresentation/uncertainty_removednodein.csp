@@ -100,15 +100,6 @@ EdgeLogic(input_phase, weight, first) =
 					
 					
 
---Behaves differently if its the first layer, because on the inputs, not on the weighted inputs. 
-NodeEdge(layer, node, index) = 
-	NodePhase.(layer - 1).index?phase ->
-	( (layer == 1) & EdgePhase.layer.node.index!(EdgeLogic(phase, extract_weights(layer, node, index), true)) -> SKIP
-	[]
-	  (layer > 1) & EdgePhase.layer.node.index!(EdgeLogic(phase, extract_weights(layer, node, index), false)) -> SKIP
-	) 
-	
-
 --This needs to be different for every single node. We need to define quite a large function for this. 
 --For every l and n, this is the core of the idea. 
 --The parameterised versions, has to be: 
@@ -155,9 +146,18 @@ EdgeCollator(layer, node, index) = let
 	within 
 		C(layer, node, index, <>)
 
+--Pattern matching instead of external choice. 
+Node(1, node, inputSize) = 
+	(||| i:{1..inputSize} @ 
+		NodePhase.0.i?phase -> 
+		EdgePhase.1.node.i!(EdgeLogic(phase, extract_weights(1, node, i), true)) -> SKIP) 
+		[| {| EdgePhase.1.node |} |]
+	EdgeCollator(1, node, inputSize) \ {| EdgePhase |} 
 
 Node(layer, node, inputSize) = 
-	(||| i:{1..inputSize} @ NodeEdge(layer, node, i)) 
+	(||| i:{1..inputSize} @ 
+		NodePhase.(layer - 1).i?phase ->
+		(layer > 1) & EdgePhase.layer.node.i!(EdgeLogic(phase, extract_weights(layer, node, i), false)) -> SKIP) 
 		[| {| EdgePhase.layer.node |} |]
 	EdgeCollator(layer, node, inputSize) \ {| EdgePhase |} 
 	
