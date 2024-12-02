@@ -253,8 +253,6 @@ Layer(l) =
 	[| {| NodePhase.l |} |] 
 	NodeCollator(l))
 
-assert Layer(1):[ deadlock-free[FD]]
-
 HiddenLayers = 
 	|| i : {1..(layerNo-1)} @
 		[ {| LayerPhase.(i-1), LayerPhase.i, NodePhase.i |} ] 
@@ -263,7 +261,8 @@ HiddenLayers =
 
 OutputLayer = Layer(layerNo)
 
-ANN_Visible = ( (InputLayer [| {| LayerPhase.0 |} |] Layer(1)) [| {| LayerPhase.1 |} |] 
+
+ANN_Visible = ( (InputLayer [| {| LayerPhase.0 |} |] HiddenLayers) [| {| LayerPhase.(layerNo-1) |} |] 
 	   OutputLayer) ; ANN_Visible
 
 assert ANN_Visible :[deadlock-free[FD]]

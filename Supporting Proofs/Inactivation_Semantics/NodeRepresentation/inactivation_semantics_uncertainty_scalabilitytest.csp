@@ -15,6 +15,7 @@
 
 --(number of nodes * (1 + previous-layer-size)
 
+
 --layer 1: 250, layer 2: 2500, 
 --2, 3, 4, 5, 6, 4, 5, 12,500
 --250, 
@@ -28,11 +29,13 @@
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5
-layerstructure = <50, 50, 50, 50, 50, 50, 5>
+layerstructure = <5, 5, 5, 5, 5, 5, 5>
 layerNo = #layerstructure 
-maxSize = 50
+maxSize = 5
 
-
+   dfsag       35 2 zerox
+   
+   
 --CHANNELS AND DATA TYPES: 
 
 --Context channel: 
