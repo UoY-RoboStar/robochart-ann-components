@@ -29,9 +29,9 @@
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5
-layerstructure = <5, 5, 5>
+layerstructure = <50, 5>
 layerNo = #layerstructure 
-maxSize = 5
+maxSize = 50
 
    
 --CHANNELS AND DATA TYPES: 
@@ -160,10 +160,16 @@ Node(layer, node, inputSize) =
 	(||| i:{1..inputSize} @ NodeEdge(layer, node, i)) 
 		[| {| EdgePhase.layer.node |} |]
 	EdgeCollator(layer, node, inputSize) \ {| EdgePhase |} 
+
+Sequential_Node(layer, node, inputSize) = 
+	(; i:<0..(inputSize-1)> @ NodeEdge(layer, node, (inputSize - i))) 
+		[| {| EdgePhase.layer.node |} |]
+	EdgeCollator(layer, node, inputSize) \ {| EdgePhase |} 
 	
 
+
 HiddenLayer(layer, size, inputSize) = 
-	[| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
+	[| {| NodePhase.(layer-1) |} |] i: {1..size} @ Sequential_Node(layer, i, inputSize) 
 
 HiddenLayers = 
 	|| i : {1..(layerNo-1)} @
@@ -232,7 +238,7 @@ transparent sbisim
 ANNRenamed = sbisim(diamond(ANN[[NodePhase.0.i.x <- context_input.i.zero_norm(x)
 	      | x <- Phases, i <- {1..insize} ]]))
 
-assert ANNRenamed :[deadlock-free[]]
+assert ANNRenamed :[deadlock-free[FD]]
 
 
 

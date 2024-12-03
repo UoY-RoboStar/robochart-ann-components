@@ -4,7 +4,7 @@
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5
-layerstructure = <50, 50, 50, 50, 50, 50, 5>
+layerstructure = <50, 5>
 layerNo = #layerstructure 
 maxSize = 50
 
