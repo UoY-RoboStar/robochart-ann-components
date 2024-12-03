@@ -19,8 +19,7 @@
 insize = 5
 outsize = 5
 -- <50, 50, 50, 50, 50, 50, 5>
---
-layerstructure = <50, 5>
+layerstructure = <50,5>
 layerNo = #layerstructure 
 maxSize = 50
 
@@ -44,6 +43,7 @@ datatype Phases = active | inactive
 
 --Channel to signal if an edge is active.
 channel EdgeActive:{1..layerNo}.{1..maxSize}.{1..maxSize}
+channel EdgeInActive:{1..layerNo}.{1..maxSize}.{1..maxSize}
 
 --Signal if a node should be active. 
 --We do want input node, want an input layer. 
@@ -100,12 +100,12 @@ EdgeCollator(layer, node, index) = let
 					(extract_weights(layer, node, index) == inactive) & (
 						 EdgeActive.layer.node.index -> C(index-1)) []
 					(extract_weights(layer, node, index) == active) & (
-						C(index-1)))
+						EdgeInActive.layer.node.index -> C(index-1)))
 				[]
 			      
 			      (extract_biases(layer,node) == inactive) & (
 			      		(extract_weights(layer, node, index) == inactive) & (
-						 C(index-1)) []
+						 EdgeInActive.layer.node.index -> C(index-1)) []
 					(extract_weights(layer, node, index) == active) & ( 
 						EdgeActive.layer.node.index -> C(index-1)))
 		
@@ -119,8 +119,11 @@ EdgeCollator(layer, node, index) = let
 --	EdgeCollator(layer, node, inputSize) \ {| EdgeActive |}
 	
 BackNode(layer, node, inputSize) = 
-	(||| i:{1..inputSize} @ EdgeActive.layer.node.i -> NodeActive.(layer-1).i -> SKIP) 
-		[| {| EdgeActive.layer.node |} |]
+	(; i:<0..(inputSize-1)> @ EdgeActive.layer.node.(inputSize-i) -> NodeActive.(layer-1).(inputSize-i) -> SKIP
+							[] 
+							EdgeInActive.layer.node.(inputSize-i) -> SKIP
+							) 
+		[| {| EdgeActive.layer.node, EdgeInActive.layer.node |} |]
 	EdgeCollator(layer, node, inputSize) \ {| EdgeActive |}
 	
 --Back layer, synchronise, on what? on nothing? every layer, recieves the nodeactive, Collator only starts, when it gets given 
