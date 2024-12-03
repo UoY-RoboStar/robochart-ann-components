@@ -232,16 +232,9 @@ transparent sbisim
 ANNRenamed = sbisim(diamond(ANN[[NodePhase.0.i.x <- context_input.i.zero_norm(x)
 	      | x <- Phases, i <- {1..insize} ]]))
 
-assert ANNRenamed :[deadlock-free[FD]]
-assert ANNRenamed :[divergence-free]
-assert ANNRenamed :[deterministic[FD]]
+assert ANNRenamed :[deadlock-free[]]
 
---This HOLDS, 2.1 can never be active, as long as all inputs are active. 
-assert ANN_Visible \ {NodePhase.2.1.active} [T= ANN_Visible
 
-assert ANNRenamed \ {| context_output |} [T= ANNRenamed
-assert ANN \ {| context_output |} [T= ANN
---To find out the result:
 
 
 

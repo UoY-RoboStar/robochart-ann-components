@@ -18,10 +18,12 @@
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5
--- <50, 50, 50, 50, 50, 50, 5>
-layerstructure = <50, 50, 50, 50, 50, 50, 5>
+-- <50, 50, 50, 50, 50, 50, 5> Server cannot handle this, maybe it can, but takes hours
+--try less deep, but more layers, more layers probably, definitely, scale very poorly. 
+--This, <10, 10, 10, 10, 5> is SCALABLE ON THE SERVER, 5 layers, 50 nodes, 10 layers per node. can do for every output dimension.
+layerstructure = <10, 10, 10, 10, 5>
 layerNo = #layerstructure 
-maxSize = 50
+maxSize = 10
 
 LayerStart = 1
 
@@ -131,7 +133,7 @@ BackNode(layer, node, inputSize) =
 --	||| i: {1..size} @ BackNode(layer, i, inputSize) 
 	
 InputLayer = 
-	(||| i : {1..insize} @ ( (i != 3) & NodeActive.0.i -> SKIP ))
+	(||| i : {1..insize} @ ( NodeActive.0.i -> SKIP ))
 
 --Single path semantics? Try for just the first? This is bad, 
 BackLayer(layer, size, inputSize) = 
@@ -152,7 +154,11 @@ BackLayers =
 		[ {| NodeActive.(i-1), NodeActive.i |} ] 
 		BackLayer(i, layerSize(i), layerSize(i-1)))  
 --Node, node 1, is (2,1,5), for the same property.
-BackANN = (BackNode(6, 1, 50) [| {| NodeActive.(layerNo-1) |} |] BackLayers)
+BackANN = (BackNode(5, 1, 10) [| {| NodeActive.(layerNo-1) |} |] BackLayers)
+BackANN2 = (BackNode(5, 2, 10) [| {| NodeActive.(layerNo-1) |} |] BackLayers)
+BackANN3 = (BackNode(5, 3, 10) [| {| NodeActive.(layerNo-1) |} |] BackLayers)
+BackANN4 = (BackNode(5, 4, 10) [| {| NodeActive.(layerNo-1) |} |] BackLayers)
+BackANN5 = (BackNode(5, 5, 10) [| {| NodeActive.(layerNo-1) |} |] BackLayers)
 
 
 --Logic test
@@ -172,7 +178,10 @@ Test = Test_P [| {| NodeActive.1 |} |] Test_Q
 assert BackANN :[deadlock-free]
 
 assert BackANN \ {| NodeActive.0 |} [T= BackANN
-
+assert BackANN2 \ {| NodeActive.0 |} [T= BackANN2
+assert BackANN3 \ {| NodeActive.0 |} [T= BackANN3
+assert BackANN4 \ {| NodeActive.0 |} [T= BackANN4
+assert BackANN5 \ {| NodeActive.0 |} [T= BackANN5
 
 --HELPER FUNCTIONS: 
 -- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --
