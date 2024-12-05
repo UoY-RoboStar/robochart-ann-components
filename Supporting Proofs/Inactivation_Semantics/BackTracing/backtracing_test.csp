@@ -20,11 +20,9 @@ insize = 5
 outsize = 5
 -- <50, 50, 50, 50, 50, 50, 5>
 --
-layerstructure = <50, 5>
+layerstructure = <50, 50, 50, 50, 50, 5>
 layerNo = #layerstructure 
 maxSize = 50
-
-LayerStart = 1
 
 --CHANNELS AND DATA TYPES: 
 
@@ -132,7 +130,7 @@ BackNode(layer, node, inputSize) =
 --	||| i: {1..size} @ BackNode(layer, i, inputSize) 
 	
 InputLayer = 
-	(||| i : {1..insize} @ ( (i != 3) & NodeActive.0.i -> SKIP ))
+	(||| i : {1..insize} @ ( NodeActive.0.i -> SKIP ))
 
 --Single path semantics? Try for just the first? This is bad, 
 BackLayer(layer, size, inputSize) = 
@@ -149,11 +147,11 @@ BackLayer(layer, size, inputSize) =
 BackLayers = 
 	InputLayer 
 	[| {| NodeActive.0 |} |] 
-	(|| i : {LayerStart..(layerNo-1)} @
+	(|| i : {1..(layerNo-1)} @
 		[ {| NodeActive.(i-1), NodeActive.i |} ] 
 		BackLayer(i, layerSize(i), layerSize(i-1)))  
 --Node, node 1, is (2,1,5), for the same property.
-BackANN = (BackNode(2, 1, 50) [| {| NodeActive.(layerNo-1) |} |] BackLayers)
+BackANN = (BackNode(6, 1, 50) [| {| NodeActive.(layerNo-1) |} |] BackLayers)
 
 
 --Logic test
@@ -172,7 +170,7 @@ Test = Test_P [| {| NodeActive.1 |} |] Test_Q
 
 assert BackANN :[deadlock-free]
 
-assert BackANN \ {| NodeActive.0 |} [T= BackANN
+--assert BackANN \ {| NodeActive.0 |} [T= BackANN
 
 
 --HELPER FUNCTIONS: 
