@@ -39,6 +39,9 @@ SeqExp ::= null\_ seq | list \ldata \seq \nat \rdata | matrix \ldata \seq \seq V
  activationfunction : ActivationFunction \\
  inputContext : Context \\
  outputContext : Context \\
+ inRanges : SeqExp \\
+ outRanges : SeqExp \\
+ annRange : (Value \cross Value)
 \end{schema}
 
 To match the meta-model better. 

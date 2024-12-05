@@ -11,6 +11,8 @@
 \begin{circus}
   \circchannel layerRes: \nat \cross \nat \cross Value \\
   \circchannel nodeOut: \nat \cross \nat \cross \nat \cross Value \\
+  \circchannel in : \nat \cross Value \\
+  \circchannel out : \nat \cross Value \\
   \circchannel\ terminate \\
 \end{circus}
 
@@ -24,21 +26,38 @@
   \circchannelset ANNHiddenEvts == \lchanset layerRes \rchanset
 \end{circus}
 
+NormF because Norm taken by the RoboWorld Z specification
 \begin{axdef}
   weights : \seq \seq \seq Value; 
-  biases : \seq \seq Value; 
+  biases : \seq \seq Value;
+  inRanges : \seq (Value \cross Value); 
+  outRanges : \seq (Value \cross Value);
+  annRange : (Value \cross Value); 
+  normF : (Value \cross (Value \cross Value) \cross (Value \cross Value)) \fun Value ; 
+  normIn : (\nat \cross Value) \fun Value; 
+  denormOut : (\nat \cross Value) \fun Value; 
   relu : Value \fun Value %
   \where %
   weights = \langle \langle \langle 0 \rangle \rangle, \langle \langle 0 \rangle \rangle \rangle \land 
   biases = \langle \langle 0 \rangle, \langle 0 \rangle \rangle \land 
-  \forall x : Value @ \\%
-  \t1 %
-  (x < 0 \implies (x,0) \in relu) \land \\% 
-  (x \geq 0 \implies (x,x) \in relu)
+  inRanges = \langle (0,0), (0,0) \rangle \land 
+  annRange = (0,0) \land
+  \forall n : \nat @ \\%
+      \t1 %
+        \forall r, r': Value \cross Value | r.2 > r.1 \land r'.2 > r'.1 @ \\%
+        \t1 %
+          \forall x : Value @ \\%
+          \t1 % 
+             normF(x, r, r') = (((x - r.1)) \realdiv (r.2 - r.1)) * (r'.2 - r'.1) + r'.1 \land \\%
+             normIn(n, x) = normF(x, inRanges(n), annRange) \land \\%
+             denormOut(n, x) = normF(x, annRange, outRanges(n)) \land \\%             
+            (x < 0 \implies (x,0) \in relu) \land \\% 
+            (x \geq 0 \implies (x,x) \in relu)
 \end{axdef}
 
 
 
+      
 \begin{circus}
   \circprocess\ AnglePIDANN \circdef \ \circbegin \\%
       Collator \circdef l, n, i : \nat; sum : Value \circspot \\%
@@ -64,9 +83,14 @@
       
       ANN \circdef \\%
       ((HiddenLayers \lpar | \lchanset layerRes \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
+     
+      Interpreter \circdef \\%
+      (\Interleave i : 1 \upto #inRanges \circspot (in.i?x \then layerRes.0.i!(normIn(i, x)) \then \Skip)) \circseq \\%
+      (\Interleave i : 1 \upto #outRanges \circspot layerRes.2.i?y \then out.i!(denormOut(i, y)) \then \Skip) \circseq Interpreter \\%
       
       ANNRenamed \circdef \\%
-      (ANN) \lcircrename layerRes := layerRes \rcircrename \circinterrupt terminate \then \Skip \\%
+      ((Interpreter \lpar | \lchanset layerRes \rchanset | \rpar ANN) \circhide \lchanset layerRes \rchanset) \lcircrename in := in \rcircrename \circinterrupt terminate \then \Skip
+     
       
     \circspot ANNRenamed \\%
   \circend

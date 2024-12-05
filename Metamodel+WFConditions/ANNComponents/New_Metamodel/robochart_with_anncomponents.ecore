@@ -855,6 +855,12 @@
         eType="#//Context" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="outputContext" lowerBound="1"
         eType="#//Context" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inRanges" eType="#//SeqExp"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outRanges" eType="#//SeqExp"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="annRange" eType="#//TupleExp"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ANNController" eSuperTypes="#//ANN #//GeneralController"/>
   <eClassifiers xsi:type="ecore:EClass" name="ANNOperation" eSuperTypes="#//ANN #//GeneralOperation">
