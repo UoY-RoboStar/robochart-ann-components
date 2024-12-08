@@ -14,13 +14,15 @@
 --From the 3 layer version, 3 not valid, if we remove 3? 
 
 --100 nodes, 3 layers, about 11Gb of ram, if we had more, we could maybe 
+transparent sbisim
+transparent diamond 
 
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5
 -- <50, 50, 50, 50, 50, 50, 5>
 --
-layerstructure = <50, 50, 50, 50, 50, 5>
+layerstructure = <50, 50, 50, 50, 50, 50, 5>
 layerNo = #layerstructure 
 maxSize = 50
 
@@ -119,7 +121,7 @@ EdgeCollator(layer, node, index) = let
 BackNode(layer, node, inputSize) = 
 	(||| i:{1..inputSize} @ EdgeActive.layer.node.i -> NodeActive.(layer-1).i -> SKIP) 
 		[| {| EdgeActive.layer.node |} |]
-	EdgeCollator(layer, node, inputSize) \ {| EdgeActive |}
+	sbisim(diamond(EdgeCollator(layer, node, inputSize) \ {| EdgeActive |}))
 	
 --Back layer, synchronise, on what? on nothing? every layer, recieves the nodeactive, Collator only starts, when it gets given 
 --Otherwise, doesn't start. Do you need to synchronise, no, each is separate, 
@@ -145,13 +147,13 @@ BackLayer(layer, size, inputSize) =
 
 --What does each layer need to sync on? needs to sync on, NodeActive
 BackLayers = 
-	InputLayer 
+	sbisim(diamond(InputLayer)) 
 	[| {| NodeActive.0 |} |] 
-	(|| i : {1..(layerNo-1)} @
+	sbisim(diamond((|| i : {1..(layerNo-1)} @
 		[ {| NodeActive.(i-1), NodeActive.i |} ] 
-		BackLayer(i, layerSize(i), layerSize(i-1)))  
+		BackLayer(i, layerSize(i), layerSize(i-1)))))  
 --Node, node 1, is (2,1,5), for the same property.
-BackANN = (BackNode(6, 1, 50) [| {| NodeActive.(layerNo-1) |} |] BackLayers)
+BackANN = (sbisim(diamond(BackNode(7, 1, 50))) [| {| NodeActive.(layerNo-1) |} |] sbisim(diamond(BackLayers)))
 
 
 --Logic test
