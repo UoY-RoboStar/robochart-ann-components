@@ -468,15 +468,27 @@ def complete_biases():
             [2.27630e-01,-1.88762e-01,5.34094e-02,-3.77861e-01,-8.12531e-02],
             [-5.88651e-01,7.46065e-02,-3.92887e-01,-3.56303e-01,-1.67712e-01]
         ]
+
+def gen_acasxu_weights(): 
+    acasxu = NNet("ACASXU_experimental_v2a_1_1.nnet")
+    weights = acasxu.weights
+    biases = acasxu.biases 
+    print(print_converted_weights(list(weights)))
+    print(print_converted_biases(list(biases)))
+
+def gen_mnist10x10(): 
+    mnist = NNet("mnist10x10.nnet")
+    weights = mnist.weights
+    biases = mnist.biases 
+    print(print_converted_weights(list(weights)))
+    print(print_converted_biases(list(biases)))
     
 if(__name__ == "__main__"):
 	#gen_input_conditions()
 	#gen_layer_conditions(2)
-    acasxu = NNet("ACASXU_experimental_v2a_1_1.nnet")
-    weights = acasxu.weights
-    biases = acasxu.biases 
+    gen_mnist10x10()
     #print(print_converted_weights(list(weights)))
-    print(print_converted_biases(list(biases)))
+    #print(print_converted_biases(list(biases)))
     #gen_first_layer_conditions(weights[0], biases[0])
     #gen_layer_conditions(2, weights, biases)
     #print(calculate_input_layer_max(complete_weights()[0], complete_biases()[0], 0.5))
