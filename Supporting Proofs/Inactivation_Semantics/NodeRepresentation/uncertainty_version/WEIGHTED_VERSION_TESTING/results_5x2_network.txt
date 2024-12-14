@@ -1,0 +1,217 @@
+Under ALL inputs: 
+InputLayer = 
+	(; i : <0..insize-1> @ ( NodePhase.0.(insize - i).(Inactive.weak) -> SKIP ))
+
+
+Acas xu 1-1 params with these CONSTANTS:
+
+
+insize = 5
+outsize = 5
+layerstructure = <5, 5>
+layerNo = #layerstructure 
+maxSize = 5
+
+Results: 
+
+MAX: 
+
+2.5 - Active.Strong
+2.4 - Active.strong
+2.3 - Active.strong
+2.2 - Active.medium
+2.1 - Active.weak
+
+MIN: 
+2.5 - Zero 
+2.4 - Zero
+2.3 - Zero
+2.2 - Zero
+2.1 - Active.medium
+
+MIN WITH MAX BIAS: 
+2.5 - Active.strong 
+2.4 - Zero 
+2.3 - Active.strong 
+2.2 - Zero
+2.1 - Active.Strong
+
+Min of : 
+Max of: 
+Min of: 2.5 - Active.strong
+And min of: 2.3 - Active.strong 
+
+WHAT DECISIONS CANNOT BE MADE: 
+MAX of:
+2.2 - medium 
+2.2 CANNOT BE MADE, INACTIVE. 
+
+Under any valuation, Under any situation. 
+IS INACTIVE, under any, inputs  less than -0.01. 
+
+Could there be a combination we are missing, 
+
+Is this even the true range? 
+
+Max isnt the max, but is the range the actual range? 
+
+1 node, in each layer, 2 layers. 
+
+
+
+
+TELLS US NOTHING. 
+
+2.1 weights: 
+Inactive.medium
+Active.weak 
+Inactive.medium 
+Active.medium
+Inative.medium 
+
+What about the bias? 
+
+Maybe the bias is wrong? 
+
+Active.weak 
+
+That shouldnt have been more under min? 
+
+bias calculation, its the lowest possible bias calculation, 
+
+weird results, always assumes that bias will be under
+
+
+
+
+DRY RUN: 
+
+2 inputs, 1 hidden node, one output node: 
+
+with acas xu: 
+
+insize = 2
+outsize = 1
+layerstructure = <1,1>
+layerNo = #layerstructure 
+maxSize = 2
+
+under both Inactive.weak 
+
+
+
+Min simulation: 
+
+2.1.Active.medium 
+
+Max simulation: 
+
+2.1.Active.medium 
+
+Is this the actual range? Hypothesis, is the true range. 
+
+Let's see: 
+
+weights: 
+node 1-1: 
+Active.weak 
+Inactive.strong 
+
+bias: 
+Active.medium 
+
+Node 2-1:
+weight: 
+Inactive.medium 
+
+bias: 
+Active.weak 
+
+Input node: Inactive.weak 
+
+Weighted sum: 
+
+Inactive.weak * Active.weak + 
+Inactive.weak * Inactive.strong 
+
++ 
+
+Active.medium 
+
+Multiplicaiton: 
+
+Inactive.weak + 
+Active.weak + 
+
+Active.medium 
+
+What are the possiblilities? 
+
+MINIMAL, there is an ABSOLUTE MININUM: 
+
+Worst case: 
+Inactive.weak + 
+
+Active.medium 
+
+WORST, active.weak, can it lead to inactive? No, because highest is: 
+
+-0.099
++ 
+LOWEST; 
+0.01 
+
+STILL ACTIVE.WEAK 
+
+HIGHEST, is: 
+
+Active.weak + active.medium 
+
+medium, 0.99 + 0.01
+
+ACTIVE.STRONG. 
+
+Active.weak -> Active.strong
+
+Any WAY THIS COULD BE DIFFERENT? 
+
+No, not under this input combination? 
+
+Minimum and MAXIMUM run
+
+2.1 - 
+
+Check with Marabou. 
+
+I think this is sound, 
+
+IF WE EVALUATE EACH NODES MINIMUM, DOES THAT CORRESPOND TO THE LIMITS OF THE NETWORK? 
+
+MAXIMAL LIMIT, I think it does. 
+
+Could be medium, but we are evaluating both bounds. 
+
+I think, each is monotonic, we have this property. 
+
+It may not be less or greater, but it CAN'T BE ANYTHING ELSE. 
+
+
+weight: 
+Inactive.medium 
+
+bias: 
+Active.weak 
+
+Inactive.medium, 
+
+Each node, can't be any different, can NEVER BE, under that input valuation, OUTSIDE OF THOSE BOUNDS. 
+
+Even with uncertainty, because of how we've done it, NO WAY IT CAN BE OUTSIDE THOSE RANGES. 
+
+Intermediate combinations, 
+
+BIAS HAS TO BE MIN, CAN'T ASSUME IT WILL ALWAYS BE MAX, HAS TO BE THE MIN AND MAX CALCULATION FOR ENTIRE 
+
+NETWORK, BIAS HAS TO BE FACTORED IN. 
+
+

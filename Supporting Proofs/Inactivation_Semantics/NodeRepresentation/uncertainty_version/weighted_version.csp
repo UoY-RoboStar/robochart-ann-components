@@ -1,10 +1,17 @@
+--ASSUMPTIONS:
+--
+--ASSUMING STRONG IS NEVER > 10, 
+
+--AS LONG AS THE ACTUAL VALUE IS NEVER > 10. 
+
+--It only EVEN COULD BE in relu networks, sigmoid, it NEVER CAN BE. 
 
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5
-layerstructure = <50, 5>
+layerstructure = <10, 5>
 layerNo = #layerstructure 
-maxSize = 50
+maxSize = 10
 
 
 --Weights and Biases: 
@@ -28,6 +35,7 @@ core_real = { -1..1}
 
 datatype decisions = coc | wl | wr | sl | sr 
 
+datatype MinMax = Min | Max
 
 channel context_input:{1..insize}.core_real
 
@@ -47,14 +55,14 @@ channel end
 --Let's make ABSTRACT ARITHMETIC: 
 --Abstract sum of TWO ACTIVE components:
 --Special PATTERN TO DEAL WITH zero. 
-sum(Zero, Zero) = Zero
-sum(Zero, Active.y) = Active.y 
-sum(Active.y, Zero) = Active.y
-sum(Zero, Inactive.y) = Inactive.y 
-sum(Inactive.y, Zero) = Inactive.y
+sum(Zero, Zero, _) = Zero
+sum(Zero, Active.y, _) = Active.y 
+sum(Active.y, Zero, _) = Active.y
+sum(Zero, Inactive.y, _) = Inactive.y 
+sum(Inactive.y, Zero, _) = Inactive.y
 
 
-sum(Active.x, Active.y) = 
+sum(Active.x, Active.y, Max) = 
 	if(x == weak) 
 		then 
 			if(y == weak) 
@@ -79,7 +87,7 @@ sum(Active.x, Active.y) =
 			Active.strong 
 			
 
-sum(Active.x, Inactive.y) = 
+sum(Active.x, Inactive.y, Max) = 
 	if(x == weak) 
 		then 
 			if(y == weak) 
@@ -112,9 +120,9 @@ sum(Active.x, Inactive.y) =
 
 
 --its the same, COMMUTATIVE, but just for syntax:
-sum(Inactive.x, Active.y) = sum(Active.x, Inactive.y)
+sum(Inactive.x, Active.y, Max) = sum(Active.x, Inactive.y, Max)
 
-sum(Inactive.x, Inactive.y) = 
+sum(Inactive.x, Inactive.y, Max) = 
 	if(x == weak) 
 		then 
 			if(y == weak) 
@@ -144,6 +152,104 @@ sum(Inactive.x, Inactive.y) =
 						Inactive.strong 
 				else 
 					Inactive.strong
+
+
+--MIN SUM:
+
+
+sum(Active.x, Active.y, Min) = 
+	if(x == weak) 
+		then 
+			if(y == weak) 
+				then 
+					Active.weak
+				else if(y == medium)
+					then 
+						Active.medium 
+				else 
+					Active.strong
+		else if(x == medium)
+			then 
+				if(y == weak) 
+					then 
+						Active.medium
+					else if(y == medium)
+						then 
+							Active.medium 
+					else 
+						Active.strong
+		else
+			Active.strong 
+			
+
+sum(Active.x, Inactive.y, Min) = 
+	if(x == weak) 
+		then 
+			if(y == weak) 
+				then 
+					Inactive.weak
+				else if(y == medium)
+					then 
+						Inactive.medium 
+				else 
+					Inactive.strong
+		else if(x == medium)
+			then 
+			if(y == weak) 
+				then 
+					Active.weak
+				else if(y == medium)
+					then 
+						Inactive.weak 
+				else 
+					Inactive.medium
+		else
+			if(y == weak) 
+				then 
+					Active.medium
+				else if(y == medium)
+					then 
+						Active.weak 
+				else 
+					Inactive.weak
+
+
+--its the same, COMMUTATIVE, but just for syntax:
+sum(Inactive.x, Active.y, Min) = sum(Active.x, Inactive.y, Min)
+
+sum(Inactive.x, Inactive.y, Min) = 
+	if(x == weak) 
+		then 
+			if(y == weak) 
+				then 
+					Inactive.medium
+				else if(y == medium)
+					then 
+						Inactive.strong 
+				else 
+					Inactive.strong
+		else if(x == medium)
+			then 
+			if(y == weak) 
+				then 
+					Inactive.strong
+				else if(y == medium)
+					then 
+						Inactive.strong 
+				else 
+					Inactive.strong
+		else
+			if(y == weak) 
+				then 
+					Inactive.strong
+				else if(y == medium)
+					then 
+						Inactive.strong 
+				else 
+					Inactive.strong
+
+
+
 
 
 --ABSTRACT PRODUCT: 
@@ -242,36 +348,35 @@ ActivationFunction(Active.x) = Active.x
 --If activation logic is FALSE, then it is active.
 --Activation Logic means we are UNSURE, TRUE IS UNSURE, FALSE IS ACTIVE.
 --What do we start at is a good question. We need to start at an identity? 
-  
-EdgeCollator(layer, node, index) = let
-	C(layer, node, 0, edge_results) = 
-			NodePhase.layer.node!ActivationFunction(sum(edge_results, extract_biases(layer,node))) -> SKIP
+--Mode is wheter it is doing the Min or Max simulation.
+EdgeCollator(layer, node, index, Mode) = let
+	C(layer, node, 0, edge_results) = 			
+			NodePhase.layer.node!ActivationFunction(sum(edge_results, extract_biases(layer,node), Mode)) -> SKIP
 			
 	C(layer, node, index, edge_results) = EdgePhase.layer.node.index?edge_phase -> 
-										C(layer, node, (index-1), sum(edge_results, edge_phase))
+										C(layer, node, (index-1), sum(edge_results, edge_phase, Mode))
 	within 
 		C(layer, node, index, Zero)
 
 
-Node(layer, node, inputSize) = 
+Node(layer, node, inputSize, Mode) = 
 	(; i:<0..(inputSize-1)> @ NodeEdge(layer, node, (inputSize - i))) 
 		[| {| EdgePhase.layer.node |} |]
-	EdgeCollator(layer, node, inputSize) \ {| EdgePhase |} 
+	EdgeCollator(layer, node, inputSize, Mode) \ {| EdgePhase |} 
 	
 
-HiddenLayer(layer, size, inputSize) = 
-	[| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
+HiddenLayer(layer, size, inputSize, Mode) = 
+	[| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize, Mode) 
 
-HiddenLayers = 
+HiddenLayers(Mode) = 
 	|| i : {1..(layerNo-1)} @
 		[ {| NodePhase.(i-1), NodePhase.i |} ] 
-		HiddenLayer(i, layerSize(i), layerSize(i-1))  
+		HiddenLayer(i, layerSize(i), layerSize(i-1), Mode)  
 
-OutputLayer = [| {| NodePhase.(layerNo-1) |} |] 
-			i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1))
+OutputLayer(Mode) = [| {| NodePhase.(layerNo-1) |} |] 
+			i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1), Mode)
 
 
-ANNHiddenEvts = diff(Events, {| NodePhase.0, NodePhase.layerNo, context_output, end |})
 
 --We can remove this, no, for analysis without another component, add this as context. 
 
@@ -314,39 +419,32 @@ Output_Interpreter = let
 	within 
 		C(outsize, <>, true)
 
---Better if the output interpreter inside the main function, needs to be because of the recursion.
-Test = (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)
+ANNHiddenEvts = diff(Events, {| NodePhase.0, NodePhase.layerNo, context_output, end |})
 
-ANN = (( ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
+ANN(Mode) = (( ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers(Mode))  
 		[| {| NodePhase.(layerNo-1) |} |] 
-	   OutputLayer) )  [| {| NodePhase.layerNo |} |] Output_Interpreter ) ; ANN 
+	   OutputLayer(Mode)) )  [| {| NodePhase.layerNo |} |] Output_Interpreter ) ; ANN(Mode)
 
-SingleANN = (( ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
+SingleANN(Mode) = (( ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers(Mode))  
 		[| {| NodePhase.(layerNo-1) |} |] 
-	   OutputLayer) )  [| {| NodePhase.layerNo |} |] Output_Interpreter ) \ {| NodePhase |} 
+	   OutputLayer(Mode)) )  [| {| NodePhase.layerNo |} |] Output_Interpreter ) \ ANNHiddenEvts 
 
-SingleANNNo = ( ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
+SingleANNNo(Mode) = ( ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers(Mode))  
 		[| {| NodePhase.(layerNo-1) |} |] 
-	   OutputLayer) ) 
-	  
-Test2 = (OutputLayer) [| {| NodePhase.layerNo |} |] Output_Interpreter
+	   OutputLayer(Mode)) ) \ ANNHiddenEvts 
+
+MINANN = SingleANNNo(Min)
+MAXANN = SingleANNNo(Max)
 -- ; ANN
 --
 
-ANN_Visible = ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
+ANN_Visible(Mode) = ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers(Mode))  
 		[| {| NodePhase.(layerNo-1) |} |] 
-	   OutputLayer)  ; ANN_Visible
+	   OutputLayer(Mode))  ; ANN_Visible(Mode)
 
-assert SingleANNNo :[deadlock-free]
-assert SingleANNNo \ {| NodePhase.layerNo.1.Active |} [T= SingleANNNo
-assert SingleANNNo \ {| NodePhase.layerNo.2.Active |} [T= SingleANNNo
-assert SingleANNNo \ {| NodePhase.layerNo.3.Active |} [T= SingleANNNo
-assert SingleANNNo \ {| NodePhase.layerNo.4.Active |} [T= SingleANNNo
-assert SingleANNNo \ {| NodePhase.layerNo.5.Active |} [T= SingleANNNo
 
-assert ANN_Visible :[deadlock-free]
-
-assert ANN_Visible :[deterministic]
+assert MINANN :[deadlock-free]
+assert MAXANN :[deadlock-free]
 
 
 
