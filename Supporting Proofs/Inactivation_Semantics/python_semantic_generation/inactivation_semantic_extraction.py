@@ -247,16 +247,61 @@ def print_converted_weights(weights):
              s += ">"
     return s
     
+#The weights, for the strong active, weak active, 
+def print_weighted_weights(weights):
+    s = "weights = \n "
+    #The constant formula, for all of them, for the activity semantics: 
+    s += "<"
+    for l in range(0, len(weights)):
+        #New DNF for every list, 
+        s += "<"
+        for n in range(0, len(weights[l])): 
+            s += "<" 
+            for i in range(0, len(weights[l][n])):
+                if(weights[l][n][i] >= 0 and weights[l][n][i] < 0.1):
+                    s += "Active.weak"
+                elif(weights[l][n][i] >= 0.1 and weights[l][n][i] < 1.0):
+                    s += "Active.medium"
+                elif(weights[l][n][i] >= 1.0):
+                    s += "Active.strong"
+                elif(weights[l][n][i] < 0 and weights[l][n][i] > -0.1):
+                    s += "Inactive.weak"
+                elif(weights[l][n][i] > -1.0 and weights[l][n][i] <= -0.1):
+                    s += "Inactive.medium"
+                else:
+                    s += "Inactive.strong"
+                if(i != len(weights[l][n])-1):
+                     s += ","
+                else:
+                     s += ">"
+            if(n != len(weights[l])-1):
+                 s += ","
+            else:
+                 s += ">"
+        if(l != len(weights)-1):
+             s += ","
+        else:
+             s += ">"
+    return s
+    
 def print_converted_biases(biases):
     s = "biases = \n "
     s += "<"
     for l in range(0, len(biases)):
         s += "<"
         for n in range(0, len(biases[l])): 
-            if(biases[l][n] > 0):
-                s += "active"
+            if(biases[l][n] >= 0 and biases[l][n] < 0.1):
+                s += "Active.weak"
+            elif(biases[l][n] >= 0.1 and biases[l][n] < 1.0):
+                s += "Active.medium"
+            elif(biases[l][n] >= 1.0):
+                s += "Active.strong"
+            elif(biases[l][n] < 0 and biases[l][n] > -0.1):
+                s += "Inactive.weak"
+            elif(biases[l][n] > -1.0 and biases[l][n] <= -0.1):
+                s += "Inactive.medium"
             else:
-                s += "inactive"
+                s += "Inactive.strong"
             if(n != len(biases[l])-1):
                 s += ","
             else:
@@ -473,7 +518,7 @@ def gen_acasxu_weights():
     acasxu = NNet("ACASXU_experimental_v2a_1_1.nnet")
     weights = acasxu.weights
     biases = acasxu.biases 
-    print(print_converted_weights(list(weights)))
+    print(print_weighted_weights(list(weights)))
     print(print_converted_biases(list(biases)))
 
 def gen_mnist10x10(): 
@@ -486,7 +531,9 @@ def gen_mnist10x10():
 if(__name__ == "__main__"):
 	#gen_input_conditions()
 	#gen_layer_conditions(2)
-    gen_mnist10x10()
+    
+    #gen_mnist10x10()
+    gen_acasxu_weights()
     #print(print_converted_weights(list(weights)))
     #print(print_converted_biases(list(biases)))
     #gen_first_layer_conditions(weights[0], biases[0])
