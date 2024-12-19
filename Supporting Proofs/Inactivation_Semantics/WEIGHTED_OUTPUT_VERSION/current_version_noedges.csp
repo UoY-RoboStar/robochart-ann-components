@@ -15,9 +15,12 @@
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5
-layerstructure = <20,10>
+--Can scale on PC to <10, 10, 10, 10, 10, 10>
+--server to: <15, 15, 15, 15, 15, 15>
+
+layerstructure = <5, 5>
 layerNo = #layerstructure 
-maxSize = 20
+maxSize = 5
 
 
 --Weights and Biases: 
@@ -308,7 +311,7 @@ EdgeCollator(layer, node, index) = let
 				NodePhase.layer.node!zero -> SKIP 
 			))
 			
-	C(layer, node, index, edge_results) = NodePhase.(layer-1).node?edge_phase -> 
+	C(layer, node, index, edge_results) = NodePhase.(layer-1).index?edge_phase -> 
 										C(layer, node, (index-1), 
 										<ReLUEdgeLogic(edge_phase, extract_weights(layer, node, index))>^edge_results)
 	within 
@@ -363,6 +366,7 @@ weight_order(7) = <1, 2, 3, 4, 5>
 weight_order(8) = <1, 3, 2, 5, 4>
 weight_order(9) = <4, 2, 3, 1, 5>
 weight_order(10) = <1, 2, 4, 3, 5>
+weight_order(_) = <1, 2, 4, 3, 5>
 
 --Function, 
 --If yes, COULD be max> 
@@ -399,14 +403,15 @@ OutputLayer = let
 	within 
 		C(layerSize(layerNo), <>, true)
 
+Test = (InputLayer [| {| NodePhase.0 |} |] HiddenLayers) 
 --Better if the output interpreter inside the main function, needs to be because of the recursion.
 ANN = (( ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
-		[| {| NodePhase.(layerNo-1) |} |] 
+		[| {| NodePhase.(layerNo) |} |] 
 	   OutputLayer) ) ) 
 	 
 
 assert ANN :[deadlock-free]
-
+assert Test :[deadlock-free]
 
 extract_sequence(1, sequence) = head(sequence)
 extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
