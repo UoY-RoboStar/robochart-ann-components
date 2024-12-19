@@ -596,7 +596,7 @@ ANNHiddenEvts = diff(Events, {| NodePhase.0, context_output, end |})
 --It passes them to the first layer. Triggers the first layer. 
 --fixed to just inactive for now. 
 InputLayer = 
-	(||| i : {1..insize} @ ( NodePhase.0.i.inactive -> SKIP ))
+	(||| i : {1..insize} @ ( NodePhase.0.i.inactive -> SKIP ||| NodePhase.0.i.active -> SKIP ))
 
 --Fix all to active for now: 
 
