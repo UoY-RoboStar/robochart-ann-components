@@ -2,7 +2,16 @@
 --
 --ASSUMING STRONG IS NEVER > 10, 
 --ASSUMING RELU ACTIVATION (the idea holds for others, but relu for now. 
+--THIS VERSION HAS NO SCALING AS WELL, ADD THAT LATER. OR DO ANOTHER EASIER CHECK FOR THIS. 
 
+--This version scales to 10 hidden layer, 5 node on regular PC very quickly, 5 node immedately. 
+
+
+--This uses the Weighted Hidden Layer and the Output Ordering semantics. 
+
+--We just need to automatically generate the output layer, the hidden layers already automatically generated. 
+
+--Think about 
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5

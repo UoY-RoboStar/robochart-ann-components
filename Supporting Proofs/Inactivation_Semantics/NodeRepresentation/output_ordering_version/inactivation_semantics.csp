@@ -580,7 +580,7 @@ HiddenLayer(layer, size, inputSize) =
 	[| {| NodePhase.(layer-1) |} |] i: {1..size} @ Sequential_Node(layer, i, inputSize) 
 
 HiddenLayers = 
-	|| i : {1..(layerNo-1)} @
+	|| i : {1..(layerNo)} @
 		[ {| NodePhase.(i-1), NodePhase.i |} ] 
 		HiddenLayer(i, layerSize(i), layerSize(i-1))  
 

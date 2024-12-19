@@ -3,12 +3,21 @@
 --ASSUMING STRONG IS NEVER > 10, 
 --ASSUMING RELU ACTIVATION (the idea holds for others, but relu for now. 
 
+
+--This version scales to 10 hidden layer, 5 node on regular PC very quickly, 5 node immedately. 
+
+
+--This uses the Weighted Hidden Layer and the Output Ordering semantics. 
+
+--We just need to automatically generate the output layer, the hidden layers already automatically generated. 
+
+--Think about 
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5
-layerstructure = <10>
+layerstructure = <20,10>
 layerNo = #layerstructure 
-maxSize = 10
+maxSize = 20
 
 
 --Weights and Biases: 
@@ -46,12 +55,11 @@ datatype Phases = Active.Strength | Inactive.Strength | Zero
 
 
 --SCALING IS > 1, <= 1, IS ACTIVE. 
-datatype NodePhases = zero | active | scaling
+datatype NodePhases = zero | active
 
 --These are NOW FOR THE WEIGHTS AND BIASES, *NOT* FOR THE NODE PHASES. 
 
 channel NodePhase:{0..layerNo}.{1..maxSize}.NodePhases
-channel EdgePhase:{1..layerNo}.{1..maxSize}.{1..maxSize}.NodePhases
 
 channel end 
 
@@ -87,9 +95,6 @@ ReLUEdgeLogic(input_phase, weight) =
 		else if(input_phase == active)
 			then
 				weight
-		else if(input_phase == scaling) 
-			then 
-				Scale(weight)
 		else 
 			Zero
 
@@ -97,9 +102,6 @@ ReLUEdgeLogic(input_phase, weight) =
 --RELU WE CAN CHANGE THIS, if its relu, 
 --Behaves differently if its the first layer, because on the inputs, not on the weighted inputs. 
 --TEMPORARY, JUST AS A BUFFER FOR NOW. 
-NodeEdge(layer, node, index) = 
-	NodePhase.(layer - 1).index?phase ->
-	EdgePhase.layer.node.index!phase -> SKIP
 
 
 --ActivationFunction, RELU, for now: 
@@ -306,7 +308,7 @@ EdgeCollator(layer, node, index) = let
 				NodePhase.layer.node!zero -> SKIP 
 			))
 			
-	C(layer, node, index, edge_results) = EdgePhase.layer.node.index?edge_phase -> 
+	C(layer, node, index, edge_results) = NodePhase.(layer-1).node?edge_phase -> 
 										C(layer, node, (index-1), 
 										<ReLUEdgeLogic(edge_phase, extract_weights(layer, node, index))>^edge_results)
 	within 
@@ -314,9 +316,7 @@ EdgeCollator(layer, node, index) = let
 		
 
 Node(layer, node, inputSize) = 
-	(; i:<0..(inputSize-1)> @ NodeEdge(layer, node, (inputSize - i))) 
-		[| {| EdgePhase.layer.node |} |]
-	EdgeCollator(layer, node, inputSize) \ {| EdgePhase |} 
+	EdgeCollator(layer, node, inputSize)
 	
 
 HiddenLayer(layer, size, inputSize) = 
