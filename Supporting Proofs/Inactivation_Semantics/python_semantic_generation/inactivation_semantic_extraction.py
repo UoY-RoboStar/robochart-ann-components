@@ -5,6 +5,7 @@ from itertools import chain, combinations
 from Nnet_file_format_external import NNet
 import copy
 import numpy as np
+import random
 
 def main():
     print("")
@@ -218,6 +219,55 @@ def input_inactivation_print_conversion(activation_lists, layer, node, no_weight
     return s
 
 
+#Print the ordering of output node, for output layer representation: 
+#bias_order = <2, 5, 4, 3, 1>
+
+#--Function: 
+#--Weight IS ABSOLUTE VALUE. 
+#weight_order(1) = <4, 3, 5, 2, 1>
+#weight_order(2) = <1, 2, 3, 4, 5>
+#weight_order(3) = <1, 3, 2, 5, 4>
+#weight_order(4) = <4, 2, 3, 1, 5>
+#weight_order(5) = <1, 2, 4, 3, 5>
+#weight_order(_) = <1,2,4,3,5>
+
+def output_layer_ordering(out_weights, out_biases): 
+    #Biase order generation: 
+    s = "bias_order = \n "
+    s += "<"
+    #we need to order first for their values, then find out, order from HIGHEST TO LOWEST. 
+    #Then find the index from out_biases. 
+    ordered_biases = list(out_biases)
+    ordered_biases.sort(reverse=True)
+    #Convert to indicies, from original list: 
+    for i in range(0, len(ordered_biases)):
+        #+1 for 1-indexing in FDR, and 0-indexed in python.
+        ordered_biases[i] = list(out_biases).index(ordered_biases[i]) + 1
+        s += str(ordered_biases[i])
+        if(i != len(ordered_biases)-1):
+             s += ","
+    s += "> \n"
+    
+    #Order the weights now, order along same axis. 
+    #numpy, we can take all weights at 1, 
+    #All, 
+    #print("out weights:")
+    #print(out_weights)
+    #print("out weights (1): ") 
+    #print(out_weights[:, 0])
+
+    for i in range(0, len(out_weights)): 
+        s += "weight_order("+str(i+1)+") = \n"
+        s += "<"
+        ordered_weights = list(out_weights[i])
+        ordered_weights.sort(reverse=True)
+        for j in range(0, len(ordered_weights)):
+            ordered_weights[j] = list(out_weights[i]).index(ordered_weights[j]) + 1
+            s += str(ordered_weights[j])
+            if(j != len(ordered_weights)-1):
+                 s += ","
+        s += "> \n"	
+    return s
 
 def print_converted_weights(weights):
     s = "weights = \n "
@@ -230,9 +280,39 @@ def print_converted_weights(weights):
             s += "<" 
             for i in range(0, len(weights[l][n])):
                 if(weights[l][n][i] > 0):
-                    s += "active"
+                    s += "Active"
                 else:
-                    s += "inactive"
+                    s += "InActive"
+                if(i != len(weights[l][n])-1):
+                     s += ","
+                else:
+                     s += ">"
+            if(n != len(weights[l])-1):
+                 s += ","
+            else:
+                 s += ">"
+        if(l != len(weights)-1):
+             s += ","
+        else:
+             s += ">"
+    return s
+    
+#Randomise every weight, but same structure as in weights:
+def print_random_weights(weights):
+    s = "weights = \n "
+    #The constant formula, for all of them, for the activity semantics: 
+    s += "<"
+    for l in range(0, len(weights)):
+        #New DNF for every list, 
+        s += "<"
+        for n in range(0, len(weights[l])): 
+            s += "<" 
+            for i in range(0, len(weights[l][n])):
+                rand = random.randint(0,1)
+                if(rand == 1):
+                    s += "Active"
+                else:
+                    s += "InActive"
                 if(i != len(weights[l][n])-1):
                      s += ","
                 else:
@@ -290,6 +370,26 @@ def print_converted_biases(biases):
     for l in range(0, len(biases)):
         s += "<"
         for n in range(0, len(biases[l])): 
+            if(biases[l][n] > 0):
+                s += "Active"
+            else:
+                s += "InActive"
+            if(n != len(biases[l])-1):
+                s += ","
+            else:
+                s += ">"
+        if(l != len(biases)-1):
+            s += ","
+        else:
+            s += ">"
+    return s
+    
+def print_weighted_biases(biases):
+    s = "biases = \n "
+    s += "<"
+    for l in range(0, len(biases)):
+        s += "<"
+        for n in range(0, len(biases[l])): 
             if(biases[l][n] >= 0 and biases[l][n] < 0.1):
                 s += "Active.weak"
             elif(biases[l][n] >= 0.1 and biases[l][n] < 1.0):
@@ -302,6 +402,28 @@ def print_converted_biases(biases):
                 s += "Inactive.medium"
             else:
                 s += "Inactive.strong"
+            if(n != len(biases[l])-1):
+                s += ","
+            else:
+                s += ">"
+        if(l != len(biases)-1):
+            s += ","
+        else:
+            s += ">"
+    return s
+
+
+def print_random_biases(biases):
+    s = "biases = \n "
+    s += "<"
+    for l in range(0, len(biases)):
+        s += "<"
+        for n in range(0, len(biases[l])): 
+            rand = random.randint(0,1)
+            if(rand == 1):
+                s += "Active"
+            else:
+                s += "InActive"
             if(n != len(biases[l])-1):
                 s += ","
             else:
@@ -518,8 +640,8 @@ def gen_acasxu_weights():
     acasxu = NNet("ACASXU_experimental_v2a_1_1.nnet")
     weights = acasxu.weights
     biases = acasxu.biases 
-    print(print_weighted_weights(list(weights)))
-    print(print_converted_biases(list(biases)))
+    print(print_random_weights(list(weights)))
+    print(print_random_biases(list(biases)))
 
 def gen_mnist10x10(): 
     mnist = NNet("mnist10x10.nnet")
@@ -528,12 +650,16 @@ def gen_mnist10x10():
     print(print_converted_weights(list(weights)))
     print(print_converted_biases(list(biases)))
     
+    #Output layer ordering: 
+    print(output_layer_ordering(weights[len(weights)-1], biases[len(biases)-1]))
+    
+    
 if(__name__ == "__main__"):
 	#gen_input_conditions()
 	#gen_layer_conditions(2)
     
-    #gen_mnist10x10()
-    gen_acasxu_weights()
+    gen_mnist10x10()
+    #gen_acasxu_weights()
     #print(print_converted_weights(list(weights)))
     #print(print_converted_biases(list(biases)))
     #gen_first_layer_conditions(weights[0], biases[0])
