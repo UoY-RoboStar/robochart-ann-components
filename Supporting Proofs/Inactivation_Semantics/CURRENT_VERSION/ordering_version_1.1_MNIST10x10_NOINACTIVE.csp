@@ -1,10 +1,10 @@
 --SETTING UP FOR MNIST, 10X10, 
 --SEMANTIC CONSTANTS--
 --MNIST is for handwriting data. 
-insize = 100
-layerstructure = <10, 10, 10, 10>
+insize = 784
+layerstructure = <10, 10, 10, 10, 10, 10>
 layerNo = #layerstructure 
-maxSize = 100
+maxSize = 784
 
    
 --CHANNELS AND DATA TYPES: 
@@ -64,7 +64,7 @@ layerwise_weight_order(layerNo, 10) =
 --ZERO IS NEVER TRANSMITTED, IT IS CALCULATED. 
 datatype InternalPhases = Zero | InActive | Active
 --The input, uncertain means active. 
-datatype Phases = inactive | uncertain | active
+datatype Phases = uncertain | active
 
 channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
 
@@ -77,24 +77,12 @@ channel end
 --Active or uncertain DEALT WITH IN THE SAME WAY BY EDGE LOGIC. 
 EdgeLogic(input_phase, weight, first) = 
 	if(first == true) then 
-		if(input_phase == inactive)
-			then 
-				if(weight == Active)
-					then 
-						InActive
-					else
-						Active
-			else
 				if(weight == InActive)
 					then
 						InActive
 					else
 						Active
 	else 
-		if(input_phase == inactive)
-			then 
-				Zero
-			else
 				if(weight == Active)
 					then 
 						Active
@@ -181,9 +169,6 @@ Node(layer, node, index) = let
 			) 
 		[]
 		(extract_biases(layer,node) == InActive) & (
-			((InActivation(layer, node, edge_results) == True) & (
-				NodePhase.layer.node!inactive -> SKIP )) 
-			[]
 			((InActivation(layer, node, edge_results) == False) & 
 				NodePhase.layer.node!uncertain -> SKIP)
 			)
@@ -280,13 +265,13 @@ couldNodeMax(n, results) =
 --Its something that, it THINKS that network_results could be massive, why? 
 OutputLayer = let	
 	C(0, network_results) = 
-		(#network_results < 11) & (
-		((not member(active, set(network_results)) and not member(inactive, set(network_results))) or card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True}) > 0) & (
+		(#network_results < 11) & 
+		((not member(active, set(network_results)) or card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True}) > 0) & (
 			[] e : decisions @
 				context_output!e -> SKIP
 			)
 		[]
-		(member(active, set(network_results)) or member(inactive, set(network_results)) and card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True}) > 0) & (
+		(member(active, set(network_results)) and card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True}) > 0) & (
 			[] e : { context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True} @
 				context_output!e -> SKIP
 			)
