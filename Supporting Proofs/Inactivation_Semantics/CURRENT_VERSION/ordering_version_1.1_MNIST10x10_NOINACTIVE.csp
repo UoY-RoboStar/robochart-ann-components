@@ -2,7 +2,7 @@
 --SEMANTIC CONSTANTS--
 --MNIST is for handwriting data. 
 insize = 784
-layerstructure = <10, 10, 10, 10, 10, 10>
+layerstructure = <10>
 layerNo = #layerstructure 
 maxSize = 784
 
@@ -106,8 +106,13 @@ IterateList(l, w1, w2) =
 
 --Sort for a list, LAYERWISE SORT. Given a set of indicies, set of ACTIVE INDIICES, which is the MAX. 
 --Highest index of those nodes that are active, then COMPARE THIS to the others.
+--Get highest index FAILS if its 0, runs forever. weight order sort is INFINITE LOOP.s
 getHighestIndex(layer, input, ISet) = 
-	extract_sequence(card(ISet), weightOrderSort(layer, input, seq(ISet)))
+	if(card(ISet) > 0) 
+		then
+			extract_sequence(card(ISet), weightOrderSort(layer, input, seq(ISet)))
+		else
+			0
 
 weightOrderSort(layer, input, seqI) = 
 	if(#seqI <= 1) then
@@ -246,6 +251,10 @@ ActiveIndicies(results) = {i | i <- {1..#results}, extract_sequence(i, results) 
 --IF THERE IS AN ACTIVE NODE, HIGHEST INDEX, FOR EVERY DIMENSION.
 --If all are, a < b, TRUE, WANT IT TO BE TRUE FOR ALL, 
 --Only check for those
+--IF ALL ARE UNCERTAIN, THIS FAILS, infinite. 
+--NO activeindicies.
+--getHighestIndex? nearly definitely. 
+
 couldNodeMax(n, results) = 
 	if ( not member(False, { LayerWiseWeightOrder(layerNo, i, n, getHighestIndex(layerNo, i, ActiveIndicies(results))) | i <- {1..layerSize(layerNo)}, extract_sequence(i, results) == active or 
 		extract_sequence(i, results) == uncertain}  )) 
@@ -263,6 +272,9 @@ couldNodeMax(n, results) =
 --Output ONLY THOSE THAT COULD BE THE MAX, 
 --Nondeterministic of everything. 
 --Its something that, it THINKS that network_results could be massive, why? 
+--Need to fix this, the intermediate layers will use this ordering, we need to fix this now. 
+--WORKS, with two, it does evaluate, with just uncertain or active. 
+--If we have no active, we can't prove anything. 
 OutputLayer = let	
 	C(0, network_results) = 
 		(#network_results < 11) & 
