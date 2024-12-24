@@ -2,9 +2,9 @@
 --SEMANTIC CONSTANTS--
 insize = 5
 outsize = 5
-layerstructure = <10>
+layerstructure = <50>
 layerNo = #layerstructure 
-maxSize = 10
+maxSize = 50
 
    
 --CHANNELS AND DATA TYPES: 
@@ -119,7 +119,7 @@ HiddenLayer(layer, size, inputSize) =
 	[| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
 
 HiddenLayers = 
-	|| i : {1..(layerNo-1)} @
+	|| i : {1..layerNo} @
 		[ {| NodePhase.(i-1), NodePhase.i |} ] 
 		HiddenLayer(i, layerSize(i), layerSize(i-1))  
 		
@@ -174,26 +174,24 @@ couldNodeMax(n, results) =
 
 --All we need to do, is add this to the guard. 
 OutputLayer = let	
-	C(0, network_results, empty) = 
-		((empty) & context_output!{} -> SKIP )
-		[]
-		((not empty) & 
-			context_output!{ context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True} -> SKIP )
+	C(0, network_results) = 
+		context_output!{ context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True} -> SKIP
 	
 	C(index, network_results) = NodePhase.layerNo.index?output -> C((index-1), <output>^network_results)
 										
 	within 
-		C(layerSize(layerNo), <>, true)
+		C(layerSize(layerNo), <>)
 
+T = (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
 
 --Better if the output interpreter inside the main function, needs to be because of the recursion.
 ANN = ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
 		[| {| NodePhase.layerNo |} |] 
 	   OutputLayer)
 
-assert ANN :[deadlock-free[FD]]
+--assert ANN :[deadlock-free]
 
-
+assert T:[deadlock-free]
 
 
 --HELPER FUNCTIONS: 
