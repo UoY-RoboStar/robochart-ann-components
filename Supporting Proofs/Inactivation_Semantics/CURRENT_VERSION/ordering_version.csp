@@ -1,12 +1,18 @@
-
+--SETTING UP FOR MNIST, 10X10, 
 --SEMANTIC CONSTANTS--
-insize = 5
-outsize = 5
-layerstructure = <50>
-layerNo = #layerstructure 
-maxSize = 50
+--MNIST is for handwriting data. 
+--ASSUMPTIONS: Input order is FIXED. WE HAVE DIFFERNET LOGIC, JUST COMPARE WEIGHTS, BECAUSE FIRST LAYER INPUT IS EQUAL. Add to specify other types of input
+--We need to add for every layer, the ordering, and not only the weight order, but if the input, for the node, is not max, and other input is, it WORKS. 
 
-   
+--IT WORKS, it does force one inactive, and two nodes to active. 
+--
+insize = 10
+layerstructure = <10>
+layerNo = #layerstructure 
+maxSize = 10
+maxLayerSize = 10
+
+
 --CHANNELS AND DATA TYPES: 
 
 --Context channel: 
@@ -15,105 +21,305 @@ core_real = { -1..1}
 
 --Decisions: 
 
-datatype decisions = coc | wl | wr | sl | sr 
+datatype decisions = Zer | One | Two | Three | Four | Five | Six | Seven | Eight | Nine
 
 channel context_input:{1..insize}.core_real
 
 --We expect a single output of all possible decisions, for every trace. 
-channel context_output:Set({coc, wl, wr, sl, sr})
+channel context_output:Set(decisions)
+
+--PARAMETERS
+
+--MNIST 10x10, test: 
+weights =  <<<InActive,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,InActive,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive>,<InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,InActive,Active,InActive,Active,Active,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,Active,InActive,Active,Active,InActive,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,InActive,Active>,<Active,Active,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive>,<Active,InActive,InActive,Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,Active,Active,InActive,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,Active,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive>,<InActive,Active,InActive,Active,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive>,<Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive>,<Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,InActive,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive>,<Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,InActive,Active,InActive,Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,Active,Active,InActive,Active,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive>,<InActive,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive>,<Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,InActive,Active,InActive,Active,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,Active,InActive,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,Active,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive,Active,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active,Active,Active,Active,InActive,Active,Active,Active,Active,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,InActive,Active,Active>>,<<InActive,InActive,Active,Active,Active,InActive,Active,InActive,InActive,InActive>,<Active,InActive,Active,Active,Active,Active,Active,InActive,Active,Active>,<Active,Active,InActive,Active,InActive,Active,InActive,InActive,InActive,Active>,<Active,Active,Active,Active,InActive,Active,InActive,InActive,Active,Active>,<Active,Active,InActive,Active,Active,Active,InActive,Active,InActive,Active>,<Active,Active,InActive,Active,Active,Active,InActive,Active,Active,InActive>,<InActive,InActive,Active,Active,Active,Active,InActive,Active,InActive,Active>,<InActive,InActive,Active,Active,Active,InActive,InActive,InActive,InActive,Active>,<Active,InActive,InActive,Active,Active,InActive,Active,Active,InActive,Active>,<Active,Active,Active,Active,Active,InActive,InActive,Active,Active,InActive>>,<<Active,InActive,InActive,Active,Active,Active,Active,InActive,InActive,InActive>,<InActive,InActive,Active,InActive,Active,Active,Active,Active,InActive,Active>,<InActive,InActive,Active,Active,Active,InActive,Active,InActive,Active,Active>,<InActive,InActive,InActive,Active,Active,InActive,InActive,Active,InActive,InActive>,<InActive,Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive>,<Active,InActive,Active,Active,Active,Active,InActive,Active,InActive,Active>,<Active,Active,Active,InActive,InActive,InActive,InActive,Active,Active,Active>,<InActive,InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active>,<Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active>,<InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active>>,<<Active,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive>,<InActive,InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive>,<Active,Active,InActive,InActive,Active,InActive,InActive,InActive,InActive,Active>,<InActive,Active,Active,InActive,InActive,Active,InActive,Active,Active,InActive>,<InActive,Active,InActive,InActive,InActive,Active,InActive,Active,InActive,Active>,<InActive,Active,InActive,Active,InActive,Active,InActive,Active,Active,InActive>,<Active,Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive>,<Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,Active>,<InActive,Active,Active,InActive,InActive,InActive,Active,Active,InActive,Active>,<InActive,Active,Active,Active,InActive,Active,Active,InActive,InActive,Active>>,<<InActive,Active,InActive,Active,InActive,Active,InActive,Active,InActive,Active>,<Active,Active,Active,Active,Active,InActive,InActive,Active,Active,Active>,<InActive,Active,InActive,Active,Active,Active,Active,Active,InActive,Active>,<InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive>,<InActive,InActive,Active,InActive,InActive,InActive,Active,Active,InActive,Active>,<InActive,InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,InActive>,<InActive,Active,InActive,InActive,InActive,InActive,InActive,InActive,InActive,InActive>,<Active,Active,Active,Active,InActive,Active,Active,Active,InActive,InActive>,<InActive,InActive,Active,Active,Active,Active,InActive,Active,Active,InActive>,<Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active>>,<<InActive,Active,InActive,Active,InActive,Active,InActive,Active,Active,Active>,<InActive,InActive,InActive,InActive,Active,InActive,InActive,InActive,Active,Active>,<InActive,Active,InActive,Active,Active,InActive,InActive,Active,InActive,Active>,<Active,InActive,Active,InActive,Active,InActive,Active,Active,InActive,Active>,<InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,InActive>,<InActive,InActive,InActive,Active,Active,Active,InActive,Active,InActive,Active>,<Active,InActive,Active,Active,Active,InActive,InActive,InActive,Active,Active>,<Active,Active,Active,InActive,Active,Active,InActive,Active,InActive,Active>,<Active,Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive>,<InActive,InActive,InActive,Active,Active,InActive,Active,InActive,Active,Active>>,<<Active,InActive,Active,Active,InActive,InActive,InActive,Active,Active,Active>,<InActive,InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive>,<InActive,Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive>,<InActive,Active,Active,Active,Active,Active,Active,Active,InActive,Active>,<Active,Active,InActive,InActive,InActive,Active,Active,InActive,InActive,Active>,<InActive,Active,InActive,Active,InActive,InActive,Active,Active,InActive,InActive>,<InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive,Active>,<Active,Active,Active,InActive,InActive,Active,Active,InActive,InActive,Active>,<Active,InActive,InActive,InActive,InActive,InActive,Active,Active,Active,InActive>,<InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active,InActive>>,<<InActive,InActive,InActive,Active,InActive,InActive,Active,Active,InActive,InActive>,<InActive,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive>,<InActive,Active,Active,InActive,Active,InActive,Active,InActive,Active,Active>,<Active,InActive,Active,InActive,InActive,Active,InActive,Active,Active,Active>,<Active,InActive,InActive,InActive,Active,Active,Active,Active,Active,Active>,<InActive,Active,Active,Active,Active,Active,InActive,Active,InActive,InActive>,<InActive,Active,Active,Active,Active,InActive,Active,Active,InActive,Active>,<Active,Active,InActive,Active,Active,Active,InActive,InActive,InActive,Active>,<Active,InActive,InActive,InActive,Active,Active,Active,Active,InActive,Active>,<Active,Active,InActive,Active,Active,InActive,InActive,Active,InActive,Active>>,<<Active,InActive,Active,Active,Active,Active,InActive,InActive,Active,Active>,<InActive,Active,Active,Active,InActive,Active,InActive,Active,Active,InActive>,<Active,InActive,Active,InActive,Active,Active,InActive,Active,Active,InActive>,<InActive,InActive,InActive,Active,Active,InActive,Active,InActive,Active,InActive>,<InActive,InActive,Active,Active,Active,InActive,Active,Active,InActive,InActive>,<Active,Active,Active,InActive,InActive,Active,Active,Active,InActive,Active>,<Active,Active,InActive,InActive,Active,Active,InActive,InActive,InActive,Active>,<Active,Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active>,<Active,InActive,Active,InActive,InActive,Active,Active,InActive,InActive,InActive>,<Active,Active,Active,InActive,InActive,Active,Active,Active,Active,Active>>,<<InActive,Active,InActive,Active,InActive,Active,Active,Active,InActive,Active>,<InActive,Active,InActive,Active,Active,InActive,Active,InActive,InActive,Active>,<InActive,InActive,InActive,Active,InActive,InActive,Active,Active,Active,InActive>,<InActive,Active,Active,InActive,Active,Active,InActive,InActive,InActive,Active>,<InActive,Active,InActive,Active,Active,InActive,InActive,InActive,InActive,Active>,<Active,InActive,InActive,Active,Active,Active,Active,Active,InActive,InActive>,<InActive,Active,InActive,Active,InActive,Active,InActive,Active,Active,Active>,<InActive,InActive,Active,Active,InActive,Active,InActive,Active,InActive,Active>,<InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,Active,Active>,<Active,InActive,Active,Active,InActive,Active,Active,Active,InActive,InActive>>,<<InActive,InActive,InActive,Active,Active,InActive,InActive,Active,Active,Active>,<Active,Active,InActive,InActive,InActive,InActive,Active,InActive,Active,InActive>,<InActive,InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive>,<Active,InActive,InActive,InActive,Active,InActive,InActive,Active,InActive,Active>,<InActive,Active,InActive,InActive,Active,Active,InActive,Active,InActive,InActive>,<InActive,InActive,InActive,InActive,InActive,Active,Active,InActive,InActive,Active>,<InActive,InActive,InActive,Active,InActive,Active,InActive,InActive,InActive,InActive>,<Active,InActive,Active,InActive,InActive,InActive,Active,InActive,InActive,InActive>,<Active,Active,InActive,Active,InActive,InActive,Active,InActive,InActive,Active>,<Active,InActive,Active,InActive,InActive,InActive,InActive,Active,InActive,InActive>>>
+
+biases =  <<Active,Active,Active,Active,InActive,Active,Active,InActive,Active,Active>,<InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive,Active>,<Active,Active,InActive,Active,InActive,InActive,Active,Active,Active,Active>,<InActive,InActive,Active,Active,InActive,Active,Active,Active,Active,Active>,<Active,Active,Active,InActive,Active,InActive,InActive,Active,InActive,Active>,<Active,Active,Active,InActive,InActive,Active,InActive,InActive,InActive,Active>,<InActive,InActive,InActive,InActive,Active,Active,Active,Active,Active,InActive>,<Active,InActive,Active,InActive,Active,Active,InActive,InActive,InActive,InActive>,<InActive,Active,InActive,Active,Active,InActive,Active,InActive,Active,InActive>,<Active,Active,Active,InActive,Active,InActive,Active,InActive,InActive,InActive>,<InActive,Active,InActive,InActive,Active,InActive,InActive,Active,InActive,InActive>>
+
+layerwise_bias_order(layerNo) = 
+ <5,8,2,6,3,1,10,9,4,7> 
+
+--Layerwise weight order, ACCORDING TO INPUT, we will need to have a nodewise weight order as well. 
+--LAYERWISE weight order, takes the input, WE WILL NEED TO DO THIS FOR ALL nodes.
+--layerwise_weight_order, takes the LAYER, and the index:
+--These are HIGHEST TO LOWEST ORDERING.
+--Layerwise or NodeWise, need NODEWISE ORDERING: HARD CODED FOR EACH NODE.
+--Bias included in here? NO, ONLY WEIGHTS, assume this is how it works.
+nodewise_weight_order(1, 1) = 
+<4,8,10,9,5,7,2,6,3,1> 
+nodewise_weight_order(1, 2) = 
+<2,7,1,9,10,8,4,6,5,3> 
+nodewise_weight_order(1, 3) = 
+<5,7,6,1,4,8,10,9,2,3> 
+nodewise_weight_order(1, 4) = 
+<1,10,5,8,7,6,9,4,3,2> 
+nodewise_weight_order(1, 5) = 
+<2,6,5,8,1,4,7,9,3,10> 
+nodewise_weight_order(1, 6) = 
+<10,6,7,5,4,1,8,3,9,2> 
+nodewise_weight_order(1, 7) = 
+<4,6,7,5,1,10,2,9,8,3> 
+nodewise_weight_order(1, 8) = 
+<7,1,3,9,5,4,10,8,6,2> 
+nodewise_weight_order(1, 9) = 
+<2,4,7,10,1,8,9,6,3,5> 
+nodewise_weight_order(1, 10) = 	
+<8,3,1,6,9,10,5,4,2,7> 
+
+--We need to generate all of our ordering. 
+--call it something different, 
+layerwise_weight_order(2, 1) = 
+<4,8,10,9,5,7,2,6,3,1> 
+layerwise_weight_order(2, 2) = 
+<2,7,1,9,10,8,4,6,5,3> 
+layerwise_weight_order(2, 3) = 
+<5,7,6,1,4,8,10,9,2,3> 
+layerwise_weight_order(2, 4) = 
+<1,10,5,8,7,6,9,4,3,2> 
+layerwise_weight_order(2, 5) = 
+<2,6,5,8,1,4,7,9,3,10> 
+layerwise_weight_order(2, 6) = 
+<10,6,7,5,4,1,8,3,9,2> 
+layerwise_weight_order(2, 7) = 
+<4,6,7,5,1,10,2,9,8,3> 
+layerwise_weight_order(2, 8) = 
+<7,1,3,9,5,4,10,8,6,2> 
+layerwise_weight_order(2, 9) = 
+<2,4,7,10,1,8,9,6,3,5> 
+layerwise_weight_order(2, 10) = 
+<8,3,1,6,9,10,5,4,2,7> 
+
 
 --NO UNCERTAINTY, we don't need to transmit uncertainty. Activation strength chaining. 
 --could have, a dot, pattern matching? 
 --Add active, we CAN use it. 
 --ZERO IS NEVER TRANSMITTED, IT IS CALCULATED. 
-datatype InternalPhases = Zero | Inactive | Active
-datatype Phases = inactive | active | uncertain
+datatype InternalPhases = Zero | InActive | Active
+--The input, uncertain means active. 
+datatype Phases = uncertain | active | inactive
+datatype IsMax = Max | Not
 
 channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
+channel MaxMemory:{1..layerNo}.{1..maxLayerSize}.IsMax
+channel setMaxMemory:{1..layerNo}.{1..maxLayerSize}.IsMax
+channel getMaxMemory:{1..layerNo}.{1..maxLayerSize}
 
 channel end 
 
+MemProc = 
+	let 
+	M(maxes) = 
+		([] l : {1..layerNo} @ [] n : {1..maxLayerSize} @ getMaxMemory.l.n -> 
+						 MaxMemory.l.n!(extract_sequence(n, extract_sequence(l, maxes))) -> M(maxes) )
+		[]
+		([] l : {1..layerNo} @ [] n : {1..maxLayerSize} @ setMaxMemory.l.n?newVal -> M(replaceSequence(l, n, maxes, newVal) ))
+	within
+		M(< <Not | j <- <1..maxLayerSize>>  | i <- <1..layerNo>>)
+
+replaceSequence(layer, node, s, new) = 
+	< <if i == layer and j == node then new else (extract_sequence(j, extract_sequence(i, s))) | j <- <1..maxLayerSize>>  | i <- <1..layerNo>>
+	
 --4 inactive nodes, try to make them all active, 
 --won't have a condition. 
 
 --ASSUME WORST CASE UNCERTAINTY, that, for us, is 
+--Active or uncertain DEALT WITH IN THE SAME WAY BY EDGE LOGIC. 
 EdgeLogic(input_phase, weight, first) = 
 	if(first == true) then 
 		if(input_phase == inactive)
 			then 
-				if(weight == inactive)
+				if(weight == Active)
 					then 
-						Active
+						InActive
 					else
-						Inactive
+						Active
 			else
-				if(weight == inactive)
+				if(weight == InActive)
 					then
-						Active
+						InActive
 					else
-						Inactive
+						Active
 	else 
 		if(input_phase == inactive)
 			then 
 				Zero
-			else if (input_phase == active)
-				then 
-				(if(weight == inactive)
-					then
-						Inactive
-					else
-						Active)
 			else
-				if(input_phase == active)
+				if(weight == Active)
 					then 
 						Active
 					else
-						Inactive
+						InActive
 
---Proving active for an ACTIVE node. 			
-Activation(l,n,edge_results) = 
-	if(member(Inactive, set(edge_results))) 
+
+--Comparison operators, 
+--This is TRUE if w1 < w2, means that w1 appears SECOND in the list. Assume the list is HIGHEST TO LOWEST.
+LayerWiseWeightOrder(layer, input, w1, w2) = IterateList(layerwise_weight_order(layer, input), w1, w2)
+NodeWiseWeightOrder(layer, node, w1, w2) = IterateList(nodewise_weight_order(layer, node), w1, w2)
+
+
+extractPosWeights(layer, node) = {i | i <- {1..layerSize(layer-1)}, extract_weights(layer, node, i) == InActive}
+extractNegWeights(layer, node) = {i | i <- {1..layerSize(layer-1)}, extract_weights(layer, node, i) == Active}
+
+--finding neg indicies, such that posIndicies < neg indicies. 
+--Proving Activity, Neg < Pos. 
+--Lowest index, get the LOWEST, of this node, that is greater. 
+--If neg less than positive, THAT IS CORRECT, WE NEED A SEPARATE POSITIVE WEIGHT THAT IS GREATER. 
+--What about bias? Can we use the bias? Not really, No. Just if bias active, then neg < pos weights, this DOES HOLD. 
+isInputLayerActive(_, _, <>, _) = True
+isInputLayerActive(layer, node, negIndicies, posSet) = 
+	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  }) > 0) 
+		then 
+			isInputLayerActive(layer, node, tail(negIndicies), 
+				diff(posSet, {getLowestNodeIndex(layer, node, { pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  })}))
+		else 
+			False
+
+IterateList(<>, w1, w2) = False
+IterateList(l, w1, w2) = 
+	if (head(l) == w1) 
 		then
 			False
-		else
-			True
+	else if (head(l) == w2) 
+		then 
+			True 
+	else 
+		IterateList(tail(l), w1, w2)
 
-InActivation(l,n,edge_results) = 
-	if(member(Active, set(edge_results)))
+--Sort for a list, LAYERWISE SORT. Given a set of indicies, set of ACTIVE INDIICES, which is the MAX. 
+--Highest index of those nodes that are active, then COMPARE THIS to the others.
+--Get highest index FAILS if its 0, runs forever. weight order sort is INFINITE LOOP.s
+getHighestIndex(layer, input, ISet) = 
+	if(card(ISet) > 0) 
 		then
-			False
+			extract_sequence(card(ISet), weightOrderSort(layer, input, seq(ISet)))
 		else
-			True
+			0
+			
+--gets the lowest node index:
+getLowestNodeIndex(layer, node, ISet) = 
+	if(card(ISet) > 0) 
+		then
+			head(nodeWiseSort(layer, node, seq(ISet)))
+		else
+			0
 
+--Sort by the NODEWISE ORDER, weights in terms of NODE level:
+nodeWiseSort(layer, node, seqI) = 
+	if(#seqI <= 1) then
+		seqI
+	else
+		
+		nodeWiseMerge(
+			layer, node, 
+			nodeWiseSort(layer, node, <extract_sequence(i, seqI) | i <- <1..(#seqI)/2>>),
+			nodeWiseSort(layer, node, <extract_sequence(i, seqI) | i <- <(#seqI)/2+1..#seqI>>)
+			)
+
+nodeWiseMerge(layer, node, left, right) = nodeWiseMergeF(layer, node, left, right, <>)
+
+nodeWiseMergeF(layer, node, <>, <>, result) = result
+nodeWiseMergeF(layer, node, left, <>, result) = nodeWiseMergeF(layer, node, tail(left), <>, result^<head(left)>)
+nodeWiseMergeF(layer, node, <>, right, result) = nodeWiseMergeF(layer, node, <>, tail(right), result^<head(right)>)
+nodeWiseMergeF(layer, node, left, right, result) = 
+	if(NodeWiseWeightOrder(layer, node, head(left), head(right)) == True)
+		then 
+			nodeWiseMergeF(layer, node, tail(left), right, result^<head(left)>)
+	else
+		nodeWiseMergeF(layer, node, left, tail(right), result^<head(right)>)
+		
+
+
+--This is a LAYER WISE WEIGHT SORTS, SORTS THE WEIGHTS BY LAYER. 
+weightOrderSort(layer, input, seqI) = 
+	if(#seqI <= 1) then
+		seqI
+	else
+		
+		merge(
+			layer, input, 
+			weightOrderSort(layer, input, <extract_sequence(i, seqI) | i <- <1..(#seqI)/2>>),
+			weightOrderSort(layer, input, <extract_sequence(i, seqI) | i <- <(#seqI)/2+1..#seqI>>)
+			)
+
+merge(layer, input, left, right) = mergeF(layer, input, left, right, <>)
+
+mergeF(layer, input, <>, <>, result) = result
+mergeF(layer, input, left, <>, result) = mergeF(layer, input, tail(left), <>, result^<head(left)>)
+mergeF(layer, input, <>, right, result) = mergeF(layer, input, <>, tail(right), result^<head(right)>)
+mergeF(layer, input, left, right, result) = 
+	if(LayerWiseWeightOrder(layer, input, head(left), head(right)) == True)
+		then 
+			mergeF(layer, input, tail(left), right, result^<head(left)>)
+	else
+		mergeF(layer, input, left, tail(right), result^<head(right)>)
+		
+countActive(<>) = 0
+countActive(l) = if(head(l) == Active) then (countActive(tail(l))+1) else (countActive(tail(l)))
+
+countInActive(<>) = 0
+countInActive(l) = if(head(l) == InActive) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
+
+--We can only ignore it, if less than? No, we need properties on the in value, and the 
+--Assume that its not scaling. 
+--FLIP, pos weights, look for pos weights < neg weights. so NEG STILL HGIHER, SO STILL INACTIVE.
+InActivation(l,n,edge_results, firstLayer) = 
+	if(firstLayer)
+		then
+			isInputLayerActive(l, n, seq(extractPosWeights(l, n)), extractNegWeights(l,n))
+		else
+			if(countActive(edge_results) > 0)
+				then
+					False
+				else
+					True
+--Activation needs to use 
+--Do it for NODE 1 FIRST. It has different behaviour. 
+--UNDER ASSUMPTIONS that input is all the same. INPUT IDENTICAL ASSUMPTION:
+Activation(l,n,edge_results,firstLayer) = 
+	if(firstLayer)
+		then
+			isInputLayerActive(l, n, seq(extractNegWeights(l, n)), extractPosWeights(l,n))
+		else
+			if(countInActive(edge_results) > 0)
+				then
+					False
+				else
+					True
+			
+
+--FOR THE INPUT LAYER FIRST. 
+--Update maximums, at the end? Node always needs to do it. Need the results, bias, 
+--If any is maximum. 
+--If it activates under an uncertainty, IT WILL STILL ACTIVATE IF some are zero.
+--We get the isMax, but just for the first layer. 
 
 
 --If activation logic is FALSE, then it is active.
 --Activation Logic means we are UNSURE, TRUE IS UNSURE, FALSE IS ACTIVE.  
+--Why is node
 Node(layer, node, index) = let
 	C(layer, node, 0, edge_results) = 
-		((extract_biases(layer,node) == active) & ( 
-				((InActivation(layer, node, edge_results) == True) &(
-					NodePhase.layer.node!uncertain -> SKIP ))
-				[] 
-				((InActivation(layer, node, edge_results) == False) &
-					NodePhase.layer.node!active -> SKIP)
-			)
-		) 
-		[]
-		((extract_biases(layer,node) == inactive) & (
-			((Activation(layer, node, edge_results) == True) & (
-				NodePhase.layer.node!uncertain -> SKIP )) 
+		(extract_biases(layer,node) == Active) & ( 
+			((Activation(layer, node, edge_results,(layer==1)) == True) & (
+				NodePhase.layer.node!active -> SKIP ) ) 
 			[]
-			((Activation(layer, node, edge_results) == False) & 
-				NodePhase.layer.node!inactive -> SKIP)
+			((Activation(layer, node, edge_results, (layer==1)) == False) & 
+				NodePhase.layer.node!uncertain -> SKIP)
+			) 
+		[]
+		(extract_biases(layer,node) == InActive) & (	
+			((InActivation(layer, node, edge_results, (layer==1)) == True) & (
+				NodePhase.layer.node!inactive -> SKIP )) 
+			[]
+			((InActivation(layer, node, edge_results, (layer==1)) == False) & 
+				NodePhase.layer.node!uncertain -> SKIP)
 			)
-		)
 			
 	C(layer, node, index, edge_results) = NodePhase.(layer-1).index?edge_phase ->
 		 C(layer, node, (index-1), <EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1))>^edge_results)
 	
 	within 
 		C(layer, node, index, <>)
+--Happens immedately, why this so much faster, still uses a sequence. 
 	
 HiddenLayer(layer, size, inputSize) = 
 	[| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
@@ -131,30 +337,19 @@ HiddenLayers =
 InputLayer = 
 	(; i : <0..insize-1> @ ( NodePhase.0.(insize-i).active -> SKIP ))
 	
---Directly from the paper, this is the acas xu. 
-context_translation(1) = coc
-context_translation(2) = wl
-context_translation(3) = wr 
-context_translation(4) = sl
-context_translation(5) = sr 
+--FOR MNIST, the handwriting recognition.
+context_translation(1) = Zer
+context_translation(2) = One
+context_translation(3) = Two
+context_translation(4) = Three
+context_translation(5) = Four
+context_translation(6) = Five
+context_translation(7) = Six
+context_translation(8) = Seven
+context_translation(9) = Eight
+context_translation(10) = Nine
 
---This is the new output layer: 
---BIAS IS NOT ABSOLUTE VALUE, BIAS IS LITERAL VALUE 
-bias_order = <2, 5, 4, 3, 1>
 
---Function: 
---Weight IS ABSOLUTE VALUE. 
-weight_order(1) = <4, 3, 5, 2, 1>
-weight_order(2) = <1, 2, 3, 4, 5>
-weight_order(3) = <1, 3, 2, 5, 4>
-weight_order(4) = <4, 2, 3, 1, 5>
-weight_order(5) = <1, 2, 4, 3, 5>
-weight_order(_) = <1,2,4,3,5>
-
---Function, 
---If yes, COULD be max> 
---Only for, 
---if any is max, 
 isMax(n, s) = 
 	if (head(s) == n) 
 		then 
@@ -162,37 +357,59 @@ isMax(n, s) =
 		else 
 			False
 		
---Active or uncertain, POST WEIGHTING, assume active? Yes. Order cant change, 
+ActiveIndicies(results) = {i | i <- {1..#results}, extract_sequence(i, results) == Active}
+
+--Run with layerNo+1 because layerNo is the index of the last hidden layer. +1 is the index of the output layer. 
+--Maybe we just take the first 10 results? 
+--Have this run on Active or Inactive, we only care about the sequence to limit 
+--Also for the activeindicies. 
 couldNodeMax(n, results) = 
-	if (not (member(True, { isMax(n, weight_order(i)) | i <- {1..layerSize(layerNo)}, extract_sequence(i, results) == active or extract_sequence(i, results) == uncertain}))  and 
-		isMax(n, bias_order) == False) 
-		then 
+	if ( not member(False, { LayerWiseWeightOrder(layerNo+1, i, n, getHighestIndex(layerNo+1, i, ActiveIndicies(results))) | i <- {1..layerSize(layerNo)}, extract_sequence(i, results) == Active } ) ) 
+		then
 			False
 		else 
-			True 
-	
+			True
+--We want an output edge, than transfers uncertainty TO ACTIVE, we don't care about uncertainty here, we assume active.
+--This makes the layer much more scalable
 
---All we need to do, is add this to the guard. 
+OutputLayerEdge(result) = 
+if(result == uncertain or result == active)
+	then
+		Active
+	else
+		InActive
+
 OutputLayer = let	
 	C(0, network_results) = 
-		context_output!{ context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True} -> SKIP
-	
-	C(index, network_results) = NodePhase.layerNo.index?output -> C((index-1), <output>^network_results)
+		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True}) == 0) & (
+			context_output!decisions -> SKIP
+			)
+		[]
+		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True}) > 0) & (
+			context_output!{context_translation(i) | i <- {1..#network_results}, couldNodeMax(i, network_results) == True} -> SKIP
+			)
+	C(index, network_results) = NodePhase.layerNo.index?output -> C((index-1), <OutputLayerEdge(output)>^network_results)
 										
 	within 
 		C(layerSize(layerNo), <>)
-
+--
 T = (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
+
+T2 = ((HiddenLayers)  
+		[| {| NodePhase.layerNo |} |] 
+	   OutputLayer)
 
 --Better if the output interpreter inside the main function, needs to be because of the recursion.
 ANN = ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
 		[| {| NodePhase.layerNo |} |] 
 	   OutputLayer)
 
---assert ANN :[deadlock-free]
+assert ANN :[deadlock-free]
 
 assert T:[deadlock-free]
+assert T2:[deadlock-free]
 
+assert OutputLayer:[deadlock-free]
 
 --HELPER FUNCTIONS: 
 -- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --
@@ -203,14 +420,12 @@ extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
 layerSize(0) = insize
 layerSize(layer) = extract_sequence(layer, layerstructure)
 
---Extract single weights value
---extract_weights(layer, node, index) = extract_sequence(index, 
-					--(extract_sequence(node, 
-						--(extract_sequence(layer, weights)))))
+extract_weights(layer, node, index) = 
+	extract_sequence(index, 
+		(extract_sequence(node, 
+			(extract_sequence(layer, weights)))))
 --Extract weights of node
---extract_biases(layer, node) = (extract_sequence(node, 
---											(extract_sequence(layer, biases))))
-		
-extract_weights(layer, node, index) = active 
-extract_biases(layer, node) = active
+extract_biases(layer, node) = 
+	(extract_sequence(node, 
+		(extract_sequence(layer, biases))))
 										
