@@ -321,6 +321,8 @@ Node(layer, node, index) = let
 		C(layer, node, index, <>)
 --Happens immedately, why this so much faster, still uses a sequence. 
 	
+--Now we just need to do the max thing, make that process, before every node, parallel, 
+--Make it in isolation first, compute what is NOT the max for each layer. 
 HiddenLayer(layer, size, inputSize) = 
 	[| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
 
