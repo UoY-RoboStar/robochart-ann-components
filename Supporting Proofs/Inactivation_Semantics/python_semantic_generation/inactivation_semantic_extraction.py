@@ -225,16 +225,16 @@ def input_inactivation_print_conversion(activation_lists, layer, node, no_weight
 #--Function: 
 #--Weight IS ABSOLUTE VALUE. 
 #This should be Done for ALL layers, automatically, but given this is for A SINGLE LAYER, indexed by l: 
-
+#WE give the transposed weights, because in order of the INPUTS, not the nodes, for layer ordering.
 def all_layer_ordering(weights, biases): 
     s = ""
     for l in range(0, len(weights)):
-        s += single_layer_ordering(l, list(weights[l]), list(biases[l]))
+        s += single_layer_ordering(l, list(weights[l].T))
     for l in range(0, len(weights)):
-        s += single_layer_bias_order(l, list(weights[l]), list(biases[l]))
+        s += single_layer_bias_order(l, list(biases[l]))
     return s
 
-def single_layer_bias_order(l, out_weights, out_biases): 
+def single_layer_bias_order(l, out_biases): 
     s = "layerwise_bias_order(" + str(l+1) + ") = \n "
     s += "<"
     #we need to order first for their values, then find out, order from HIGHEST TO LOWEST. 
@@ -251,7 +251,8 @@ def single_layer_bias_order(l, out_weights, out_biases):
     s += "> \n"
     return s
     
-def single_layer_ordering(l, out_weights, out_biases): 
+#Needs to be one per input, 
+def single_layer_ordering(l, out_weights): 
     #Biase order generation: 
     s = ""
     #Order the weights now, order along same axis. 
@@ -679,8 +680,9 @@ def gen_mnist10x10():
     mnist = NNet("mnist10x10.nnet")
     weights = mnist.weights
     biases = mnist.biases 
-    #print(print_converted_weights(list(weights)))
-    #print(print_converted_biases(list(biases)))
+    #print(weights)
+    print(print_converted_weights(list(weights)))
+    print(print_converted_biases(list(biases)))
     
     #Output layer ordering: 
     print(all_layer_ordering(list(weights), list(biases)))

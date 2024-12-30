@@ -7,12 +7,11 @@
 --IT WORKS, it does force one inactive, and two nodes to active. 
 --
 include "mnist_params.csp"
-insize = 784
-layerstructure = <10, 10>
+insize = 2
+layerstructure = <2, 2>
 layerNo = #layerstructure 
-maxSize = 784
-maxLayerSize = 10
-
+maxSize = 2
+maxLayerSize = 2
 
 --CHANNELS AND DATA TYPES: 
 
@@ -42,28 +41,10 @@ datatype IsMax = Max | Not
 channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
 --InternalNodePhase, to transfer to each node, because before each layer, we calculate the max, then update the memory.
 channel InternalNodePhase:{0..layerNo}.{1..maxSize}.Phases
-channel MaxMemory:{1..layerNo}.{1..maxLayerSize}.IsMax
-channel setMaxMemory:{1..layerNo}.{1..maxLayerSize}.IsMax
-channel getMaxMemory:{1..layerNo}.{1..maxLayerSize}
+channel IsNodeMax:{1..layerNo}.{1..maxLayerSize}.IsMax
 
 channel end 
 
---Everything starts as Max, then turned to Not, 
-MemProc = 
-	let 
-	M(maxes) = 
-		([] l : {1..layerNo} @ [] n : {1..maxLayerSize} @ getMaxMemory.l.n -> 
-						 MaxMemory.l.n!(extract_sequence(n, extract_sequence(l, maxes))) -> M(maxes) )
-		[]
-		([] l : {1..layerNo} @ [] n : {1..maxLayerSize} @ setMaxMemory.l.n?newVal -> M(replaceSequence(l, n, maxes, newVal) ))
-	within
-		M(< <Max | j <- <1..maxLayerSize>>  | i <- <1..layerNo>>)
-
-replaceSequence(layer, node, s, new) = 
-	< <if i == layer and j == node then new else (extract_sequence(j, extract_sequence(i, s))) | j <- <1..maxLayerSize>>  | i <- <1..layerNo>>
-	
---4 inactive nodes, try to make them all active, 
---won't have a condition. 
 
 --ASSUME WORST CASE UNCERTAINTY, that, for us, is 
 --Active or uncertain DEALT WITH IN THE SAME WAY BY EDGE LOGIC. 
@@ -279,7 +260,7 @@ Activation(l,n,edge_results,firstLayer,maxSeq) =
 --As were reading if, if we AREN'T the first layer, we need to get whether the previous is max or not. 
 Node(layer, node, index) = let
 	C(layer, node, 0, edge_results, maxSeq) = 
-		(extract_biases(layer,node) == Active) & ( 
+		( (extract_biases(layer,node) == Active) & ( 
 			((Activation(layer, node, edge_results,(layer==1), maxSeq) == True) & (
 				NodePhase.layer.node!active -> SKIP ) ) 
 			[]
@@ -295,59 +276,46 @@ Node(layer, node, index) = let
 			((InActivation(layer, node, edge_results, (layer==1), maxSeq) == False) & (
 				NodePhase.layer.node!uncertain -> SKIP)
 			)
+			) ) 
+			;
+			( (couldNodeMax(layer, node, edge_results) == False) & (
+				IsNodeMax.layer.node!Not -> SKIP
+			)
+			[]
+			(couldNodeMax(layer, node, edge_results) == True) & (
+				IsNodeMax.layer.node!Max -> SKIP
+			)
 			)
 			
+			
 	C(layer, node, index, edge_results, maxSeq) = 
-		((layer == 1) & InternalNodePhase.(layer-1).index?edge_phase -> C(layer, node, (index-1), <EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1))>^edge_results, <>))
+		((layer == 1) & NodePhase.(layer-1).index?edge_phase -> C(layer, node, (index-1), <EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1))>^edge_results, <>))
 		[]
-		((layer != 1) & getMaxMemory.(layer-1).node -> MaxMemory.(layer-1).node?isMax -> InternalNodePhase.(layer-1).index?edge_phase -> 
+		((layer != 1) & NodePhase.(layer-1).index?edge_phase -> IsNodeMax.(layer-1).index?isMax -> 
 			C(layer, node, (index-1), <EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1))>^edge_results, <isMax>^maxSeq))
 	
 	within 
 		C(layer, node, index, <>, <>)
 
---output layer edge to make it more scalable, we ignore inactive, but it makes it so much less scalable.
---For every one, does it sequentially, 
---For every index, 
---
-CalculateMax(layer) = let	
-	C(0, network_results) = 
-		(layer == 1) & (SKIP)
-		[]
-		(layer > 1) & (
-			(#<i | i <- <1..layerSize(layer-1)>, couldNodeMax(layer, i, network_results) == False> > 0) & (
-				;  i <- < i | i <- <1..layerSize(layer-1)>, couldNodeMax(layer, i, network_results) == False> @ (
-					setMaxMemory.layer.i!Not -> SKIP
-				)
-			)
-			[]
-			(#<i | i <- <1..layerSize(layer-1)>, couldNodeMax(layer, i, network_results) == False> == 0) & (
-				SKIP
-			)
-		)
-	C(index, network_results) = NodePhase.(layer-1).index?output -> InternalNodePhase.(layer-1).index!output -> C((index-1), <OutputLayerEdge(output)>^network_results)
-										
-	within 
-		C(layerSize(layer-1), <>)
-
-assert CalculateMax(2) :[deadlock-free]
---Happens immedately, why this so much faster, still uses a sequence. 
-	
---Now we just need to do the max thing, make that process, before every node, parallel, 
---Make it in isolation first, compute what is NOT the max for each layer. 
---Before every layer, we need to have it do this calculating order process, that it recieves from 
---Parallelism here, with the memory process, only one that needs it is the layer, then lets hide these channels here as well.
---Only need to synchronise with MemProc, NOTHING ELSE, 
---make another channel for now, make it a buffer, want to finish this. 
+--Does every layer, is it a different nodemax, no, it is the same one
 HiddenLayer(layer, size, inputSize) = 
-	(CalculateMax(layer) [| {| InternalNodePhase.(layer-1) |} |] ([| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize)))
-	
-	
+	(layer == 1) & ( ([| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize)) )
+	[]
+	(layer != 1) & ( ([| {| NodePhase.(layer-1), IsNodeMax.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize)) )
 
+	
+--Needs to synchronise, what, on the, that is on the layer level. Transfers from one to the other, does receive from previous layer.
+--Doesn't need, for 0, if we are at layer 1, we don't synchronise on.
+--Each does need to synchronise on previous one. 
+--Hide isnodemax? No, we do need to communicate it to the next layer,
 HiddenLayers = 
-	|| i : {1..layerNo} @
-		[ {| NodePhase.(i-1), NodePhase.i |} ] 
+	(HiddenLayer(1, layerSize(1), layerSize(0))) 
+	[| {| NodePhase.1, IsNodeMax.1 |} |]
+	(
+	|| i : {2..layerNo} @
+		[ {| NodePhase.(i-1), NodePhase.i, IsNodeMax.(i-1), IsNodeMax.(i) |} ] 
 		HiddenLayer(i, layerSize(i), layerSize(i-1))  
+	)
 		
 --We can remove this, no, for analysis without another component, add this as context. 
 
@@ -382,8 +350,13 @@ ActiveIndicies(results) = {i | i <- {1..#results}, extract_sequence(i, results) 
 --No, its just the input to this layer. Then order every weight, but ]
 --Find all active indicies, we just need to run the weight order on, 
 --It is this node, its just, the nodes you look at, are from this layer, not previous layer.
+--results, check if node N, can activate under every INPUT, that is the previous layer size. 
+--Just if its not the maximum, for all inputs, for this layer.
+--Don't even use reuslts, 
+--Only for those INPUTS THAT ARE ACTIVE, 
+--It's Active, 
 couldNodeMax(l, n, results) = 
-	if ( not member(False, { LayerWiseWeightOrder(l, i, n, getHighestIndex(l, i, ActiveIndicies(results))) | i <- {1..layerSize(l-1)} })
+	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)}, extract_sequence(i, results) == Active})
 		and 
 		head(layerwise_bias_order(l)) != n ) 
 		then
@@ -397,12 +370,13 @@ couldNodeMax(l, n, results) =
 --It does matter though, it definitely does, difference between
 --Uncertain can be inactive for now, not as good but more scalable.
 OutputLayerEdge(result) = 
-if(result == active)
+if(result == active or result == uncertain)
 	then
 		Active
 	else
 		InActive
 
+--Doesn't use the max value, but store it for completeness.
 OutputLayer = let	
 	C(0, network_results) = 
 		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True}) == 0) & (
@@ -412,28 +386,19 @@ OutputLayer = let
 		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True}) > 0) & (
 			context_output!{context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True} -> SKIP
 			)
-	C(index, network_results) = NodePhase.layerNo.index?output -> C((index-1), <OutputLayerEdge(output)>^network_results)
+	C(index, network_results) = NodePhase.layerNo.index?output -> IsNodeMax.layerNo.index?isMax -> C((index-1), <OutputLayerEdge(output)>^network_results)
 										
 	within 
 		C(layerSize(layerNo), <>)
 --
-T = (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
-
-T2 = ((HiddenLayers)  
-		[| {| NodePhase.layerNo |} |] 
-	   OutputLayer)
 
 --Better if the output interpreter inside the main function, needs to be because of the recursion.
-ANN = ( ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
-		[| {| NodePhase.layerNo |} |] 
+ANN = ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
+		[| {| NodePhase.layerNo, IsNodeMax.layerNo |} |] 
 	   OutputLayer) 
-			[| {| getMaxMemory, setMaxMemory, MaxMemory |} |] 
-				MemProc ) \ {| getMaxMemory, setMaxMemory, MaxMemory |} 
 
 assert ANN :[deadlock-free]
-
-assert T:[deadlock-free]
-assert T2:[deadlock-free]
+assert HiddenLayers :[deadlock-free]
 
 assert OutputLayer:[deadlock-free]
 
