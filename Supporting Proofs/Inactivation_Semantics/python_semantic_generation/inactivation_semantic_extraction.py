@@ -224,16 +224,18 @@ def input_inactivation_print_conversion(activation_lists, layer, node, no_weight
 
 #--Function: 
 #--Weight IS ABSOLUTE VALUE. 
-#weight_order(1) = <4, 3, 5, 2, 1>
-#weight_order(2) = <1, 2, 3, 4, 5>
-#weight_order(3) = <1, 3, 2, 5, 4>
-#weight_order(4) = <4, 2, 3, 1, 5>
-#weight_order(5) = <1, 2, 4, 3, 5>
-#weight_order(_) = <1,2,4,3,5>
+#This should be Done for ALL layers, automatically, but given this is for A SINGLE LAYER, indexed by l: 
 
-def output_layer_ordering(out_weights, out_biases): 
-    #Biase order generation: 
-    s = "bias_order = \n "
+def all_layer_ordering(weights, biases): 
+    s = ""
+    for l in range(0, len(weights)):
+        s += single_layer_ordering(l, list(weights[l]), list(biases[l]))
+    for l in range(0, len(weights)):
+        s += single_layer_bias_order(l, list(weights[l]), list(biases[l]))
+    return s
+
+def single_layer_bias_order(l, out_weights, out_biases): 
+    s = "layerwise_bias_order(" + str(l+1) + ") = \n "
     s += "<"
     #we need to order first for their values, then find out, order from HIGHEST TO LOWEST. 
     #Then find the index from out_biases. 
@@ -247,7 +249,11 @@ def output_layer_ordering(out_weights, out_biases):
         if(i != len(ordered_biases)-1):
              s += ","
     s += "> \n"
+    return s
     
+def single_layer_ordering(l, out_weights, out_biases): 
+    #Biase order generation: 
+    s = ""
     #Order the weights now, order along same axis. 
     #numpy, we can take all weights at 1, 
     #All, 
@@ -257,7 +263,7 @@ def output_layer_ordering(out_weights, out_biases):
     #print(out_weights[:, 0])
 
     for i in range(0, len(out_weights)): 
-        s += "weight_order("+str(i+1)+") = \n"
+        s += "layerwise_weight_order(" + str(l+1) + "," +str(i+1)+") = \n"
         s += "<"
         ordered_weights = list(out_weights[i])
         ordered_weights.sort(reverse=True)
@@ -267,6 +273,32 @@ def output_layer_ordering(out_weights, out_biases):
             if(j != len(ordered_weights)-1):
                  s += ","
         s += "> \n"	
+    return s
+    
+
+def all_node_ordering(weights): 
+    s = ""
+    for l in range(0, len(weights)):
+        for n in range(0, len(list(weights[l]))):
+            s += single_node_ordering(l, n, list(weights[l][n]))
+    return s
+#Single node, has just a SCALAR for a bias, which we ignore, and a single list, for weights:
+def single_node_ordering(l, n, node_weights): 
+    #Biase order generation: 
+    s = "nodewise_weight_order(" + str(l+1) + "," + str(n+1) +") = \n"
+    s += "<"
+    #we need to order first for their values, then find out, order from HIGHEST TO LOWEST. 
+    #Then find the index from out_biases. 
+    ordered_weights = list(node_weights)
+    ordered_weights.sort(reverse=True)
+    #Convert to indicies, from original list: 
+    for i in range(0, len(ordered_weights)):
+        #+1 for 1-indexing in FDR, and 0-indexed in python.
+        ordered_weights[i] = list(node_weights).index(ordered_weights[i]) + 1
+        s += str(ordered_weights[i])
+        if(i != len(ordered_weights)-1):
+             s += ","
+    s += "> \n"
     return s
 
 def print_converted_weights(weights):
@@ -647,12 +679,12 @@ def gen_mnist10x10():
     mnist = NNet("mnist10x10.nnet")
     weights = mnist.weights
     biases = mnist.biases 
-    print(print_converted_weights(list(weights)))
-    print(print_converted_biases(list(biases)))
+    #print(print_converted_weights(list(weights)))
+    #print(print_converted_biases(list(biases)))
     
     #Output layer ordering: 
-    print(output_layer_ordering(weights[len(weights)-1], biases[len(biases)-1]))
-    
+    print(all_layer_ordering(list(weights), list(biases)))
+    print(all_node_ordering(list(weights)))
     
 if(__name__ == "__main__"):
 	#gen_input_conditions()
