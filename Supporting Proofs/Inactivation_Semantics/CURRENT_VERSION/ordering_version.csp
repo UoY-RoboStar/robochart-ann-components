@@ -7,11 +7,11 @@
 --IT WORKS, it does force one inactive, and two nodes to active. 
 --
 include "mnist_params.csp"
-insize = 2
-layerstructure = <2, 2>
+insize = 784
+layerstructure = <10>
 layerNo = #layerstructure 
-maxSize = 2
-maxLayerSize = 2
+maxSize = 784
+maxLayerSize = 10
 
 --CHANNELS AND DATA TYPES: 
 
@@ -28,10 +28,6 @@ channel context_input:{1..insize}.core_real
 --We expect a single output of all possible decisions, for every trace. 
 channel context_output:Set(decisions)
 
-
---NO UNCERTAINTY, we don't need to transmit uncertainty. Activation strength chaining. 
---could have, a dot, pattern matching? 
---Add active, we CAN use it. 
 --ZERO IS NEVER TRANSMITTED, IT IS CALCULATED. 
 datatype InternalPhases = Zero | InActive | Active
 --The input, uncertain means active. 
@@ -39,8 +35,7 @@ datatype Phases = uncertain | active | inactive
 datatype IsMax = Max | Not
 
 channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
---InternalNodePhase, to transfer to each node, because before each layer, we calculate the max, then update the memory.
-channel InternalNodePhase:{0..layerNo}.{1..maxSize}.Phases
+--To communicate if the node can be the maximum of this layer or not.
 channel IsNodeMax:{1..layerNo}.{1..maxLayerSize}.IsMax
 
 channel end 
@@ -84,11 +79,6 @@ NodeWiseWeightOrder(layer, node, w1, w2) = IterateList(nodewise_weight_order(lay
 extractPosWeights(layer, node) = {i | i <- {1..layerSize(layer-1)}, extract_weights(layer, node, i) == InActive}
 extractNegWeights(layer, node) = {i | i <- {1..layerSize(layer-1)}, extract_weights(layer, node, i) == Active}
 
---finding neg indicies, such that posIndicies < neg indicies. 
---Proving Activity, Neg < Pos. 
---Lowest index, get the LOWEST, of this node, that is greater. 
---If neg less than positive, THAT IS CORRECT, WE NEED A SEPARATE POSITIVE WEIGHT THAT IS GREATER. 
---What about bias? Can we use the bias? Not really, No. Just if bias active, then neg < pos weights, this DOES HOLD. 
 --This is under ASSUMPTION THAT ALL INPUTS ARE THE SAME, THAT WE HAVE FOR THE INPUT LAYER. 
 isInputLayerActive(_, _, <>, _) = True
 isInputLayerActive(layer, node, negIndicies, posSet) = 
@@ -99,17 +89,6 @@ isInputLayerActive(layer, node, negIndicies, posSet) =
 		else 
 			False
 
---Hidden layer, we just need to add a check, about the maxSeq. 
---Check is, card of positive indicies, is the positive indicies, 
---Finding A SET OF POSITIVE INDICIES, THAT ARE VIABLE CANDIDATES, THEN FINDING THE MINIMUM. 
---If there is a SINGLE VIABLE CANDIDATE, the lowest node index of this. 
---We just need to tighten the bounds on what is a viable candidate.
---Viable, for head(negIndicies), head(negIndicies) is NOT, then pos_i is MAX. 
---If both max, we don't know, yes. We can't guarantee anything.
---Works, because can't be the max, if we can guarantee that it can never be the maximum index.
---Does this mean, yes it does, that the other must be higher, under all valuations. Requires at least one active. 
---So if its higher, and the weight is higher, then we have discharged it, if we discharge all, then it must be true still.
---Because the negative weighted value is overriden by another value. 
 isHiddenLayerActive(_, _, <>, _, _) = True
 isHiddenLayerActive(layer, node, negIndicies, posSet, maxSeq) = 
 	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i) and
@@ -120,14 +99,6 @@ isHiddenLayerActive(layer, node, negIndicies, posSet, maxSeq) =
 				diff(posSet, {getLowestNodeIndex(layer, node, { pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  })}))
 		else 
 			False
-
-
---Now we have the node ordering, its the same, but for all indicies, for a succesful index
---This is returning a succesful index, if we can find a positive that is strictly greater than each negative. 
-
---This condition, NEED TO ADD THAT ALSO, we need to give it a 
-
---Let's calculate the max for every layer first. Get that information. 
 
 IterateList(<>, w1, w2) = False
 IterateList(l, w1, w2) = 
@@ -140,8 +111,6 @@ IterateList(l, w1, w2) =
 	else 
 		IterateList(tail(l), w1, w2)
 
---Sort for a list, LAYERWISE SORT. Given a set of indicies, set of ACTIVE INDIICES, which is the MAX. 
---Highest index of those nodes that are active, then COMPARE THIS to the others.
 --Get highest index FAILS if its 0, runs forever. weight order sort is INFINITE LOOP.s
 getHighestIndex(layer, input, ISet) = 
 	if(card(ISet) > 0) 
@@ -150,7 +119,6 @@ getHighestIndex(layer, input, ISet) =
 		else
 			0
 			
---gets the lowest node index:
 getLowestNodeIndex(layer, node, ISet) = 
 	if(card(ISet) > 0) 
 		then
@@ -158,7 +126,6 @@ getLowestNodeIndex(layer, node, ISet) =
 		else
 			0
 
---Sort by the NODEWISE ORDER, weights in terms of NODE level:
 nodeWiseSort(layer, node, seqI) = 
 	if(#seqI <= 1) then
 		seqI
@@ -184,7 +151,6 @@ nodeWiseMergeF(layer, node, left, right, result) =
 		
 
 
---This is a LAYER WISE WEIGHT SORTS, SORTS THE WEIGHTS BY LAYER. 
 weightOrderSort(layer, input, seqI) = 
 	if(#seqI <= 1) then
 		seqI
@@ -214,9 +180,7 @@ countActive(l) = if(head(l) == Active) then (countActive(tail(l))+1) else (count
 countInActive(<>) = 0
 countInActive(l) = if(head(l) == InActive) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
 
---We can only ignore it, if less than? No, we need properties on the in value, and the 
---Assume that its not scaling. 
---FLIP, pos weights, look for pos weights < neg weights. so NEG STILL HGIHER, SO STILL INACTIVE.
+
 InActivation(l,n,edge_results, firstLayer, maxSeq) = 
 	if(countActive(edge_results) > 0)
 		then
@@ -229,9 +193,6 @@ InActivation(l,n,edge_results, firstLayer, maxSeq) =
 			True
 	
 			
---Activation needs to use 
---Do it for NODE 1 FIRST. It has different behaviour. 
---UNDER ASSUMPTIONS that input is all the same. INPUT IDENTICAL ASSUMPTION:
 Activation(l,n,edge_results,firstLayer,maxSeq) = 
 	if(countInActive(edge_results) > 0)
 		then
@@ -244,20 +205,6 @@ Activation(l,n,edge_results,firstLayer,maxSeq) =
 			True
 	
 			
-			
-
---FOR THE INPUT LAYER FIRST. 
---Update maximums, at the end? Node always needs to do it. Need the results, bias, 
---If any is maximum. 
---If it activates under an uncertainty, IT WILL STILL ACTIVATE IF some are zero.
---We get the isMax, but just for the first layer. 
-
-
---If activation logic is FALSE, then it is active.
---Activation Logic means we are UNSURE, TRUE IS UNSURE, FALSE IS ACTIVE.  
---Why is node
---Calculate the order here? We have all of the results? Then also get the previous 
---As were reading if, if we AREN'T the first layer, we need to get whether the previous is max or not. 
 Node(layer, node, index) = let
 	C(layer, node, 0, edge_results, maxSeq) = 
 		( (extract_biases(layer,node) == Active) & ( 
@@ -297,17 +244,12 @@ Node(layer, node, index) = let
 	within 
 		C(layer, node, index, <>, <>)
 
---Does every layer, is it a different nodemax, no, it is the same one
 HiddenLayer(layer, size, inputSize) = 
 	(layer == 1) & ( ([| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize)) )
 	[]
 	(layer != 1) & ( ([| {| NodePhase.(layer-1), IsNodeMax.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize)) )
 
 	
---Needs to synchronise, what, on the, that is on the layer level. Transfers from one to the other, does receive from previous layer.
---Doesn't need, for 0, if we are at layer 1, we don't synchronise on.
---Each does need to synchronise on previous one. 
---Hide isnodemax? No, we do need to communicate it to the next layer,
 HiddenLayers = 
 	(HiddenLayer(1, layerSize(1), layerSize(0))) 
 	[| {| NodePhase.1, IsNodeMax.1 |} |]
@@ -317,11 +259,6 @@ HiddenLayers =
 		HiddenLayer(i, layerSize(i), layerSize(i-1))  
 	)
 		
---We can remove this, no, for analysis without another component, add this as context. 
-
---Doesn't make 0 avaliable, external choice, as it should be, waits on the context to decide one of the other, then 
---It passes them to the first layer. Triggers the first layer. 
---fixed to just inactive for now. 
 InputLayer = 
 	(; i : <0..insize-1> @ ( NodePhase.0.(insize-i).active -> SKIP ))
 	
@@ -339,22 +276,7 @@ context_translation(10) = Nine
 		
 ActiveIndicies(results) = {i | i <- {1..#results}, extract_sequence(i, results) == Active}
 
---Run with layerNo+1 because layerNo is the index of the last hidden layer. +1 is the index of the output layer. 
---Maybe we just take the first 10 results? 
---Have this run on Active or Inactive, we only care about the sequence to limit 
---Also for the activeindicies. 
---Take the layer as a parameter. 
---Is it the same, yes, it will be. 
---We need to test this for the entire, because we group uncertain and inactive together. 
---It has to be of the previous layer, weight ordering of previous layer, 
---No, its just the input to this layer. Then order every weight, but ]
---Find all active indicies, we just need to run the weight order on, 
---It is this node, its just, the nodes you look at, are from this layer, not previous layer.
---results, check if node N, can activate under every INPUT, that is the previous layer size. 
---Just if its not the maximum, for all inputs, for this layer.
---Don't even use reuslts, 
---Only for those INPUTS THAT ARE ACTIVE, 
---It's Active, 
+
 couldNodeMax(l, n, results) = 
 	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)}, extract_sequence(i, results) == Active})
 		and 
@@ -363,12 +285,7 @@ couldNodeMax(l, n, results) =
 			False
 		else 
 			True
---We want an output edge, than transfers uncertainty TO ACTIVE, we don't care about uncertainty here, we assume active.
---This makes the layer much more scalable
 
---Has no real behaviour, just turns it to Active or Inactive for scalability. And we don't care about uncertain in ReLU networks.
---It does matter though, it definitely does, difference between
---Uncertain can be inactive for now, not as good but more scalable.
 OutputLayerEdge(result) = 
 if(result == active or result == uncertain)
 	then
@@ -390,7 +307,6 @@ OutputLayer = let
 										
 	within 
 		C(layerSize(layerNo), <>)
---
 
 --Better if the output interpreter inside the main function, needs to be because of the recursion.
 ANN = ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
