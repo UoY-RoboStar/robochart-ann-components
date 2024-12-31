@@ -8,7 +8,7 @@
 --Deadlocks with 10 nodes, 9? 1 layer, is it just about if you have one layer? 
 --It might be, 
 include "mnist_params.csp"
-insize = 5
+insize = 10
 layerstructure = <10, 10>
 layerNo = #layerstructure 
 maxSize = 10
@@ -32,9 +32,10 @@ channel context_input:{1..insize}.core_real
 channel context_output:Set(decisions)
 
 --ZERO IS NEVER TRANSMITTED, IT IS CALCULATED. 
+--Zero is still useful, it means we can ignore those values, with Inactive, and if its inactive, its negative.
 datatype InternalPhases = Zero | InActive | Active
 --The input, uncertain means active. 
-datatype Phases = uncertain | active | inactive
+datatype Phases = active | inactive
 datatype IsMax = Max | Not
 
 channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
@@ -210,23 +211,20 @@ Activation(l,n,edge_results,firstLayer,maxSeq) =
 			
 Node(layer, node, index) = let
 	C(layer, node, 0, edge_results, maxSeq) = 
-		( (extract_biases(layer,node) == Active) & ( 
-			((Activation(layer, node, edge_results,(layer==1), maxSeq) == True) & (
-				NodePhase.layer.node!active -> SKIP ) ) 
-			[]
-			((Activation(layer, node, edge_results, (layer==1), maxSeq) == False) & 
-				NodePhase.layer.node!uncertain -> SKIP)
-			) 
+		( ( (extract_biases(layer,node) == Active) & ( 
+				NodePhase.layer.node!active -> SKIP ) 
+			)
 		[]
 		(extract_biases(layer,node) == InActive) & (	
 			((InActivation(layer, node, edge_results, (layer==1), maxSeq) == True) & (
 				NodePhase.layer.node!inactive -> SKIP )
-			) 
+			)
+			)
 			[]
 			((InActivation(layer, node, edge_results, (layer==1), maxSeq) == False) & (
-				NodePhase.layer.node!uncertain -> SKIP)
+				NodePhase.layer.node!active -> SKIP)
 			)
-			) ) 
+			) 
 			;
 			( (couldNodeMax(layer, node, edge_results) == False) & (
 				IsNodeMax.layer.node!Not -> SKIP
@@ -294,7 +292,7 @@ couldNodeMax(l, n, results) =
 			True
 
 OutputLayerEdge(result) = 
-if(result == active or result == uncertain)
+if(result == active)
 	then
 		Active
 	else
