@@ -3,15 +3,15 @@
 --MNIST is for handwriting data. 
 --ASSUMPTIONS: Input order is FIXED. WE HAVE DIFFERNET LOGIC, JUST COMPARE WEIGHTS, BECAUSE FIRST LAYER INPUT IS EQUAL. Add to specify other types of input
 --We need to add for every layer, the ordering, and not only the weight order, but if the input, for the node, is not max, and other input is, it WORKS. 
-
+--3.7GB ram, with 10x10 hidden layers. 
 --IT WORKS, it does force one inactive, and two nodes to active. 
 --Deadlocks with 10 nodes, 9? 1 layer, is it just about if you have one layer? 
 --It might be, 
 include "mnist_params.csp"
-insize = 10
+insize = 784
 layerstructure = <10, 10>
 layerNo = #layerstructure 
-maxSize = 10
+maxSize = 784
 maxLayerSize = 10
 
 --Why can't it evaluate anymore, being slow? Not because of couldnodemax or evaluation functions, why is it? 
@@ -79,9 +79,9 @@ EdgeLogic(input_phase, weight, first) =
 LayerWiseWeightOrder(layer, input, w1, w2) = IterateList(layerwise_weight_order(layer, input), w1, w2)
 NodeWiseWeightOrder(layer, node, w1, w2) = IterateList(nodewise_weight_order(layer, node), w1, w2)
 
-
-extractPosWeights(layer, node) = {i | i <- {1..layerSize(layer-1)}, extract_weights(layer, node, i) == InActive}
-extractNegWeights(layer, node) = {i | i <- {1..layerSize(layer-1)}, extract_weights(layer, node, i) == Active}
+--Why from the previous layer? inputs, 
+extractPosWeights(layer, node, S) = {i | i <- S, extract_weights(layer, node, i) == InActive}
+extractNegWeights(layer, node, S) = {i | i <- S, extract_weights(layer, node, i) == Active}
 
 --This is under ASSUMPTION THAT ALL INPUTS ARE THE SAME, THAT WE HAVE FOR THE INPUT LAYER. 
 isInputLayerActive(_, _, <>, _) = True
@@ -185,15 +185,25 @@ countInActive(<>) = 0
 countInActive(l) = if(head(l) == InActive) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
 
 
---Just take complement, 
+--Just take complement, edge_results are the inactive, if the card does not equal layer size, then some are positive. 
+--just need the indicies of the maximum, we don't need to compare all weights, just those 
+--Extract from, only those positive weights that are in complement. 
+--Assuming all are positive. 
+--neg weights, only FROM THOSE THAT ARE POSITIVE, INACTIVE IS ZERO, ANY THAT ARE INACTIVE ARE ZERO, 
+--Why didn't we do this before? 
+--If any are active and NOT IN THE INACTIVE SET, THEREFORE ACTIVE, then we have to look at them.
+--Zero, they will be zero, 
+--If any are Zero, then they are NOT COUNTED, if any that are active, then returns the negative, active, weights, 
+--then finds negative weights that are GREATER THAN THE POSITIVE WEIGHTS, ONLY RUNS THIS ON inactive bias, so if we have that, we must be inactive.
 InActivation(l,n,edge_results, firstLayer, maxInd) = 
-	if(card(edge_results) > 0)
+	if(card(edge_results) != layerSize(l-1))
 		then
 			if(firstLayer)
 			then
-				isInputLayerActive(l, n, seq(extractPosWeights(l, n)), extractNegWeights(l,n))
+				isInputLayerActive(l, n, seq(extractPosWeights(l, n, {1..layerSize(l-1)})), extractNegWeights(l,n, {1..layerSize(l-1)}))
 			else
-				isHiddenLayerActive(l, n, seq(extractPosWeights(l, n)), extractNegWeights(l,n), maxInd)
+				isHiddenLayerActive(l, n, seq(extractPosWeights(l,n, diff({1..layerSize(l-1)}, edge_results))), 
+					extractNegWeights(l,n,diff({1..layerSize(l-1)}, edge_results)), maxInd)
 		else
 			True
 	
@@ -209,21 +219,33 @@ InActivation(l,n,edge_results, firstLayer, maxInd) =
 --		else
 --			True
 	
+	
+returnSet(edge_phase, index) = 
+	if(edge_phase == Active) 
+		then
+			{}
+		else
+			{index}
 			
-			
+returnNotSet(isMax, index) = 
+	if(isMax == Not)
+		then
+			{index}
+		else
+			{}
 Node(layer, node, index) = let
-	C(layer, node, 0, edge_results, maxSeq) = 
+	C(layer, node, 0, edge_results, maxSet) = 
 		( ( (extract_biases(layer,node) == Active) & ( 
 				NodePhase.layer.node!active -> SKIP ) 
 			)
 		[]
 		(extract_biases(layer,node) == InActive) & (	
-			((InActivation(layer, node, edge_results, (layer==1), maxSeq) == True) & (
+			((InActivation(layer, node, edge_results, (layer==1), maxSet) == True) & (
 				NodePhase.layer.node!inactive -> SKIP )
 			)
 			)
 			[]
-			((InActivation(layer, node, edge_results, (layer==1), maxSeq) == False) & (
+			((InActivation(layer, node, edge_results, (layer==1), maxSet) == False) & (
 				NodePhase.layer.node!active -> SKIP)
 			)
 			) 
@@ -238,36 +260,14 @@ Node(layer, node, index) = let
 			)
 			
 			
-	C(layer, node, index, edge_results, maxSeq) = 
+	C(layer, node, index, edge_results, maxSet) = 
 		((layer == 1) & NodePhase.(layer-1).index?edge_phase -> 
-			(EdgeLogic(edge_phase, extract_weights(layer, node, index)) == Active) & (
-			C(layer, node, (index-1), edge_results, {}))
-			[]
-			(EdgeLogic(edge_phase, extract_weights(layer, node, index)) == InActive) & (
-			C(layer, node, (index-1), union(index, edge_results), {}))
-			)
+			C(layer, node, (index-1), union(returnSet(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)), index), edge_results), {}))
 		[]
 		((layer != 1) & NodePhase.(layer-1).index?edge_phase -> IsNodeMax.(layer-1).index?isMax -> 
-			(EdgeLogic(edge_phase, extract_weights(layer, node, index)) == Active) & (
-				(isMax == Max) & (
-				C(layer, node, (index-1), edge_results, maxSeq)
-				)
-				[]
-				(isMax == Not) & (
-				C(layer, node, (index-1), edge_results, union(index, maxSeq))
-				)
-				)
-			)
-			[]
-			(EdgeLogic(edge_phase, extract_weights(layer, node, index)) == InActive) & (
-				(isMax == Max) & (
-				C(layer, node, (index-1), union(index, edge_results), maxSeq)
-				)
-				[]
-				(isMax == Not) & (
-				C(layer, node, (index-1), union(index, edge_results), union(index, maxSeq))
-				)
-			)
+			C(layer, node, (index-1), union(returnSet(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)), index), edge_results), 
+				union(returnNotSet(isMax, index), maxSet)
+				))
 	within 
 		C(layer, node, index, {}, {})
 
@@ -308,8 +308,9 @@ context_translation(10) = Nine
 ActiveIndicies(results) = {i | i <- {1..#results}, extract_sequence(i, results) == Active}
 
 
+--results is the INACTIVE nodes, not a member, 
 couldNodeMax(l, n, results) = 
-	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)}, not member(Active, results)})
+	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)}, not member(i, results)})
 		and 
 		head(layerwise_bias_order(l)) != n ) 
 		then
@@ -332,7 +333,7 @@ OutputLayer = let
 			)
 		[]
 		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, {}) == True}) > 0) & (
-			context_output!{context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True} -> SKIP
+			context_output!{context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, {}) == True} -> SKIP
 			)
 	C(index, network_results) = NodePhase.layerNo.index?output -> IsNodeMax.layerNo.index?isMax -> C((index-1), <OutputLayerEdge(output)>^network_results)
 										
