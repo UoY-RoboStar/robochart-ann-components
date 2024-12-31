@@ -94,10 +94,10 @@ isInputLayerActive(layer, node, negIndicies, posSet) =
 			False
 
 isHiddenLayerActive(_, _, <>, _, _) = True
-isHiddenLayerActive(layer, node, negIndicies, posSet, maxSeq) = 
+isHiddenLayerActive(layer, node, negIndicies, posSet, maxInd) = 
 	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i) and
-				   extract_sequence(head(negIndicies), maxSeq) == Not and 
-				   extract_sequence(pos_i, maxSeq) == Max }) > 0) 
+				   member(head(negIndicies), maxInd) and 
+				   not member(pos_i, maxInd) }) > 0) 
 		then 
 			isInputLayerActive(layer, node, tail(negIndicies), 
 				diff(posSet, {getLowestNodeIndex(layer, node, { pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  })}))
@@ -185,29 +185,31 @@ countInActive(<>) = 0
 countInActive(l) = if(head(l) == InActive) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
 
 
-InActivation(l,n,edge_results, firstLayer, maxSeq) = 
-	if(countActive(edge_results) > 0)
+--Just take complement, 
+InActivation(l,n,edge_results, firstLayer, maxInd) = 
+	if(card(edge_results) > 0)
 		then
 			if(firstLayer)
 			then
 				isInputLayerActive(l, n, seq(extractPosWeights(l, n)), extractNegWeights(l,n))
 			else
-				isHiddenLayerActive(l, n, seq(extractPosWeights(l, n)), extractNegWeights(l,n), maxSeq)
+				isHiddenLayerActive(l, n, seq(extractPosWeights(l, n)), extractNegWeights(l,n), maxInd)
 		else
 			True
 	
 			
-Activation(l,n,edge_results,firstLayer,maxSeq) = 
-	if(countInActive(edge_results) > 0)
-		then
-			if(firstLayer)
-				then
-					isInputLayerActive(l, n, seq(extractNegWeights(l, n)), extractPosWeights(l,n))
-				else
-					isHiddenLayerActive(l, n, seq(extractNegWeights(l, n)), extractPosWeights(l,n), maxSeq)
-		else
-			True
+--Activation(l,n,edge_results,firstLayer,maxSeq) = 
+--	if(countInActive(edge_results) > 0)
+--		then
+--			if(firstLayer)
+--				then
+--					isInputLayerActive(l, n, seq(extractNegWeights(l, n)), extractPosWeights(l,n))
+--				else
+--					isHiddenLayerActive(l, n, seq(extractNegWeights(l, n)), extractPosWeights(l,n), maxSeq)
+--		else
+--			True
 	
+			
 			
 Node(layer, node, index) = let
 	C(layer, node, 0, edge_results, maxSeq) = 
@@ -237,13 +239,37 @@ Node(layer, node, index) = let
 			
 			
 	C(layer, node, index, edge_results, maxSeq) = 
-		((layer == 1) & NodePhase.(layer-1).index?edge_phase -> C(layer, node, (index-1), <EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1))>^edge_results, <>))
+		((layer == 1) & NodePhase.(layer-1).index?edge_phase -> 
+			(EdgeLogic(edge_phase, extract_weights(layer, node, index)) == Active) & (
+			C(layer, node, (index-1), edge_results, {}))
+			[]
+			(EdgeLogic(edge_phase, extract_weights(layer, node, index)) == InActive) & (
+			C(layer, node, (index-1), union(index, edge_results), {}))
+			)
 		[]
 		((layer != 1) & NodePhase.(layer-1).index?edge_phase -> IsNodeMax.(layer-1).index?isMax -> 
-			C(layer, node, (index-1), <EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1))>^edge_results, <isMax>^maxSeq))
-	
+			(EdgeLogic(edge_phase, extract_weights(layer, node, index)) == Active) & (
+				(isMax == Max) & (
+				C(layer, node, (index-1), edge_results, maxSeq)
+				)
+				[]
+				(isMax == Not) & (
+				C(layer, node, (index-1), edge_results, union(index, maxSeq))
+				)
+				)
+			)
+			[]
+			(EdgeLogic(edge_phase, extract_weights(layer, node, index)) == InActive) & (
+				(isMax == Max) & (
+				C(layer, node, (index-1), union(index, edge_results), maxSeq)
+				)
+				[]
+				(isMax == Not) & (
+				C(layer, node, (index-1), union(index, edge_results), union(index, maxSeq))
+				)
+			)
 	within 
-		C(layer, node, index, <>, <>)
+		C(layer, node, index, {}, {})
 
 HiddenLayer(layer, size, inputSize) = 
 	(layer == 1) & ( ([| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize)) )
@@ -283,7 +309,7 @@ ActiveIndicies(results) = {i | i <- {1..#results}, extract_sequence(i, results) 
 
 
 couldNodeMax(l, n, results) = 
-	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)}, extract_sequence(i, results) == Active})
+	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)}, not member(Active, results)})
 		and 
 		head(layerwise_bias_order(l)) != n ) 
 		then
@@ -301,11 +327,11 @@ if(result == active)
 --Doesn't use the max value, but store it for completeness.
 OutputLayer = let	
 	C(0, network_results) = 
-		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True}) == 0) & (
+		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, {}) == True}) == 0) & (
 			context_output!decisions -> SKIP
 			)
 		[]
-		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True}) > 0) & (
+		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, {}) == True}) > 0) & (
 			context_output!{context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True} -> SKIP
 			)
 	C(index, network_results) = NodePhase.layerNo.index?output -> IsNodeMax.layerNo.index?isMax -> C((index-1), <OutputLayerEdge(output)>^network_results)
