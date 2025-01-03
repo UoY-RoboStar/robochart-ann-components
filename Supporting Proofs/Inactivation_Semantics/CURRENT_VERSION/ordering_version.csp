@@ -8,8 +8,8 @@
 --Deadlocks with 10 nodes, 9? 1 layer, is it just about if you have one layer? 
 --It might be, 
 include "mnist_params.csp"
-insize = 784
-layerstructure = <10, 10>
+insize = 5
+layerstructure = <2, 2>
 layerNo = #layerstructure 
 maxSize = 784
 maxLayerSize = 10
@@ -33,9 +33,9 @@ channel context_output:Set(decisions)
 
 --ZERO IS NEVER TRANSMITTED, IT IS CALCULATED. 
 --Zero is still useful, it means we can ignore those values, with Inactive, and if its inactive, its negative.
-datatype InternalPhases = Zero | InActive | Active
+datatype InternalPhases = Zero | InActive | Active | Uncertain
 --The input, uncertain means active. 
-datatype Phases = active | inactive
+datatype Phases = active | inactive | uncertain
 datatype IsMax = Max | Not
 
 channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
@@ -66,12 +66,18 @@ EdgeLogic(input_phase, weight, first) =
 		if(input_phase == inactive)
 			then 
 				Zero
-			else
+		else if(input_phase == active) 
+			then	
 				if(weight == Active)
 					then 
 						Active
 					else
 						InActive
+		else if(input_phase == uncertain)
+				then
+					Uncertain
+				else
+					Zero
 
 
 --Comparison operators, 
@@ -195,6 +201,7 @@ countInActive(l) = if(head(l) == InActive) then (countInActive(tail(l))+1) else 
 --Zero, they will be zero, 
 --If any are Zero, then they are NOT COUNTED, if any that are active, then returns the negative, active, weights, 
 --then finds negative weights that are GREATER THAN THE POSITIVE WEIGHTS, ONLY RUNS THIS ON inactive bias, so if we have that, we must be inactive.
+--
 InActivation(l,n,edge_results, firstLayer, maxInd) = 
 	if(card(edge_results) != layerSize(l-1))
 		then
@@ -270,6 +277,8 @@ Node(layer, node, index) = let
 				))
 	within 
 		C(layer, node, index, {}, {})
+ 	
+assert Node(1,1,100) :[deadlock-free]
 
 HiddenLayer(layer, size, inputSize) = 
 	(layer == 1) & ( ([| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize)) )
