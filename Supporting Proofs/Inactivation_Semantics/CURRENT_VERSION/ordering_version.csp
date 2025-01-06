@@ -86,8 +86,46 @@ LayerWiseWeightOrder(layer, input, w1, w2) = IterateList(layerwise_weight_order(
 NodeWiseWeightOrder(layer, node, w1, w2) = IterateList(nodewise_weight_order(layer, node), w1, w2)
 
 --Why from the previous layer? inputs, 
-extractPosWeights(layer, node, S) = {i | i <- S, extract_weights(layer, node, i) == InActive}
-extractNegWeights(layer, node, S) = {i | i <- S, extract_weights(layer, node, i) == Active}
+--Needs to be from, GETS ALL THAT MUST BE POSITIVE, OR COULD BE, COULD BE. 
+--If uncertain is TRUE, it returns all those that 
+--How do we know the index, size of the 
+--NO WE DON'T NEED TO DO ANY WEIGHT MESSING, WE ALREADY KNOW, THESE ARE THE WEIGHTED RESULTS. 
+--All weighted results that could be positive, do we not have that? If its inactive, that is negative
+--just any that are active or uncertain. 
+--If uncertain is FALSE, returns ONLY THOSE THAT HAVE TO BE ACTIVE, positive. 
+--either means it can be active or uncertain, otherwise, its fixed. 
+extractPosWeights(<>, either) = {}
+extractPosWeights(edge_results, either) = 
+	if(either)
+		then 		
+			if(head(edge_results) == Active or head(edge_results) == Uncertain) 
+				then
+					union({#(edge_results)}, extractPosWeights(tail(edge_results), either))
+				else
+					extractPosWeights(tail(edge_results), either)
+		else
+			if(head(edge_results) == Active) 
+				then
+					union({#(edge_results)}, extractPosWeights(tail(edge_results), either))
+				else
+					extractPosWeights(tail(edge_results), either)
+			
+
+extractNegWeights(<>, either) = {}
+extractNegWeights(edge_results, either) = 
+	if(either)
+		then 		
+			if(head(edge_results) == InActive or head(edge_results) == Uncertain) 
+				then
+					union({#(edge_results)}, extractNegWeights(tail(edge_results), either))
+				else
+					extractNegWeights(tail(edge_results), either)
+		else
+			if(head(edge_results) == InActive) 
+				then
+					union({#(edge_results)}, extractNegWeights(tail(edge_results), either))
+				else
+					extractNegWeights(tail(edge_results), either)
 
 --This is under ASSUMPTION THAT ALL INPUTS ARE THE SAME, THAT WE HAVE FOR THE INPUT LAYER. 
 isInputLayerActive(_, _, <>, _) = True
@@ -183,48 +221,44 @@ mergeF(layer, input, left, right, result) =
 			mergeF(layer, input, tail(left), right, result^<head(left)>)
 	else
 		mergeF(layer, input, left, tail(right), result^<head(right)>)
-		
+
+--Countactive not includes uncertain as well, if there is any uncertain, 
+--Returning those that COULD be active or inactive.
 countActive(<>) = 0
-countActive(l) = if(head(l) == Active) then (countActive(tail(l))+1) else (countActive(tail(l)))
+countActive(l) = if(head(l) == Active or head(l) == Uncertain) then (countActive(tail(l))+1) else (countActive(tail(l)))
 
 countInActive(<>) = 0
-countInActive(l) = if(head(l) == InActive) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
+countInActive(l) = if(head(l) == InActive or head(l) == Uncertain) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
 
 
---Just take complement, edge_results are the inactive, if the card does not equal layer size, then some are positive. 
---just need the indicies of the maximum, we don't need to compare all weights, just those 
---Extract from, only those positive weights that are in complement. 
---Assuming all are positive. 
---neg weights, only FROM THOSE THAT ARE POSITIVE, INACTIVE IS ZERO, ANY THAT ARE INACTIVE ARE ZERO, 
---Why didn't we do this before? 
---If any are active and NOT IN THE INACTIVE SET, THEREFORE ACTIVE, then we have to look at them.
---Zero, they will be zero, 
---If any are Zero, then they are NOT COUNTED, if any that are active, then returns the negative, active, weights, 
---then finds negative weights that are GREATER THAN THE POSITIVE WEIGHTS, ONLY RUNS THIS ON inactive bias, so if we have that, we must be inactive.
---
+--Takes a sequence, maxInd treat as a set. 
+--Need the set of ALL THAT COULD BE POSITIVE, AND then the set of indicies that are DEFINITELY POSITIVE. 
+--Set of indicies, SEQUENCE OF possible indicies, then a set of those that are definitely negative. 
+--Those that are POSITIVE, 
+--Does the sequence order matter? No, just has to be all of them, so just TREAT THEM AS SETS. 
+--We have a sequence of results, we need the indicies, so need to iterate them. 
 InActivation(l,n,edge_results, firstLayer, maxInd) = 
-	if(card(edge_results) != layerSize(l-1))
+	if(countActive(edge_results) > 0)
 		then
 			if(firstLayer)
 			then
-				isInputLayerActive(l, n, seq(extractPosWeights(l, n, {1..layerSize(l-1)})), extractNegWeights(l,n, {1..layerSize(l-1)}))
+				isInputLayerActive(l, n, seq(extractPosWeights(edge_results, True)), extractNegWeights(edge_results, False))
 			else
-				isHiddenLayerActive(l, n, seq(extractPosWeights(l,n, diff({1..layerSize(l-1)}, edge_results))), 
-					extractNegWeights(l,n,diff({1..layerSize(l-1)}, edge_results)), maxInd)
+				isHiddenLayerActive(l, n, seq(extractPosWeights(edge_results, True)), extractNegWeights(edge_results, False), maxInd)
 		else
 			True
 	
 			
---Activation(l,n,edge_results,firstLayer,maxSeq) = 
---	if(countInActive(edge_results) > 0)
---		then
---			if(firstLayer)
---				then
---					isInputLayerActive(l, n, seq(extractNegWeights(l, n)), extractPosWeights(l,n))
---				else
---					isHiddenLayerActive(l, n, seq(extractNegWeights(l, n)), extractPosWeights(l,n), maxSeq)
---		else
---			True
+Activation(l,n,edge_results,firstLayer,maxSeq) = 
+	if(countInActive(edge_results) > 0)
+		then
+			if(firstLayer)
+				then
+					isInputLayerActive(l, n, seq(extractNegWeights(edge_results, True)), extractPosWeights(edge_results, False))
+				else
+					isHiddenLayerActive(l, n, seq(extractNegWeights(edge_results, True)), extractPosWeights(edge_results, False), maxSeq)
+		else
+			True
 	
 	
 returnSet(edge_phase, index) = 
@@ -269,14 +303,12 @@ Node(layer, node, index) = let
 			
 	C(layer, node, index, edge_results, maxSet) = 
 		((layer == 1) & NodePhase.(layer-1).index?edge_phase -> 
-			C(layer, node, (index-1), union(returnSet(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)), index), edge_results), {}))
+			C(layer, node, (index-1), <(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)))>^edge_results, {}))
 		[]
 		((layer != 1) & NodePhase.(layer-1).index?edge_phase -> IsNodeMax.(layer-1).index?isMax -> 
-			C(layer, node, (index-1), union(returnSet(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)), index), edge_results), 
-				union(returnNotSet(isMax, index), maxSet)
-				))
+			C(layer, node, (index-1), <(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)))>^edge_results, union(returnNotSet(isMax, index), maxSet)))
 	within 
-		C(layer, node, index, {}, {})
+		C(layer, node, index, <>, {})
  	
 assert Node(1,1,100) :[deadlock-free]
 
@@ -318,8 +350,11 @@ ActiveIndicies(results) = {i | i <- {1..#results}, extract_sequence(i, results) 
 
 
 --results is the INACTIVE nodes, not a member, 
+--sequence again, where, extract either, when its active or inactive, yes, why pos? Yes, those that are active or uncertain, not inactive. 
+--Not member, or member, no, member. All those, where the weight could be active, not the highest for all of those. 
+--Only for those i that are a member of, the positive indicies. 
 couldNodeMax(l, n, results) = 
-	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)}, not member(i, results)})
+	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)}, member(i, extractPosWeights(results, True))})
 		and 
 		head(layerwise_bias_order(l)) != n ) 
 		then
@@ -337,12 +372,12 @@ if(result == active)
 --Doesn't use the max value, but store it for completeness.
 OutputLayer = let	
 	C(0, network_results) = 
-		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, {}) == True}) == 0) & (
+		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True}) == 0) & (
 			context_output!decisions -> SKIP
 			)
 		[]
-		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, {}) == True}) > 0) & (
-			context_output!{context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, {}) == True} -> SKIP
+		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True}) > 0) & (
+			context_output!{context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True} -> SKIP
 			)
 	C(index, network_results) = NodePhase.layerNo.index?output -> IsNodeMax.layerNo.index?isMax -> C((index-1), <OutputLayerEdge(output)>^network_results)
 										
