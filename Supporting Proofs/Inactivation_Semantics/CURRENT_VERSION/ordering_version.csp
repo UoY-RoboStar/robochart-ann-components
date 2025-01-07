@@ -7,9 +7,10 @@
 --IT WORKS, it does force one inactive, and two nodes to active. 
 --Deadlocks with 10 nodes, 9? 1 layer, is it just about if you have one layer? 
 --It might be, 
+--aql:self.oclIsTypeOf(robochart::OrderedEvent)
 include "mnist_params.csp"
 insize = 5
-layerstructure = <2, 2>
+layerstructure = <5,5,5,5,5>
 layerNo = #layerstructure 
 maxSize = 784
 maxLayerSize = 10
@@ -140,8 +141,8 @@ isInputLayerActive(layer, node, negIndicies, posSet) =
 isHiddenLayerActive(_, _, <>, _, _) = True
 isHiddenLayerActive(layer, node, negIndicies, posSet, maxInd) = 
 	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i) and
-				   member(head(negIndicies), maxInd) and 
-				   not member(pos_i, maxInd) }) > 0) 
+				   extract_sequence(head(negIndicies), maxInd) == Not and
+				   extract_sequence(pos_i, maxInd) == Max}) > 0) 
 		then 
 			isInputLayerActive(layer, node, tail(negIndicies), 
 				diff(posSet, {getLowestNodeIndex(layer, node, { pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  })}))
@@ -277,8 +278,15 @@ returnNotSet(isMax, index) =
 Node(layer, node, index) = let
 	C(layer, node, 0, edge_results, maxSet) = 
 		( ( (extract_biases(layer,node) == Active) & ( 
-				NodePhase.layer.node!active -> SKIP ) 
+				((Activation(layer, node, edge_results, (layer==1), maxSet) == True) & (
+				NodePhase.layer.node!active -> SKIP )
 			)
+			)
+			[]
+			((Activation(layer, node, edge_results, (layer==1), maxSet) == False) & (
+				NodePhase.layer.node!uncertain -> SKIP)
+			)
+			) 
 		[]
 		(extract_biases(layer,node) == InActive) & (	
 			((InActivation(layer, node, edge_results, (layer==1), maxSet) == True) & (
@@ -287,9 +295,10 @@ Node(layer, node, index) = let
 			)
 			[]
 			((InActivation(layer, node, edge_results, (layer==1), maxSet) == False) & (
-				NodePhase.layer.node!active -> SKIP)
+				NodePhase.layer.node!uncertain -> SKIP)
 			)
-			) 
+			)
+			 
 			;
 			( (couldNodeMax(layer, node, edge_results) == False) & (
 				IsNodeMax.layer.node!Not -> SKIP
@@ -303,12 +312,12 @@ Node(layer, node, index) = let
 			
 	C(layer, node, index, edge_results, maxSet) = 
 		((layer == 1) & NodePhase.(layer-1).index?edge_phase -> 
-			C(layer, node, (index-1), <(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)))>^edge_results, {}))
+			C(layer, node, (index-1), <(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)))>^edge_results, <>))
 		[]
 		((layer != 1) & NodePhase.(layer-1).index?edge_phase -> IsNodeMax.(layer-1).index?isMax -> 
-			C(layer, node, (index-1), <(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)))>^edge_results, union(returnNotSet(isMax, index), maxSet)))
+			C(layer, node, (index-1), <(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)))>^edge_results, <(isMax)>^maxSet))
 	within 
-		C(layer, node, index, <>, {})
+		C(layer, node, index, <>, <>)
  	
 assert Node(1,1,100) :[deadlock-free]
 
@@ -363,7 +372,7 @@ couldNodeMax(l, n, results) =
 			True
 
 OutputLayerEdge(result) = 
-if(result == active)
+if(result == active or result == uncertain)
 	then
 		Active
 	else
