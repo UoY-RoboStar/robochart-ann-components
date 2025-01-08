@@ -1,12 +1,6 @@
---SETTING UP FOR MNIST, 10X10, 
---SEMANTIC CONSTANTS--
---MNIST is for handwriting data. 
---ASSUMPTIONS: Input order is FIXED. WE HAVE DIFFERNET LOGIC, JUST COMPARE WEIGHTS, BECAUSE FIRST LAYER INPUT IS EQUAL. Add to specify other types of input
---We need to add for every layer, the ordering, and not only the weight order, but if the input, for the node, is not max, and other input is, it WORKS. 
---3.7GB ram, with 10x10 hidden layers. 
---IT WORKS, it does force one inactive, and two nodes to active. 
---Deadlocks with 10 nodes, 9? 1 layer, is it just about if you have one layer? 
---It might be, 
+--ASSUMPTIONS: Input is ALL THE SAME, for properties. 
+--Adjust to have A FULL ORDERING, WE CAN STILL SAY SOMETHING ABOUT THIS. Or just active inactive. 
+--NOTES: If we have ALL IANCTIVE, must more properties, ALL ACTIVE, much less properties.
 include "mnist_params.csp"
 insize = 5
 layerstructure = <5,5,5>
@@ -206,12 +200,14 @@ countInActive(<>) = 0
 countInActive(l) = if(head(l) == InActive or head(l) == Uncertain) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
 
 
+--Why do we ever run inactivation on input layer? We shouldn't. 
 InActivation'(0,n,input_values) = 
 	if(extract_sequence(n, input_values) == active)
 		then
 			False
 		else
 			True
+--If all HAVE TO BE INACTIVE, 
 InActivation'(l,n,input_values) = 
 	if(countActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >) > 0)
 		then
@@ -327,7 +323,7 @@ HiddenLayers =
 	( ([| {| NodePhase.0 |} |] i: {1..layerSize(layerNo)} @ Node(layerNo, i, insize)) )
 		
 InputLayer = 
-	(; i : <0..insize-1> @ ( NodePhase.0.(insize-i).active -> SKIP ))
+	(; i : <0..insize-1> @ (i == 4) & ( NodePhase.0.(insize-i).active -> SKIP ) [] (i != 4) & ( NodePhase.0.(insize-i).inactive -> SKIP ))
 	
 --FOR MNIST, the handwriting recognition.
 context_translation(1) = Zer
