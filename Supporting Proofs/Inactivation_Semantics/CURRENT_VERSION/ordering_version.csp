@@ -4,9 +4,9 @@
 include "acasxu_1_1.csp"
 insize = 5
 outsize = 5
-layerstructure = <5,5,5,5,5,5>
+layerstructure = <10,10,10>
 layerNo = #layerstructure 
-maxSize = 5
+maxSize = 10
 
 --Why can't it evaluate anymore, being slow? Not because of couldnodemax or evaluation functions, why is it? 
 
@@ -60,7 +60,7 @@ EdgeLogic(input_phase, weight) =
 
 
 --Comparison operators, 
---This is TRUE if w1 < w2, means that w1 appears SECOND in the list. Assume the list is HIGHEST TO LOWEST.
+--This is TRUE if w2 > w1, means that w1 appears SECOND in the list. Assume the list is HIGHEST TO LOWEST.
 LayerWiseWeightOrder(layer, input, w1, w2) = IterateList(layerwise_weight_order(layer, input), w1, w2)
 NodeWiseWeightOrder(layer, node, w1, w2) = IterateList(nodewise_weight_order(layer, node), w1, w2)
 
@@ -98,9 +98,11 @@ extractNegWeights(edge_results, either) =
 					extractNegWeights(tail(edge_results), either)
 
 --This is under ASSUMPTION THAT ALL INPUTS ARE THE SAME, THAT WE HAVE FOR THE INPUT LAYER. 
+--true if in2 > in1. We need POS TO BE GREATER. 
 isInputLayerActive(_, _, <>, _) = True
 isInputLayerActive(layer, node, negIndicies, posSet) = 
-	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  }) > 0) 
+	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  and 
+				InputOrdering(head(negIndicies), pos_i) }) > 0) 
 		then 
 			isInputLayerActive(layer, node, tail(negIndicies), 
 				diff(posSet, {getLowestNodeIndex(layer, node, { pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  })}))
@@ -201,6 +203,11 @@ countActive(l) = if(head(l) == Active or head(l) == Uncertain) then (countActive
 countInActive(<>) = 0
 countInActive(l) = if(head(l) == InActive or head(l) == Uncertain) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
 
+--hard coded for now. INPUTS ARE IN ORDER. 
+INPUT_ORDER = <x | x <- <1..insize>>
+
+InputOrdering(w1, w2) = IterateList(INPUT_ORDER, w1, w2)
+
 
 --Why do we ever run inactivation on input layer? We shouldn't. 
 InActivation'(0,n,input_values) = 
@@ -212,6 +219,8 @@ InActivation'(0,n,input_values) =
 --If all HAVE TO BE INACTIVE, 
 --Only care about active nodes, in input layer? Yes, we DON'T CARE ABOUT ANY OTHERS. 
 --Then, if any are active, THEY ARE THE SAME. 
+--Input, if we have multiple. THey are all NOT max, if we have multiple active inputs. 
+--couldnodemax, Active
 InActivation'(l,n,input_values) = 
 	if(countActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >) > 0)
 		then
@@ -239,7 +248,16 @@ InActivation'(l,n,input_values) =
 								{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
 									Activation'((l-1), i, input_values) == True}, 
 							
-								<couldNodeMax_Worst(l,n) | n <- <1..layerSize(l-1)>>)
+								<(if 
+									couldNodeMax(l-1, n, 
+									< if (InActivation'(l-1, i, input_values)) == True then InActive else Active | 
+										i <- <1..layerSize(l-1)>>)
+									then
+										Max
+									else
+										Not)
+										 | 
+									n <- <1..layerSize(l-1)>>) 
 		else
 			True
 	
@@ -277,7 +295,7 @@ Activation'(l,n,input_values) =
 								{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
 									Activation'((l-1), i, input_values) == True}, 
 							
-								<couldNodeMax_Worst(l,n) | n <- <1..layerSize(l-1)>>)
+								<Not | n <- <1..layerSize(l-1)>>)
 		else
 			True
 	
@@ -333,7 +351,7 @@ HiddenLayers =
 
 --inputlayer only with N active.	
 InputLayer(n) = 
-	(; i : <0..insize-1> @ (i == n) & ( NodePhase.0.(insize-i).active -> SKIP ) [] (i != n) & ( NodePhase.0.(insize-i).inactive -> SKIP ))
+	(; i : <0..insize-1> @ (member(i,n)) & ( NodePhase.0.(insize-i).active -> SKIP ) [] (not member(i,n)) & ( NodePhase.0.(insize-i).inactive -> SKIP ))
 	
 --FOR MNIST, the handwriting recognition.
 context_translation(1) = Zer
@@ -365,14 +383,6 @@ ActiveIndicies(results) = {i | i <- {1..#results}, extract_sequence(i, results) 
 --Only for those i that are a member of, the positive indicies. 
 --MAKE A COULD NODE MAX, UNDER WORST SITUATIONS, assume all is ACTIVE.
 
-couldNodeMax_Worst(l, n) = 
-	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)} })
-		and 
-		head(layerwise_bias_order(l)) != n ) 
-		then
-			Not
-		else 
-			Max
 
 couldNodeMax(l, n, results) = 
 	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)}, member(i, extractPosWeights(results, True))})
@@ -411,11 +421,16 @@ ANN(n) = ( (InputLayer(n) [| {| NodePhase.0 |} |] HiddenLayers)
 		[| {| NodePhase.1 |} |] 
 	   OutputLayer) 
 
-assert ANN(1) :[deadlock-free]
-assert ANN(2) :[deadlock-free]
-assert ANN(3) :[deadlock-free]
-assert ANN(4) :[deadlock-free]
-assert ANN(5) :[deadlock-free]
+assert ANN({0..4}) :[deadlock-free]
+assert ANN({1,2}) :[deadlock-free]
+assert ANN({2,3}) :[deadlock-free]
+assert ANN({3,4}) :[deadlock-free]
+assert ANN({2,4}) :[deadlock-free]
+assert ANN({0}) :[deadlock-free]
+assert ANN({1}) :[deadlock-free]
+assert ANN({2}) :[deadlock-free]
+assert ANN({3}) :[deadlock-free]
+assert ANN({4}) :[deadlock-free]
 
 --HELPER FUNCTIONS: 
 -- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --
