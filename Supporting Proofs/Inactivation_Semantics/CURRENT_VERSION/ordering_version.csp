@@ -1,18 +1,12 @@
---SETTING UP FOR MNIST, 10X10, 
---SEMANTIC CONSTANTS--
---MNIST is for handwriting data. 
---ASSUMPTIONS: Input order is FIXED. WE HAVE DIFFERNET LOGIC, JUST COMPARE WEIGHTS, BECAUSE FIRST LAYER INPUT IS EQUAL. Add to specify other types of input
---We need to add for every layer, the ordering, and not only the weight order, but if the input, for the node, is not max, and other input is, it WORKS. 
---3.7GB ram, with 10x10 hidden layers. 
---IT WORKS, it does force one inactive, and two nodes to active. 
---Deadlocks with 10 nodes, 9? 1 layer, is it just about if you have one layer? 
---It might be, 
-include "mnist_params.csp"
+--ASSUMPTIONS: Input is ALL THE SAME, for properties. 
+--Adjust to have A FULL ORDERING, WE CAN STILL SAY SOMETHING ABOUT THIS. Or just active inactive. 
+--NOTES: If we have ALL IANCTIVE, must more properties, ALL ACTIVE, much less properties.
+include "acasxu_1_1.csp"
 insize = 5
-layerstructure = <5,5,5,5>
+outsize = 5
+layerstructure = <5,5,5,5,5,5>
 layerNo = #layerstructure 
-maxSize = 784
-maxLayerSize = 10
+maxSize = 5
 
 --Why can't it evaluate anymore, being slow? Not because of couldnodemax or evaluation functions, why is it? 
 
@@ -25,44 +19,29 @@ core_real = { -1..1}
 --Decisions: 
 
 datatype decisions = Zer | One | Two | Three | Four | Five | Six | Seven | Eight | Nine
+datatype decisionsacasxu = COC | WL | WR | SL | SR
 
 channel context_input:{1..insize}.core_real
 
 --We expect a single output of all possible decisions, for every trace. 
-channel context_output:Set(decisions)
+channel context_output:Set(decisionsacasxu)
 
 --ZERO IS NEVER TRANSMITTED, IT IS CALCULATED. 
 --Zero is still useful, it means we can ignore those values, with Inactive, and if its inactive, its negative.
 datatype InternalPhases = Zero | InActive | Active | Uncertain
---The input, uncertain means active. 
+--The input, uncertain means active. x	
 datatype Phases = active | inactive | uncertain
 datatype IsMax = Max | Not
 
-channel NodePhase:{0..layerNo}.{1..maxSize}.Phases
---To communicate if the node can be the maximum of this layer or not.
-channel IsNodeMax:{1..layerNo}.{1..maxLayerSize}.IsMax
+channel NodePhase:{0..1}.{1..maxSize}.Phases
 
 channel end 
 
 
 --ASSUME WORST CASE UNCERTAINTY, that, for us, is 
 --Active or uncertain DEALT WITH IN THE SAME WAY BY EDGE LOGIC. 
-EdgeLogic(input_phase, weight, first) = 
-	if(first == true) then 
-		if(input_phase == inactive)
-			then 
-				if(weight == Active)
-					then 
-						InActive
-					else
-						Active
-			else
-				if(weight == InActive)
-					then
-						InActive
-					else
-						Active
-	else 
+
+EdgeLogic(input_phase, weight) = 
 		if(input_phase == inactive)
 			then 
 				Zero
@@ -128,19 +107,12 @@ isInputLayerActive(layer, node, negIndicies, posSet) =
 		else 
 			False
 
---((
---				   	extract_sequence(head(negIndicies), maxInd) == Not and
---				   	extract_sequence(pos_i, maxInd) == Max
---				   	
---				   )
---				   or
---				   (
---				   	True
---				   ))
-
 isHiddenLayerActive(_, _, <>, _, _) = True
 isHiddenLayerActive(layer, node, negIndicies, posSet, maxInd) = 
-	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i) }) > 0) 
+	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i) and 
+			extract_sequence(pos_i, maxInd) == Max and 
+			extract_sequence(head(negIndicies), maxInd) == Not
+			}) > 0) 
 		then 
 			isHiddenLayerActive(layer, node, tail(negIndicies), 
 				diff(posSet, {getLowestNodeIndex(layer, node, { pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  })}), maxInd)
@@ -230,35 +202,82 @@ countInActive(<>) = 0
 countInActive(l) = if(head(l) == InActive or head(l) == Uncertain) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
 
 
---Takes a sequence, maxInd treat as a set. 
---Need the set of ALL THAT COULD BE POSITIVE, AND then the set of indicies that are DEFINITELY POSITIVE. 
---Set of indicies, SEQUENCE OF possible indicies, then a set of those that are definitely negative. 
---Those that are POSITIVE, 
---Does the sequence order matter? No, just has to be all of them, so just TREAT THEM AS SETS. 
---We have a sequence of results, we need the indicies, so need to iterate them.
---Not working because we have none that are fixed. 
---must have fixed, absolutely negative values, do we ? Way too few that we actually can fix, need a different strategy.
---Uses the orderings more heavily? 
-InActivation(l,n,edge_results, firstLayer, maxInd) = 
-	if(countActive(edge_results) > 0)
+--Why do we ever run inactivation on input layer? We shouldn't. 
+InActivation'(0,n,input_values) = 
+	if(extract_sequence(n, input_values) == active)
 		then
-			if(firstLayer)
-			then
-				isInputLayerActive(l, n, seq(extractPosWeights(edge_results, True)), extractNegWeights(edge_results, False))
-			else
-				isHiddenLayerActive(l, n, seq(extractPosWeights(edge_results, True)), extractNegWeights(edge_results, False), maxInd)
+			False
+		else
+			True
+--If all HAVE TO BE INACTIVE, 
+--Only care about active nodes, in input layer? Yes, we DON'T CARE ABOUT ANY OTHERS. 
+--Then, if any are active, THEY ARE THE SAME. 
+InActivation'(l,n,input_values) = 
+	if(countActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >) > 0)
+		then
+			if(not member(False, {InActivation'((l-1), i, input_values) | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True)})) 
+				then
+					True
+				else
+					if(l==1) 
+						then
+							isInputLayerActive(l, n, 
+					
+						seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+							Activation'((l-1), i, input_values) == True}), 
+							
+						{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+							Activation'((l-1), i, input_values) == True})
+						
+						else
+							
+							isHiddenLayerActive(l, n, 
+					
+								seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+									InActivation'((l-1), i, input_values) == False}), 
+		
+								{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+									Activation'((l-1), i, input_values) == True}, 
+							
+								<couldNodeMax_Worst(l,n) | n <- <1..layerSize(l-1)>>)
 		else
 			True
 	
-			
-Activation(l,n,edge_results,firstLayer,maxSeq) = 
-	if(countInActive(edge_results) > 0)
+		
+Activation'(0,n,input_values) = 
+	if(extract_sequence(n, input_values) == inactive)
 		then
-			if(firstLayer)
+			False
+		else
+			True
+Activation'(l,n,input_values) = 
+	if(countInActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)>>) > 0)
+		then
+			if(not member(False, {InActivation'((l-1), i, input_values) | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True)})) 
 				then
-					isInputLayerActive(l, n, seq(extractNegWeights(edge_results, True)), extractPosWeights(edge_results, False))
+					True
 				else
-					isHiddenLayerActive(l, n, seq(extractNegWeights(edge_results, True)), extractPosWeights(edge_results, False), maxSeq)
+					if(l==1) 
+						then
+							isInputLayerActive(l, n, 
+					
+						seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+							Activation'((l-1), i, input_values) == True}), 
+							
+						{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+							Activation'((l-1), i, input_values) == True})
+						
+						else
+						
+							isHiddenLayerActive(l, n, 
+					
+								seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+									InActivation'((l-1), i, input_values) == False}), 
+							
+								{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+									Activation'((l-1), i, input_values) == True}, 
+							
+								<couldNodeMax_Worst(l,n) | n <- <1..layerSize(l-1)>>)
 		else
 			True
 	
@@ -277,76 +296,44 @@ returnNotSet(isMax, index) =
 		else
 			{}
 Node(layer, node, index) = let
-	C(layer, node, 0, edge_results, maxSet) = 
+	C(layer, node, 0, input_values) = 
 		( ( (extract_biases(layer,node) == Active) & ( 
-				((Activation(layer, node, edge_results, (layer==1), maxSet) == True) & (
-				NodePhase.layer.node!active -> SKIP )
+				((Activation'(layer, node, input_values) == True) & (
+				NodePhase.1.node!active -> SKIP )
 			)
 			)
 			[]
-			((Activation(layer, node, edge_results, (layer==1), maxSet) == False) & (
-				NodePhase.layer.node!active -> SKIP
-				|~|
-				NodePhase.layer.node!inactive -> SKIP)
+			((Activation'(layer, node, input_values) == False) & (
+				NodePhase.1.node!uncertain -> SKIP)
 			)
 			) 
 		[]
 		(extract_biases(layer,node) == InActive) & (	
-			((InActivation(layer, node, edge_results, (layer==1), maxSet) == True) & (
-				NodePhase.layer.node!inactive -> SKIP )
+			((InActivation'(layer, node, input_values) == True) & (
+				NodePhase.1.node!inactive -> SKIP )
 			)
 			)
 			[]
-			((InActivation(layer, node, edge_results, (layer==1), maxSet) == False) & (
-				NodePhase.layer.node!active -> SKIP
-				|~|
-				NodePhase.layer.node!inactive -> SKIP)
-			)
-			)
-			 
-			;
-			( (couldNodeMax(layer, node, edge_results) == False) & (
-				IsNodeMax.layer.node!Not -> SKIP
-			)
-			[]
-			(couldNodeMax(layer, node, edge_results) == True) & (
-				IsNodeMax.layer.node!Max -> SKIP
+			((InActivation'(layer, node, input_values) == False) & (
+				NodePhase.1.node!uncertain -> SKIP)
 			)
 			)
 			
 			
-	C(layer, node, index, edge_results, maxSet) = 
-		((layer == 1) & NodePhase.(layer-1).index?edge_phase -> 
-			C(layer, node, (index-1), <(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)))>^edge_results, <>))
-		[]
-		((layer != 1) & NodePhase.(layer-1).index?edge_phase -> IsNodeMax.(layer-1).index?isMax -> 
-			C(layer, node, (index-1), <(EdgeLogic(edge_phase, extract_weights(layer, node, index), (layer==1)))>^edge_results, <(isMax)>^maxSet))
+	C(layer, node, index, input_values) = 
+		NodePhase.0.index?input_phase -> 
+			C(layer, node, (index-1), <input_phase>^input_values)
 	within 
-		C(layer, node, index, <>, <>)
+		C(layer, node, index, <>)
  	
-assert Node(1,1,100) :[deadlock-free]
 
-HiddenLayer(layer, size, inputSize) = 
-	(layer == 1) & ( ([| {| NodePhase.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize)) )
-	[]
-	(layer != 1) & ( ([| {| NodePhase.(layer-1), IsNodeMax.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize)) )
-
+HiddenLayers = 
+	( ([| {| NodePhase.0 |} |] i: {1..layerSize(layerNo)} @ Node(layerNo, i, insize)) )
 	
-HiddenLayers =
-	(layerNo == 1) & (HiddenLayer(1, layerSize(1), layerSize(0))) 
-	[]
-	(layerNo > 1) & (
-	(HiddenLayer(1, layerSize(1), layerSize(0))) 
-	[| {| NodePhase.1, IsNodeMax.1 |} |]
-	(
-	|| i : {2..layerNo} @
-		[ {| NodePhase.(i-1), NodePhase.i, IsNodeMax.(i-1), IsNodeMax.(i) |} ] 
-		HiddenLayer(i, layerSize(i), layerSize(i-1))  
-	)
-	)
-		
-InputLayer = 
-	(; i : <0..insize-1> @ ( NodePhase.0.(insize-i).active -> SKIP ))
+
+--inputlayer only with N active.	
+InputLayer(n) = 
+	(; i : <0..insize-1> @ (i == n) & ( NodePhase.0.(insize-i).active -> SKIP ) [] (i != n) & ( NodePhase.0.(insize-i).inactive -> SKIP ))
 	
 --FOR MNIST, the handwriting recognition.
 context_translation(1) = Zer
@@ -359,6 +346,15 @@ context_translation(7) = Six
 context_translation(8) = Seven
 context_translation(9) = Eight
 context_translation(10) = Nine
+
+--For acas xu: 
+context_translation_acasxu(1) = COC
+context_translation_acasxu(2) = WL
+context_translation_acasxu(3) = WR
+context_translation_acasxu(4) = SL
+context_translation_acasxu(5) = SR
+
+
 		
 ActiveIndicies(results) = {i | i <- {1..#results}, extract_sequence(i, results) == Active}
 
@@ -367,6 +363,17 @@ ActiveIndicies(results) = {i | i <- {1..#results}, extract_sequence(i, results) 
 --sequence again, where, extract either, when its active or inactive, yes, why pos? Yes, those that are active or uncertain, not inactive. 
 --Not member, or member, no, member. All those, where the weight could be active, not the highest for all of those. 
 --Only for those i that are a member of, the positive indicies. 
+--MAKE A COULD NODE MAX, UNDER WORST SITUATIONS, assume all is ACTIVE.
+
+couldNodeMax_Worst(l, n) = 
+	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)} })
+		and 
+		head(layerwise_bias_order(l)) != n ) 
+		then
+			Not
+		else 
+			Max
+
 couldNodeMax(l, n, results) = 
 	if ( not member(True, { n == head(layerwise_weight_order(l, i)) | i <- {1..layerSize(l-1)}, member(i, extractPosWeights(results, True))})
 		and 
@@ -386,37 +393,29 @@ if(result == active or result == uncertain)
 --Doesn't use the max value, but store it for completeness.
 OutputLayer = let	
 	C(0, network_results) = 
-		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True}) == 0) & (
-			context_output!decisions -> SKIP
+		(card({ context_translation_acasxu(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True}) == 0) & (
+			context_output!decisionsacasxu -> SKIP
 			)
 		[]
-		(card({ context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True}) > 0) & (
-			context_output!{context_translation(i) | i <- {1..#network_results}, couldNodeMax((layerNo+1), i, network_results) == True} -> SKIP
+		(card({ context_translation_acasxu(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True}) > 0) & (
+			context_output!{context_translation_acasxu(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True} -> SKIP
 			)
-	C(index, network_results) = NodePhase.layerNo.index?output -> IsNodeMax.layerNo.index?isMax -> C((index-1), <OutputLayerEdge(output)>^network_results)
+	C(index, network_results) = NodePhase.1.index?output -> C((index-1), <OutputLayerEdge(output)>^network_results)
 										
 	within 
 		C(layerSize(layerNo), <>)
 
 --Better if the output interpreter inside the main function, needs to be because of the recursion.
-ANN = ( (InputLayer [| {| NodePhase.0 |} |] HiddenLayers)  
-		[| {| NodePhase.layerNo, IsNodeMax.layerNo |} |] 
+--It needs to recieve the results, from the INPUT LAYER. We don't have edges, 
+ANN(n) = ( (InputLayer(n) [| {| NodePhase.0 |} |] HiddenLayers)  
+		[| {| NodePhase.1 |} |] 
 	   OutputLayer) 
 
-assert ANN :[deadlock-free]
-assert HiddenLayers :[deadlock-free]
-
-assert ANN \ { NodePhase.4.4.inactive} [T= ANN
-assert ANN \ { NodePhase.4.5.inactive} [T= ANN
-assert ANN \ { NodePhase.4.3.inactive} [T= ANN
-assert ANN \ { NodePhase.4.2.inactive} [T= ANN
-assert ANN \ { NodePhase.4.1.inactive} [T= ANN
-assert ANN \ { NodePhase.4.4.active} [T= ANN
-assert ANN \ { NodePhase.4.5.active} [T= ANN
-assert ANN \ { NodePhase.4.3.active} [T= ANN
-assert ANN \ { NodePhase.4.2.active} [T= ANN
-assert ANN \ { NodePhase.4.1.active} [T= ANN
-assert OutputLayer:[deadlock-free]
+assert ANN(1) :[deadlock-free]
+assert ANN(2) :[deadlock-free]
+assert ANN(3) :[deadlock-free]
+assert ANN(4) :[deadlock-free]
+assert ANN(5) :[deadlock-free]
 
 --HELPER FUNCTIONS: 
 -- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --
