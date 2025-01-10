@@ -1,7 +1,6 @@
---ASSUMPTIONS: Input is ALL THE SAME, for properties. 
---Adjust to have A FULL ORDERING, WE CAN STILL SAY SOMETHING ABOUT THIS. Or just active inactive. 
---NOTES: If we have ALL IANCTIVE, must more properties, ALL ACTIVE, much less properties.
---62 tests.
+--ASSUMPTIONS: Input is NORMALISED, has 1 max, and there is an ORDERING TO THE INPUTS.
+--Relu is 1 max, is CLIPPED TO 1 MAXIMUM.
+
 include "acasxu_1_1.csp"
 insize = 5
 outsize = 5
@@ -234,38 +233,39 @@ InActivation'(l,n,input_values) =
 				then
 					True
 				else
-					if(l==1) 
-						then
-							if(extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
+
+					if(extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
 								then
 									True
 								else
+									if(l==1) 
+										then
 									isInputLayerActive(l, n, 
 									seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
 									Activation'((l-1), i, input_values) == True}), 	
 									{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
 									Activation'((l-1), i, input_values) == True})
 						
-						else
+										else
 							
-							isHiddenLayerActive(l, n, 
+											isHiddenLayerActive(l, n, 
 					
-								seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
-									InActivation'((l-1), i, input_values) == False}), 
+												seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+												InActivation'((l-1), i, input_values) == False}), 
 		
-								{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
-									Activation'((l-1), i, input_values) == True}, 
+												{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+												Activation'((l-1), i, input_values) == True}, 
 							
-								<(if 
-									couldNodeMax(l-1, n, 
-									< if (InActivation'(l-1, i, input_values)) == True then InActive else Active | 
-										i <- <1..layerSize(l-1)>>)
-									then
-										Max
-									else
-										Not)
-										 | 
-									n <- <1..layerSize(l-1)>>) 
+												<(if 
+												couldNodeMax(l-1, n, 
+												< if (InActivation'(l-1, i, input_values)) == True then InActive else Active | 
+												i <- <1..layerSize(l-1)>>)
+												then
+													Max
+												else
+													Not)
+												 | 
+												n <- <1..layerSize(l-1)>>) 
 		else
 			True
 	
@@ -283,29 +283,27 @@ Activation'(l,n,input_values) =
 				then
 					True
 				else
-					if(l==1) 
-						then
-							if(extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
+					if(extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
 								then
 									True
 								else
+									if(l==1) 
+										then
 								
-									isInputLayerActive(l, n, 
-										seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-											Activation'((l-1), i, input_values) == True}), 	
-										{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-											Activation'((l-1), i, input_values) == True})
-						else
+											isInputLayerActive(l, n, 
+												seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+												Activation'((l-1), i, input_values) == True}), 	
+												{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+												Activation'((l-1), i, input_values) == True})
+										else
 						
-							isHiddenLayerActive(l, n, 
-					
-								seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
-									InActivation'((l-1), i, input_values) == False}), 
+											isHiddenLayerActive(l, n, 
+												seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+											InActivation'((l-1), i, input_values) == False}), 
 							
-								{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
-									Activation'((l-1), i, input_values) == True}, 
-							
-								<Not | n <- <1..layerSize(l-1)>>)
+											{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+												Activation'((l-1), i, input_values) == True}, 
+											<Not | n <- <1..layerSize(l-1)>>)
 		else
 			True
 	

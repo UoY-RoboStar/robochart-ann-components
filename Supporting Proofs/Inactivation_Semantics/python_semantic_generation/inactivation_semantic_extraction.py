@@ -281,8 +281,9 @@ def single_layer_ordering(l, out_weights):
 def all_node_ordering(weights, biases): 
     s = ""
     #Computing the safe set first
-    for n in range(0, len(list(weights[0]))):
-        s += safe_set_computation(0, n, list(weights[0][n]), biases[0][n])
+    for l in range(0, len(weights)):
+        for n in range(0, len(list(weights[l]))):
+            s += safe_set_computation(l, n, list(weights[l][n]), biases[l][n])
         
     for l in range(0, len(weights)):
         for n in range(0, len(list(weights[l]))):
