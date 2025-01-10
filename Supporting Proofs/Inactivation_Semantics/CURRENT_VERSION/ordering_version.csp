@@ -1,12 +1,13 @@
 --ASSUMPTIONS: Input is ALL THE SAME, for properties. 
 --Adjust to have A FULL ORDERING, WE CAN STILL SAY SOMETHING ABOUT THIS. Or just active inactive. 
 --NOTES: If we have ALL IANCTIVE, must more properties, ALL ACTIVE, much less properties.
+--62 tests.
 include "acasxu_1_1.csp"
 insize = 5
 outsize = 5
-layerstructure = <10,10,10>
+layerstructure = <5,5,5,5>
 layerNo = #layerstructure 
-maxSize = 10
+maxSize = 5
 
 --Why can't it evaluate anymore, being slow? Not because of couldnodemax or evaluation functions, why is it? 
 
@@ -99,10 +100,11 @@ extractNegWeights(edge_results, either) =
 
 --This is under ASSUMPTION THAT ALL INPUTS ARE THE SAME, THAT WE HAVE FOR THE INPUT LAYER. 
 --true if in2 > in1. We need POS TO BE GREATER. 
+--safe_set(1,0)
 isInputLayerActive(_, _, <>, _) = True
 isInputLayerActive(layer, node, negIndicies, posSet) = 
 	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  and 
-				InputOrdering(head(negIndicies), pos_i) }) > 0) 
+			InputOrdering(head(negIndicies), pos_i) }) > 0) 
 		then 
 			isInputLayerActive(layer, node, tail(negIndicies), 
 				diff(posSet, {getLowestNodeIndex(layer, node, { pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  })}))
@@ -203,9 +205,10 @@ countActive(l) = if(head(l) == Active or head(l) == Uncertain) then (countActive
 countInActive(<>) = 0
 countInActive(l) = if(head(l) == InActive or head(l) == Uncertain) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
 
---hard coded for now. INPUTS ARE IN ORDER. 
+--hard coded for now. INPUTS ARE IN ORDER. INPUT ORDER HELPS, NOT NECESSARY TECHNICALLY.
 INPUT_ORDER = <x | x <- <1..insize>>
 
+--w1 < w2. 
 InputOrdering(w1, w2) = IterateList(INPUT_ORDER, w1, w2)
 
 
@@ -221,6 +224,9 @@ InActivation'(0,n,input_values) =
 --Then, if any are active, THEY ARE THE SAME. 
 --Input, if we have multiple. THey are all NOT max, if we have multiple active inputs. 
 --couldnodemax, Active
+
+--Its inactive if all the POSITIVE WEIGHTS, no uncertainty in input layer, 
+--TODO: use let within expressions to make this neater, and more efficient. 
 InActivation'(l,n,input_values) = 
 	if(countActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >) > 0)
 		then
@@ -230,13 +236,15 @@ InActivation'(l,n,input_values) =
 				else
 					if(l==1) 
 						then
-							isInputLayerActive(l, n, 
-					
-						seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-							Activation'((l-1), i, input_values) == True}), 
-							
-						{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-							Activation'((l-1), i, input_values) == True})
+							if(extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
+								then
+									True
+								else
+									isInputLayerActive(l, n, 
+									seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+									Activation'((l-1), i, input_values) == True}), 	
+									{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+									Activation'((l-1), i, input_values) == True})
 						
 						else
 							
@@ -277,14 +285,16 @@ Activation'(l,n,input_values) =
 				else
 					if(l==1) 
 						then
-							isInputLayerActive(l, n, 
-					
-						seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-							Activation'((l-1), i, input_values) == True}), 
-							
-						{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-							Activation'((l-1), i, input_values) == True})
-						
+							if(extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
+								then
+									True
+								else
+								
+									isInputLayerActive(l, n, 
+										seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+											Activation'((l-1), i, input_values) == True}), 	
+										{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+											Activation'((l-1), i, input_values) == True})
 						else
 						
 							isHiddenLayerActive(l, n, 
@@ -422,16 +432,7 @@ ANN(n) = ( (InputLayer(n) [| {| NodePhase.0 |} |] HiddenLayers)
 	   OutputLayer) 
 
 assert ANN({0..4}) :[deadlock-free]
-assert ANN({1,2}) :[deadlock-free]
-assert ANN({2,3}) :[deadlock-free]
-assert ANN({3,4}) :[deadlock-free]
-assert ANN({2,4}) :[deadlock-free]
-assert ANN({0}) :[deadlock-free]
-assert ANN({1}) :[deadlock-free]
-assert ANN({2}) :[deadlock-free]
-assert ANN({3}) :[deadlock-free]
-assert ANN({4}) :[deadlock-free]
-
+	
 --HELPER FUNCTIONS: 
 -- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --
 

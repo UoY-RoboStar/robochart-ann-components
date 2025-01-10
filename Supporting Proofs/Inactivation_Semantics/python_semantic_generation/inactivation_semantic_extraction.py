@@ -277,25 +277,67 @@ def single_layer_ordering(l, out_weights):
     return s
     
 
-def all_node_ordering(weights): 
+#Add the safe set computation here.
+def all_node_ordering(weights, biases): 
     s = ""
+    #Computing the safe set first
+    for n in range(0, len(list(weights[0]))):
+        s += safe_set_computation(0, n, list(weights[0][n]), biases[0][n])
+        
     for l in range(0, len(weights)):
         for n in range(0, len(list(weights[l]))):
-            s += single_node_ordering(l, n, list(weights[l][n]))
+            s += single_node_ordering(l, n, list(weights[l][n]), biases[l][n])
     return s
+
+#Computes the safe set, of weights that ARE LESS THAN THE BIAS. This is an automatically generated set.
+#Indexed by l and n, but ONLY FOR THE INPUT LAYER RIGHT NOW.
+#If the sum is < bias, then ANY COMBINATION MUST BE LESS as well, that is true. 
+def safe_set_computation(l, n, node_weights, bias):
+    s = "safe_set(" + str(l+1) + "," + str(n+1) + ") = \n"
+    s += "{"
+    ordered_weights = list(node_weights)
+    safe_weights = []
+    #Don't sort reverse, this time, sort smallest to largest.
+    ordered_weights.sort()
+    #Cumulative sum of the weights
+    c_sum = 0.0
+    for i in range(0, len(ordered_weights)): 
+         c_sum += ordered_weights[i]
+         if(c_sum < abs(bias)):
+             safe_weights.append(str(list(node_weights).index(ordered_weights[i]) + 1))
+             
+    for i in range(0, len(safe_weights)):
+        s += safe_weights[i]
+        if(i != len(safe_weights)-1):
+            s += ","
+            
+    s += "} \n"
+    return s
+         
+         
 #Single node, has just a SCALAR for a bias, which we ignore, and a single list, for weights:
-def single_node_ordering(l, n, node_weights): 
-    #Biase order generation: 
+#Needs to be different for input layer, because we are assuming normalisation.
+def single_node_ordering(l, n, node_weights, bias): 
+    #Bias order generation: 
     s = "nodewise_weight_order(" + str(l+1) + "," + str(n+1) +") = \n"
     s += "<"
     #we need to order first for their values, then find out, order from HIGHEST TO LOWEST. 
     #Then find the index from out_biases. 
-    ordered_weights = list(node_weights)
+    #Add bias value to the ordered_weights, 
+    ordered_weights = []
+    if((l+1) == 1):
+        ordered_weights = list(node_weights)
+        ordered_weights.append(bias)
+    else:
+        ordered_weights = list(node_weights)
     ordered_weights.sort(reverse=True)
     #Convert to indicies, from original list: 
     for i in range(0, len(ordered_weights)):
         #+1 for 1-indexing in FDR, and 0-indexed in python.
-        ordered_weights[i] = list(node_weights).index(ordered_weights[i]) + 1
+        if(ordered_weights[i] == bias):
+            ordered_weights[i] = 0
+        else:
+            ordered_weights[i] = list(node_weights).index(ordered_weights[i]) + 1
         s += str(ordered_weights[i])
         if(i != len(ordered_weights)-1):
              s += ","
@@ -678,7 +720,7 @@ def gen_acasxu_1_1():
     
     #Output layer ordering: 
     print(all_layer_ordering(list(weights), list(biases)))
-    print(all_node_ordering(list(weights)))
+    print(all_node_ordering(list(weights), list(biases)))
 
 def gen_mnist10x10(): 
     mnist = NNet("mnist10x10.nnet")
@@ -690,7 +732,7 @@ def gen_mnist10x10():
     
     #Output layer ordering: 
     print(all_layer_ordering(list(weights), list(biases)))
-    print(all_node_ordering(list(weights)))
+    print(all_node_ordering(list(weights), list(biases)))
     
 if(__name__ == "__main__"):
 	#gen_input_conditions()
