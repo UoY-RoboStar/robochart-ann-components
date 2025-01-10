@@ -1,0 +1,45 @@
+RELU6 RESULTS, for two layers, takes about 2 minutes on normal PC:
+50-50 layer structure.
+Last hidden layer is: quite a few inactive.
+Under input order: INPUT_ORDER = <5,3,4,2,1>
+
+<Active, InActive, Active, InActive, Active, InActive, Active,
+ InActive, InActive, InActive, InActive, InActive, InActive,
+ InActive, Active, InActive, InActive, Active, Active, Active,
+ Active, Active, InActive, Active, InActive, InActive, InActive,
+ Active, Active, InActive, InActive, InActive, InActive, Active,
+ InActive, Active, InActive, InActive, Active, InActive, Active,
+ Active, Active, InActive, InActive, InActive, InActive, Active,
+ InActive, Active>
+ 
+ 
+Input order:
+<1,2,3,4,5>
+
+<Active, InActive, Active, InActive, Active, InActive, Active,
+ InActive, InActive, InActive, InActive, InActive, InActive,
+ InActive, Active, InActive, InActive, Active, Active, InActive,
+ Active, Active, InActive, Active, InActive, InActive, InActive,
+ Active, Active, InActive, InActive, InActive, InActive, Active,
+ InActive, Active, InActive, InActive, Active, InActive, Active,
+ Active, Active, InActive, InActive, InActive, InActive, Active,
+ InActive, Active>
+ 
+ DIFFERENT, very similar but not the same, input ordering IS MAKING A DIFFERENCE. 
+ 
+
+ INPUT_ORDER = <2,3,4,5,1>
+
+<Active, InActive, Active, InActive, Active, InActive, Active,
+ InActive, InActive, InActive, InActive, InActive, InActive,
+ InActive, Active, InActive, InActive, Active, Active, InActive,
+ Active, Active, InActive, Active, InActive, InActive, InActive,
+ Active, Active, InActive, InActive, InActive, InActive, Active,
+ InActive, Active, InActive, InActive, Active, InActive, Active,
+ Active, Active, InActive, InActive, InActive, InActive, Active,
+ InActive, Active>
+ 
+ 
+ 
+
+

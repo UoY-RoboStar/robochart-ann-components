@@ -3,9 +3,8 @@
 include "acasxu_1_1.csp"
 insize = 5
 outsize = 5
-layerstructure = <5,5>
+layerstructure = <50,50>
 layerNo = #layerstructure 
-maxSize = 5
 
 --Why can't it evaluate anymore, being slow? Not because of couldnodemax or evaluation functions, why is it? 
 
@@ -32,7 +31,7 @@ datatype InternalPhases = Zero | InActive | Active | Uncertain
 datatype Phases = active | inactive | uncertain
 datatype IsMax = Max | Not
 
-channel NodePhase:{0..1}.{1..maxSize}.Phases
+channel NodePhase:{0, 1}.{1..insize}.Phases
 
 channel end 
 
@@ -204,7 +203,7 @@ countInActive(<>) = 0
 countInActive(l) = if(head(l) == InActive or head(l) == Uncertain) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
 
 --hard coded for now. INPUTS ARE IN ORDER. INPUT ORDER HELPS, NOT NECESSARY TECHNICALLY.
-INPUT_ORDER = <x | x <- <1..insize>>
+INPUT_ORDER = <2,3,4,5,1>
 
 --w1 < w2. 
 InputOrdering(w1, w2) = IterateList(INPUT_ORDER, w1, w2)
@@ -226,32 +225,38 @@ InActivation'(0,n,input_values) =
 --Its inactive if all the POSITIVE WEIGHTS, no uncertainty in input layer, 
 --TODO: use let within expressions to make this neater, and more efficient. 
 InActivation'(l,n,input_values) = 
-	if(countActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >) > 0)
+	let 
+		prev_result_active = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >
+		prev_result_real = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>
+		
+	within
+	
+	if(countActive(prev_result_active) > 0)
 		then
-			if(not member(False, {InActivation'((l-1), i, input_values) | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True)})) 
+			if(not member(False, {InActivation'((l-1), i, input_values) | i <- extractPosWeights(prev_result_active, True)})) 
 				then
 					True
 				else
 					if(l==1) 
 						then
-							if(extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
+							if(extractPosWeights(prev_result_real, True) < safe_set(l, n) )
 								then
 									True
 								else
 									isInputLayerActive(l, n, 
-									seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-									Activation'((l-1), i, input_values) == True}), 	
-									{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-									Activation'((l-1), i, input_values) == True})
+										seq({i | i <- extractPosWeights(prev_result_active, True),
+										Activation'((l-1), i, input_values) == True}), 	
+										{i | i <- extractNegWeights(prev_result_active, True),
+										Activation'((l-1), i, input_values) == True})
 						
 						else
 							
 							isHiddenLayerActive(l, n, 
-					
-								seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+							
+								seq({i | i <- extractPosWeights(prev_result_active, True), 
 									InActivation'((l-1), i, input_values) == False}), 
 		
-								{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+								{i | i <- extractNegWeights(prev_result_active, True), 
 									Activation'((l-1), i, input_values) == True}, 
 							
 								<(if 
@@ -275,87 +280,213 @@ Activation'(0,n,input_values) =
 		else
 			True
 Activation'(l,n,input_values) = 
-	if(countInActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)>>) > 0)
+	let 
+		prev_result_active = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >
+		prev_result_real = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>
+		
+	within
+	
+	if(countInActive(prev_result_active) > 0)
 		then
-			if(not member(False, {InActivation'((l-1), i, input_values) | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True)})) 
+			if(not member(False, {InActivation'((l-1), i, input_values) | i <- extractNegWeights(prev_result_active, True)})) 
 				then
 					True
 				else
 					if(l==1) 
 						then
-							if(extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
+							if(extractNegWeights(prev_result_real, True) < safe_set(l, n) )
 								then
 									True
 								else
 								
 									isInputLayerActive(l, n, 
-										seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+										seq({i | i <- extractNegWeights(prev_result_active, True),
 											Activation'((l-1), i, input_values) == True}), 	
-										{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+										{i | i <- extractPosWeights(prev_result_active, True),
 											Activation'((l-1), i, input_values) == True})
 						else
 						
 							isHiddenLayerActive(l, n, 
 					
-								seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+								seq({i | i <- extractNegWeights(prev_result_active, True), 
 									InActivation'((l-1), i, input_values) == False}), 
 							
-								{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+								{i | i <- extractPosWeights(prev_result_active, True), 
 									Activation'((l-1), i, input_values) == True}, 
 							
-								<Not | n <- <1..layerSize(l-1)>>)
+								<(if 
+									couldNodeMax(l-1, n, 
+									< if (InActivation'(l-1, i, input_values)) == True then InActive else Active | 
+										i <- <1..layerSize(l-1)>>)
+									then
+										Max
+									else
+										Not)
+										 | 
+									n <- <1..layerSize(l-1)>>)
 		else
 			True
 	
-	
-returnSet(edge_phase, index) = 
-	if(edge_phase == Active) 
-		then
-			{}
-		else
-			{index}
-			
-returnNotSet(isMax, index) = 
-	if(isMax == Not)
-		then
-			{index}
-		else
-			{}
-Node(layer, node, index) = let
-	C(layer, node, 0, input_values) = 
-		( ( (extract_biases(layer,node) == Active) & ( 
-				((Activation'(layer, node, input_values) == True) & (
-				NodePhase.1.node!active -> SKIP )
-			)
-			)
-			[]
-			((Activation'(layer, node, input_values) == False) & (
-				NodePhase.1.node!uncertain -> SKIP)
-			)
-			) 
-		[]
-		(extract_biases(layer,node) == InActive) & (	
-			((InActivation'(layer, node, input_values) == True) & (
-				NodePhase.1.node!inactive -> SKIP )
-			)
-			)
-			[]
-			((InActivation'(layer, node, input_values) == False) & (
-				NodePhase.1.node!uncertain -> SKIP)
-			)
-			)
-			
-			
-	C(layer, node, index, input_values) = 
-		NodePhase.0.index?input_phase -> 
-			C(layer, node, (index-1), <input_phase>^input_values)
-	within 
-		C(layer, node, index, <>)
- 	
+--Version with RELU6, as in, BOUNDED RELU VERSION: 
 
-HiddenLayers = 
-	( ([| {| NodePhase.0 |} |] i: {1..layerSize(layerNo)} @ Node(layerNo, i, insize)) )
+BoundedInActivation'(0,n,input_values) = 
+	if(extract_sequence(n, input_values) == active)
+		then
+			False
+		else
+			True
+--If all HAVE TO BE INACTIVE, 
+--Only care about active nodes, in input layer? Yes, we DON'T CARE ABOUT ANY OTHERS. 
+--Then, if any are active, THEY ARE THE SAME. 
+--Input, if we have multiple. THey are all NOT max, if we have multiple active inputs. 
+--couldnodemax, Active
+
+--Its inactive if all the POSITIVE WEIGHTS, no uncertainty in input layer, 
+--TODO: use let within expressions to make this neater, and more efficient. 
+BoundedInActivation'(l,n,input_values) = 
+	if(countActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >) > 0)
+		then
+			if(not member(False, {BoundedInActivation'((l-1), i, input_values) | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True)})) 
+				then
+					True
+				else
+
+					if(extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, BoundedActivation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
+								then
+									True
+								else
+									if(l==1) 
+										then
+									isInputLayerActive(l, n, 
+									seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+									BoundedActivation'((l-1), i, input_values) == True}), 	
+									{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+									BoundedActivation'((l-1), i, input_values) == True})
+						
+										else
+							
+											isHiddenLayerActive(l, n, 
+					
+												seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+												BoundedInActivation'((l-1), i, input_values) == False}), 
+		
+												{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+												BoundedActivation'((l-1), i, input_values) == True}, 
+							
+												<(if 
+												couldNodeMax(l-1, n, 
+												< if (BoundedInActivation'(l-1, i, input_values)) == True then InActive else Active | 
+												i <- <1..layerSize(l-1)>>)
+												then
+													Max
+												else
+													Not)
+												 | 
+												n <- <1..layerSize(l-1)>>) 
+		else
+			True
 	
+		
+BoundedActivation'(0,n,input_values) = 
+	if(extract_sequence(n, input_values) == inactive)
+		then
+			False
+		else
+			True
+BoundedActivation'(l,n,input_values) = 
+	if(countInActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)>>) > 0)
+		then
+			if(not member(False, {BoundedInActivation'((l-1), i, input_values) | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True)})) 
+				then
+					True
+				else
+					if(extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, BoundedActivation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
+								then
+									True
+								else
+									if(l==1) 
+										then
+								
+											isInputLayerActive(l, n, 
+												seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+												BoundedActivation'((l-1), i, input_values) == True}), 	
+												{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
+												BoundedActivation'((l-1), i, input_values) == True})
+										else
+						
+											isHiddenLayerActive(l, n, 
+												seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+											BoundedInActivation'((l-1), i, input_values) == False}), 
+							
+											{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
+												BoundedActivation'((l-1), i, input_values) == True}, 
+											<(if 
+												couldNodeMax(l-1, n, 
+												< if (BoundedInActivation'(l-1, i, input_values)) == True then InActive else Active | 
+												i <- <1..layerSize(l-1)>>)
+												then
+													Max
+												else
+													Not)
+												 | 
+												n <- <1..layerSize(l-1)>>)
+		else
+			True
+			
+Last_Hidden_Layer_Results = <if (extract_biases(layerNo,node) == Active)
+						then
+							if(BoundedActivation'(layerNo, node, <active | i <- <1..5>>) == True)
+								then
+									OutputLayerEdge(active)
+								else
+									OutputLayerEdge(uncertain)
+						else 
+							if(BoundedInActivation'(layerNo, node, <active | i <- <1..5>>) == True)
+								then
+									OutputLayerEdge(inactive)
+								else
+									OutputLayerEdge(uncertain)
+						| 
+						node <- <1..layerSize(layerNo)>
+						>
+						
+OutputLayer = let
+	C(0, input_values) = 
+	
+		let
+			network_results = <if (extract_biases(layerNo,node) == Active)
+						then
+							if(BoundedActivation'(layerNo, node, input_values) == True)
+								then
+									OutputLayerEdge(active)
+								else
+									OutputLayerEdge(uncertain)
+						else 
+							if(BoundedInActivation'(layerNo, node, input_values) == True)
+								then
+									OutputLayerEdge(inactive)
+								else
+									OutputLayerEdge(uncertain)
+						| 
+						node <- <1..layerSize(layerNo)>
+						>
+		within
+
+			context_output!(if card({ context_translation_acasxu(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True}) > 0
+						then {context_translation_acasxu(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True}
+							
+					else 
+						decisionsacasxu) -> SKIP ; 
+						
+			(; i : <1..outsize> @ NodePhase.1.i!(if BoundedActivation'(layerNo+1, i, input_values) == True then active else 
+							(if BoundedInActivation'(layerNo+1, i, input_values) == True then inactive else uncertain) ) -> SKIP)
+			
+			
+	C(index, input_values) = 
+		NodePhase.0.index?input_phase -> 
+			C((index-1), <input_phase>^input_values)
+	within 
+		C(insize, <>)
 
 --inputlayer only with N active.	
 InputLayer(n) = 
@@ -408,26 +539,9 @@ if(result == active or result == uncertain)
 	else
 		InActive
 
---Doesn't use the max value, but store it for completeness.
-OutputLayer = let	
-	C(0, network_results) = 
-		(card({ context_translation_acasxu(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True}) == 0) & (
-			context_output!decisionsacasxu -> SKIP
-			)
-		[]
-		(card({ context_translation_acasxu(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True}) > 0) & (
-			context_output!{context_translation_acasxu(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True} -> SKIP
-			)
-	C(index, network_results) = NodePhase.1.index?output -> C((index-1), <OutputLayerEdge(output)>^network_results)
-										
-	within 
-		C(layerSize(layerNo), <>)
-
 --Better if the output interpreter inside the main function, needs to be because of the recursion.
 --It needs to recieve the results, from the INPUT LAYER. We don't have edges, 
-ANN(n) = ( (InputLayer(n) [| {| NodePhase.0 |} |] HiddenLayers)  
-		[| {| NodePhase.1 |} |] 
-	   OutputLayer) 
+ANN(n) = ( (InputLayer(n) [| {| NodePhase.0 |} |] OutputLayer))
 
 assert ANN({0..4}) :[deadlock-free]
 	
