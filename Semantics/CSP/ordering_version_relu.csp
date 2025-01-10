@@ -1,33 +1,29 @@
 --ASSUMPTIONS: Input is NORMALISED, has 1 max, and there is an ORDERING TO THE INPUTS.
+--Assume normalisation is [0,1], it does work for -0.5, 0.5, but simpler for [0,1].
 
-include "acasxu_1_1.csp"
+include "NETWORKS/acasxu_1_1.csp"
+include "INACTIVATION_LOGIC/inactivation_logic.csp"
+
 insize = 5
 outsize = 5
-layerstructure = <50,50>
+layerstructure = <10,10>
 layerNo = #layerstructure 
-
---Why can't it evaluate anymore, being slow? Not because of couldnodemax or evaluation functions, why is it? 
 
 --CHANNELS AND DATA TYPES: 
 
 --Context channel: 
-
 core_real = { -1..1}
 
 --Decisions: 
-
 datatype decisions = Zer | One | Two | Three | Four | Five | Six | Seven | Eight | Nine
 datatype decisionsacasxu = COC | WL | WR | SL | SR
 
 channel context_input:{1..insize}.core_real
 
---We expect a single output of all possible decisions, for every trace. 
 channel context_output:Set(decisionsacasxu)
 
---ZERO IS NEVER TRANSMITTED, IT IS CALCULATED. 
---Zero is still useful, it means we can ignore those values, with Inactive, and if its inactive, its negative.
 datatype InternalPhases = Zero | InActive | Active | Uncertain
---The input, uncertain means active. x	
+
 datatype Phases = active | inactive | uncertain
 datatype IsMax = Max | Not
 
@@ -35,10 +31,7 @@ channel NodePhase:{0, 1}.{1..insize}.Phases
 
 channel end 
 
-
---ASSUME WORST CASE UNCERTAINTY, that, for us, is 
---Active or uncertain DEALT WITH IN THE SAME WAY BY EDGE LOGIC. 
-
+--Assume INPUT IS ALWAYS POSITIVE, so we don't need
 EdgeLogic(input_phase, weight) = 
 		if(input_phase == inactive)
 			then 
@@ -56,396 +49,20 @@ EdgeLogic(input_phase, weight) =
 				else
 					Zero
 
-
---Comparison operators, 
---This is TRUE if w2 > w1, means that w1 appears SECOND in the list. Assume the list is HIGHEST TO LOWEST.
-LayerWiseWeightOrder(layer, input, w1, w2) = IterateList(layerwise_weight_order(layer, input), w1, w2)
-NodeWiseWeightOrder(layer, node, w1, w2) = IterateList(nodewise_weight_order(layer, node), w1, w2)
-
-extractPosWeights(<>, either) = {}
-extractPosWeights(edge_results, either) = 
-	if(either)
-		then 		
-			if(head(edge_results) == Active or head(edge_results) == Uncertain) 
-				then
-					union({#(edge_results)}, extractPosWeights(tail(edge_results), either))
-				else
-					extractPosWeights(tail(edge_results), either)
-		else
-			if(head(edge_results) == Active) 
-				then
-					union({#(edge_results)}, extractPosWeights(tail(edge_results), either))
-				else
-					extractPosWeights(tail(edge_results), either)
-			
-
-extractNegWeights(<>, either) = {}
-extractNegWeights(edge_results, either) = 
-	if(either)
-		then 		
-			if(head(edge_results) == InActive or head(edge_results) == Uncertain) 
-				then
-					union({#(edge_results)}, extractNegWeights(tail(edge_results), either))
-				else
-					extractNegWeights(tail(edge_results), either)
-		else
-			if(head(edge_results) == InActive) 
-				then
-					union({#(edge_results)}, extractNegWeights(tail(edge_results), either))
-				else
-					extractNegWeights(tail(edge_results), either)
-
---This is under ASSUMPTION THAT ALL INPUTS ARE THE SAME, THAT WE HAVE FOR THE INPUT LAYER. 
---true if in2 > in1. We need POS TO BE GREATER. 
---safe_set(1,0)
-isInputLayerActive(_, _, <>, _) = True
-isInputLayerActive(layer, node, negIndicies, posSet) = 
-	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  and 
-			InputOrdering(head(negIndicies), pos_i) }) > 0) 
-		then 
-			isInputLayerActive(layer, node, tail(negIndicies), 
-				diff(posSet, {getLowestNodeIndex(layer, node, { pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  })}))
-		else 
-			False
-
-isHiddenLayerActive(_, _, <>, _, _) = True
-isHiddenLayerActive(layer, node, negIndicies, posSet, maxInd) = 
-	if(card({ pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i) and 
-			extract_sequence(pos_i, maxInd) == Max and 
-			extract_sequence(head(negIndicies), maxInd) == Not
-			}) > 0) 
-		then 
-			isHiddenLayerActive(layer, node, tail(negIndicies), 
-				diff(posSet, {getLowestNodeIndex(layer, node, { pos_i | pos_i <- posSet, NodeWiseWeightOrder(layer, node, head(negIndicies), pos_i)  })}), maxInd)
-		else 
-			False
-
-IterateList(<>, w1, w2) = False
-IterateList(l, w1, w2) = 
-	if (head(l) == w1) 
-		then
-			False
-	else if (head(l) == w2) 
-		then 
-			True 
-	else 
-		IterateList(tail(l), w1, w2)
-
---Get highest index FAILS if its 0, runs forever. weight order sort is INFINITE LOOP.s
-getHighestIndex(layer, input, ISet) = 
-	if(card(ISet) > 0) 
-		then
-			extract_sequence(card(ISet), weightOrderSort(layer, input, seq(ISet)))
-		else
-			0
-			
-getLowestNodeIndex(layer, node, ISet) = 
-	if(card(ISet) > 0) 
-		then
-			head(nodeWiseSort(layer, node, seq(ISet)))
-		else
-			0
-
-nodeWiseSort(layer, node, seqI) = 
-	if(#seqI <= 1) then
-		seqI
-	else
-		
-		nodeWiseMerge(
-			layer, node, 
-			nodeWiseSort(layer, node, <extract_sequence(i, seqI) | i <- <1..(#seqI)/2>>),
-			nodeWiseSort(layer, node, <extract_sequence(i, seqI) | i <- <(#seqI)/2+1..#seqI>>)
-			)
-
-nodeWiseMerge(layer, node, left, right) = nodeWiseMergeF(layer, node, left, right, <>)
-
-nodeWiseMergeF(layer, node, <>, <>, result) = result
-nodeWiseMergeF(layer, node, left, <>, result) = nodeWiseMergeF(layer, node, tail(left), <>, result^<head(left)>)
-nodeWiseMergeF(layer, node, <>, right, result) = nodeWiseMergeF(layer, node, <>, tail(right), result^<head(right)>)
-nodeWiseMergeF(layer, node, left, right, result) = 
-	if(NodeWiseWeightOrder(layer, node, head(left), head(right)) == True)
-		then 
-			nodeWiseMergeF(layer, node, tail(left), right, result^<head(left)>)
-	else
-		nodeWiseMergeF(layer, node, left, tail(right), result^<head(right)>)
-		
-
-
-weightOrderSort(layer, input, seqI) = 
-	if(#seqI <= 1) then
-		seqI
-	else
-		
-		merge(
-			layer, input, 
-			weightOrderSort(layer, input, <extract_sequence(i, seqI) | i <- <1..(#seqI)/2>>),
-			weightOrderSort(layer, input, <extract_sequence(i, seqI) | i <- <(#seqI)/2+1..#seqI>>)
-			)
-
-merge(layer, input, left, right) = mergeF(layer, input, left, right, <>)
-
-mergeF(layer, input, <>, <>, result) = result
-mergeF(layer, input, left, <>, result) = mergeF(layer, input, tail(left), <>, result^<head(left)>)
-mergeF(layer, input, <>, right, result) = mergeF(layer, input, <>, tail(right), result^<head(right)>)
-mergeF(layer, input, left, right, result) = 
-	if(LayerWiseWeightOrder(layer, input, head(left), head(right)) == True)
-		then 
-			mergeF(layer, input, tail(left), right, result^<head(left)>)
-	else
-		mergeF(layer, input, left, tail(right), result^<head(right)>)
-
---Countactive not includes uncertain as well, if there is any uncertain, 
---Returning those that COULD be active or inactive.
-countActive(<>) = 0
-countActive(l) = if(head(l) == Active or head(l) == Uncertain) then (countActive(tail(l))+1) else (countActive(tail(l)))
-
-countInActive(<>) = 0
-countInActive(l) = if(head(l) == InActive or head(l) == Uncertain) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
-
---hard coded for now. INPUTS ARE IN ORDER. INPUT ORDER HELPS, NOT NECESSARY TECHNICALLY.
-INPUT_ORDER = <2,3,4,5,1>
-
---w1 < w2. 
-InputOrdering(w1, w2) = IterateList(INPUT_ORDER, w1, w2)
-
-
---Why do we ever run inactivation on input layer? We shouldn't. 
-InActivation'(0,n,input_values) = 
-	if(extract_sequence(n, input_values) == active)
-		then
-			False
-		else
-			True
---If all HAVE TO BE INACTIVE, 
---Only care about active nodes, in input layer? Yes, we DON'T CARE ABOUT ANY OTHERS. 
---Then, if any are active, THEY ARE THE SAME. 
---Input, if we have multiple. THey are all NOT max, if we have multiple active inputs. 
---couldnodemax, Active
-
---Its inactive if all the POSITIVE WEIGHTS, no uncertainty in input layer, 
---TODO: use let within expressions to make this neater, and more efficient. 
-InActivation'(l,n,input_values) = 
-	let 
-		prev_result_active = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >
-		prev_result_real = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>
-		
-	within
-	
-	if(countActive(prev_result_active) > 0)
-		then
-			if(not member(False, {InActivation'((l-1), i, input_values) | i <- extractPosWeights(prev_result_active, True)})) 
-				then
-					True
-				else
-					if(l==1) 
-						then
-							if(extractPosWeights(prev_result_real, True) < safe_set(l, n) )
-								then
-									True
-								else
-									isInputLayerActive(l, n, 
-										seq({i | i <- extractPosWeights(prev_result_active, True),
-										Activation'((l-1), i, input_values) == True}), 	
-										{i | i <- extractNegWeights(prev_result_active, True),
-										Activation'((l-1), i, input_values) == True})
-						
-						else
-							
-							isHiddenLayerActive(l, n, 
-							
-								seq({i | i <- extractPosWeights(prev_result_active, True), 
-									InActivation'((l-1), i, input_values) == False}), 
-		
-								{i | i <- extractNegWeights(prev_result_active, True), 
-									Activation'((l-1), i, input_values) == True}, 
-							
-								<(if 
-									couldNodeMax(l-1, n, 
-									< if (InActivation'(l-1, i, input_values)) == True then InActive else Active | 
-										i <- <1..layerSize(l-1)>>)
-									then
-										Max
-									else
-										Not)
-										 | 
-									n <- <1..layerSize(l-1)>>) 
-		else
-			True
-	
-		
-Activation'(0,n,input_values) = 
-	if(extract_sequence(n, input_values) == inactive)
-		then
-			False
-		else
-			True
-Activation'(l,n,input_values) = 
-	let 
-		prev_result_active = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >
-		prev_result_real = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>
-		
-	within
-	
-	if(countInActive(prev_result_active) > 0)
-		then
-			if(not member(False, {InActivation'((l-1), i, input_values) | i <- extractNegWeights(prev_result_active, True)})) 
-				then
-					True
-				else
-					if(l==1) 
-						then
-							if(extractNegWeights(prev_result_real, True) < safe_set(l, n) )
-								then
-									True
-								else
-								
-									isInputLayerActive(l, n, 
-										seq({i | i <- extractNegWeights(prev_result_active, True),
-											Activation'((l-1), i, input_values) == True}), 	
-										{i | i <- extractPosWeights(prev_result_active, True),
-											Activation'((l-1), i, input_values) == True})
-						else
-						
-							isHiddenLayerActive(l, n, 
-					
-								seq({i | i <- extractNegWeights(prev_result_active, True), 
-									InActivation'((l-1), i, input_values) == False}), 
-							
-								{i | i <- extractPosWeights(prev_result_active, True), 
-									Activation'((l-1), i, input_values) == True}, 
-							
-								<(if 
-									couldNodeMax(l-1, n, 
-									< if (InActivation'(l-1, i, input_values)) == True then InActive else Active | 
-										i <- <1..layerSize(l-1)>>)
-									then
-										Max
-									else
-										Not)
-										 | 
-									n <- <1..layerSize(l-1)>>)
-		else
-			True
-	
---Version with RELU6, as in, BOUNDED RELU VERSION: 
-
-BoundedInActivation'(0,n,input_values) = 
-	if(extract_sequence(n, input_values) == active)
-		then
-			False
-		else
-			True
---If all HAVE TO BE INACTIVE, 
---Only care about active nodes, in input layer? Yes, we DON'T CARE ABOUT ANY OTHERS. 
---Then, if any are active, THEY ARE THE SAME. 
---Input, if we have multiple. THey are all NOT max, if we have multiple active inputs. 
---couldnodemax, Active
-
---Its inactive if all the POSITIVE WEIGHTS, no uncertainty in input layer, 
---TODO: use let within expressions to make this neater, and more efficient. 
-BoundedInActivation'(l,n,input_values) = 
-	if(countActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >) > 0)
-		then
-			if(not member(False, {BoundedInActivation'((l-1), i, input_values) | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True)})) 
-				then
-					True
-				else
-
-					if(extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, BoundedActivation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
-								then
-									True
-								else
-									if(l==1) 
-										then
-									isInputLayerActive(l, n, 
-									seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-									BoundedActivation'((l-1), i, input_values) == True}), 	
-									{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-									BoundedActivation'((l-1), i, input_values) == True})
-						
-										else
-							
-											isHiddenLayerActive(l, n, 
-					
-												seq({i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
-												BoundedInActivation'((l-1), i, input_values) == False}), 
-		
-												{i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
-												BoundedActivation'((l-1), i, input_values) == True}, 
-							
-												<(if 
-												couldNodeMax(l-1, n, 
-												< if (BoundedInActivation'(l-1, i, input_values)) == True then InActive else Active | 
-												i <- <1..layerSize(l-1)>>)
-												then
-													Max
-												else
-													Not)
-												 | 
-												n <- <1..layerSize(l-1)>>) 
-		else
-			True
-	
-		
-BoundedActivation'(0,n,input_values) = 
-	if(extract_sequence(n, input_values) == inactive)
-		then
-			False
-		else
-			True
-BoundedActivation'(l,n,input_values) = 
-	if(countInActive(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)>>) > 0)
-		then
-			if(not member(False, {BoundedInActivation'((l-1), i, input_values) | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True)})) 
-				then
-					True
-				else
-					if(extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, BoundedActivation'((l-1), i, input_values) == True>, True) < safe_set(l, n) )
-								then
-									True
-								else
-									if(l==1) 
-										then
-								
-											isInputLayerActive(l, n, 
-												seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-												BoundedActivation'((l-1), i, input_values) == True}), 	
-												{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize> >, True),
-												BoundedActivation'((l-1), i, input_values) == True})
-										else
-						
-											isHiddenLayerActive(l, n, 
-												seq({i | i <- extractNegWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
-											BoundedInActivation'((l-1), i, input_values) == False}), 
-							
-											{i | i <- extractPosWeights(<EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >, True), 
-												BoundedActivation'((l-1), i, input_values) == True}, 
-											<(if 
-												couldNodeMax(l-1, n, 
-												< if (BoundedInActivation'(l-1, i, input_values)) == True then InActive else Active | 
-												i <- <1..layerSize(l-1)>>)
-												then
-													Max
-												else
-													Not)
-												 | 
-												n <- <1..layerSize(l-1)>>)
-		else
-			True
-			
+--Sequence of the results of the last hidden layer, for transparency
 Last_Hidden_Layer_Results = <if (extract_biases(layerNo,node) == Active)
 						then
 							if(BoundedActivation'(layerNo, node, <active | i <- <1..5>>) == True)
 								then
-									OutputLayerEdge(active)
+									active
 								else
-									OutputLayerEdge(uncertain)
+									uncertain
 						else 
 							if(BoundedInActivation'(layerNo, node, <active | i <- <1..5>>) == True)
 								then
-									OutputLayerEdge(inactive)
+									inactive
 								else
-									OutputLayerEdge(uncertain)
+									uncertain
 						| 
 						node <- <1..layerSize(layerNo)>
 						>
