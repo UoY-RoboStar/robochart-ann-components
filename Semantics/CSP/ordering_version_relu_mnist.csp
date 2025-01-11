@@ -1,19 +1,14 @@
 --ASSUMPTIONS: Input is NORMALISED, has 1 max, and there is an ORDERING TO THE INPUTS.
 --Assume normalisation is [0,1], it does work for -0.5, 0.5, but simpler for [0,1].
 
-include "NETWORKS/acasxu_1_1.csp"
+include "NETWORKS/mnist_10x10.csp"
 include "INACTIVATION_LOGIC/inactivation_logic.csp"
 
-insize = 5
-outsize = 5
+insize = 784
+outsize = 10
 --Scalability: can do <50,50> in a 3-5 minutes on normal PC.
-layerstructure = <10,10,10>
+layerstructure = <10>
 layerNo = #layerstructure 
-
---Important constant: 
-
---INPUT ORDER HELPS, NOT NECESSARY TECHNICALLY.
-INPUT_ORDER = <2,3,4,5,1>
 
 --CHANNELS AND DATA TYPES: 
 
@@ -26,7 +21,7 @@ datatype decisionsacasxu = COC | WL | WR | SL | SR
 
 channel context_input:{1..insize}.core_real
 
-channel context_output:Set(decisionsacasxu)
+channel context_output:Set(decisions)
 
 datatype InternalPhases = Zero | InActive | Active | Uncertain
 
@@ -72,23 +67,6 @@ Last_Hidden_Layer_Results = <if (extract_biases(layerNo,node) == Active)
 						| 
 						node <- <1..layerSize(layerNo)>
 						>
-
-Output_Layer_Results = <if (extract_biases(layerNo+1,node) == Active)
-						then
-							if(BoundedActivation'(layerNo+1, node, <active | i <- <1..5>>) == True)
-								then
-									active
-								else
-									uncertain
-						else 
-							if(BoundedInActivation'(layerNo+1, node, <active | i <- <1..5>>) == True)
-								then
-									inactive
-								else
-									uncertain
-						| 
-						node <- <1..layerSize(layerNo+1)>
-						>
 						
 OutputLayer = let
 	C(0, input_values) = 
@@ -112,11 +90,11 @@ OutputLayer = let
 						>
 		within
 
-			context_output!(if card({ context_translation_acasxu(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True}) > 0
-						then {context_translation_acasxu(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True}
+			context_output!(if card({ context_translation(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True}) > 0
+						then {context_translation(i) | i <- {1..outsize}, couldNodeMax((layerNo+1), i, network_results) == True}
 							
 					else 
-						decisionsacasxu) -> SKIP ; 
+						decisions) -> SKIP ; 
 						
 			(; i : <1..outsize> @ NodePhase.1.i!(if BoundedActivation'(layerNo+1, i, input_values) == True then active else 
 							(if BoundedInActivation'(layerNo+1, i, input_values) == True then inactive else uncertain) ) -> SKIP)
@@ -183,7 +161,7 @@ if(result == active or result == uncertain)
 --It needs to recieve the results, from the INPUT LAYER. We don't have edges, 
 ANN(n) = ( (InputLayer(n) [| {| NodePhase.0 |} |] OutputLayer))
 
-assert ANN({0..4}) :[deadlock-free]
+assert ANN({0..insize-1}) :[deadlock-free]
 	
 --HELPER FUNCTIONS: 
 -- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --

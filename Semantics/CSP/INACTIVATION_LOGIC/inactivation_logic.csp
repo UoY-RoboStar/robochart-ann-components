@@ -147,8 +147,6 @@ countActive(l) = if(head(l) == Active or head(l) == Uncertain) then (countActive
 countInActive(<>) = 0
 countInActive(l) = if(head(l) == InActive or head(l) == Uncertain) then (countInActive(tail(l))+1) else (countInActive(tail(l)))
 
---hard coded for now. INPUTS ARE IN ORDER. INPUT ORDER HELPS, NOT NECESSARY TECHNICALLY.
-INPUT_ORDER = <2,3,4,5,1>
 
 --w1 < w2. 
 InputOrdering(w1, w2) = IterateList(INPUT_ORDER, w1, w2)
@@ -320,7 +318,7 @@ BoundedInActivation'(l,n,input_values) =
 							
 												<(if 
 												couldNodeMax(l-1, n, 
-												< if (BoundedInActivation'(l-1, i, input_values)) == True then InActive else Active | 
+												< Active | 
 												i <- <1..layerSize(l-1)>>)
 												then
 													Max
@@ -367,7 +365,7 @@ BoundedActivation'(l,n,input_values) =
 												BoundedActivation'((l-1), i, input_values) == True}, 
 											<(if 
 												couldNodeMax(l-1, n, 
-												< if (BoundedInActivation'(l-1, i, input_values)) == True then InActive else Active | 
+												< Active | 
 												i <- <1..layerSize(l-1)>>)
 												then
 													Max

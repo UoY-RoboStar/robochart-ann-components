@@ -1,0 +1,68 @@
+Validation test for a reduced acas xu network. 
+Parameters: 
+insize = 5
+outsize = 5
+--Scalability: can do <50,50> in a 3-5 minutes on normal PC.
+layerstructure = <10,10,10>
+layerNo = #layerstructure 
+
+--Important constant: 
+
+--INPUT ORDER HELPS, NOT NECESSARY TECHNICALLY.
+INPUT_ORDER = <2,3,4,5,1>
+
+Results: 
+
+context_output.{SR}.
+
+SR should be the MAX ALWAYS, under these conditions. 
+
+The output layer is layer 4, will be the FIRST 5 NODES OF LAYER 4. 
+
+5 IS SR, 5 SHOULD BE THE HIGHEST ALWAYS UNDER THESE ASSUMPTIONS. 
+
+
+RESULTS from python: 
+
+We get that it chooses ONE all the time, coc, not 5, something with our interpretation may be wrong, but the THING MIGHT WORK. 
+
+Only for positive values, but it shows it does work, we can adjust to negative, it might change a lot.
+
+This is still REAL RESULTS, just positive, its for half the entire range, it is usable results. 
+
+Any ANN that has this pattern to, any ann, can be retrained, 
+
+Either 2 or 0, if it can be negative, 2, if we let it be negative, add the proper edges, see if we can verify that.
+
+DOESN'T SEEM TO MATTER ABOUT THE ORDER, try removing the order, maybe its just the layer structure. 
+
+Just pos and neg patterns. 
+
+Notes: 
+
+- it is 0, CLEAR OF CONFLICT, not 5, strong right. 
+
+- It seems to work though, other nodes cannot activate. 
+
+- Last hidden layer, entirely uncertain, that's just because we aren't using 50 nodes, we are using the 10 node version, and also, we are using normal relu.
+
+But we still get strong right, we still get the right result, shows our ordering logic is COORRECT. 
+
+thinks all can be positive, but it doesn't matter, it doesn't know, but it can verify the right answer. 
+
+Validation of our output ordering logic, which is A VERY GOOD SIGN. 
+
+Bounded, however, comes up with this for last layer: 
+
+<inactive, active, inactive, active, active, inactive, inactive,
+ inactive, uncertain, inactive>
+ 
+ Validation results, more:
+ 
+ Bounded inactivation and activation CHANGES NOTHING, still sr. 
+ 
+ Find out why its calling the wrong one. 
+ 
+ 
+
+
