@@ -6,9 +6,14 @@ include "INACTIVATION_LOGIC/inactivation_logic.csp"
 
 insize = 784
 outsize = 10
---Scalability: can do <50,50> in a 3-5 minutes on normal PC.
 layerstructure = <10>
 layerNo = #layerstructure 
+
+--Important constant: 
+
+--INPUT ORDER HELPS, NOT NECESSARY TECHNICALLY.
+INPUT_ORDER = <i | i <- <1..insize>>
+
 
 --CHANNELS AND DATA TYPES: 
 

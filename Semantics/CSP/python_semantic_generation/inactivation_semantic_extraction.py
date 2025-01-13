@@ -302,9 +302,9 @@ def relu6_all_node_ordering(weights, biases):
             s += single_node_ordering(l, n, list(weights[l][n]), biases[l][n])
     return s
 
-#Computes the safe set, of weights that ARE LESS THAN THE BIAS. This is an automatically generated set.
-#Indexed by l and n, but ONLY FOR THE INPUT LAYER RIGHT NOW.
-#If the sum is < bias, then ANY COMBINATION MUST BE LESS as well, that is true. 
+
+#Safe set for ONE MAX activation functions.
+#Also, 0 MINIMUM,
 def safe_set_computation(l, n, node_weights, bias):
     s = "safe_set(" + str(l+1) + "," + str(n+1) + ") = \n"
     s += "{"
@@ -770,14 +770,14 @@ def gen_mnist10x10():
     
     #Output layer ordering: 
     print(all_layer_ordering(list(weights), list(biases)))
-    print(all_node_ordering(list(weights), list(biases)))
+    print(relu6_all_node_ordering(list(weights), list(biases)))
     
 if(__name__ == "__main__"):
 	#gen_input_conditions()
 	#gen_layer_conditions(2)
     
-    #gen_mnist10x10()
-    gen_acasxu_1_1()
+    gen_mnist10x10()
+    #gen_acasxu_1_1()
     #print(print_converted_weights(list(weights)))
     #print(print_converted_biases(list(biases)))
     #gen_first_layer_conditions(weights[0], biases[0])

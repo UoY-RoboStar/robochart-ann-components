@@ -169,8 +169,13 @@ InActivation'(0,n,input_values) =
 --TODO: use let within expressions to make this neater, and more efficient. 
 InActivation'(l,n,input_values) = 
 	let 
-		prev_result_active = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >
-		prev_result_real = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>
+		if(l > 1) 
+			then
+				prev_result_active = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..layerSize(l-1)> >
+				prev_result_real = <EdgeLogic(active, extract_weights(l,n,i)) | i <- <1..insize>, Activation'((l-1), i, input_values) == True>
+			else
+				prev_result_active = <EdgeLogic(extract_sequence(i, input_values), extract_weights(l,n,i)) | i <- <1..insize> >
+				prev_result_real = <EdgeLogic(extract_sequence(i, input_values), extract_weights(l,n,i)) | i <- <1..insize>>
 		
 	within
 	
