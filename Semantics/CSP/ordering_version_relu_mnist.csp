@@ -37,24 +37,6 @@ channel NodePhase:{0, 1}.{1..insize}.Phases
 
 channel end 
 
---Assume INPUT IS ALWAYS POSITIVE, so we don't need
-EdgeLogic(input_phase, weight) = 
-		if(input_phase == inactive)
-			then 
-				Zero
-		else if(input_phase == active) 
-			then	
-				if(weight == Active)
-					then 
-						Active
-					else
-						InActive
-		else if(input_phase == uncertain)
-				then
-					Uncertain
-				else
-					Zero
-
 --Sequence of the results of the last hidden layer, for transparency
 Last_Hidden_Layer_Results = <if (extract_biases(layerNo,node) == Active)
 						then

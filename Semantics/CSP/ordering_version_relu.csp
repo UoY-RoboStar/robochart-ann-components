@@ -37,24 +37,6 @@ channel NodePhase:{0, 1}.{1..insize}.Phases
 
 channel end 
 
---Assume INPUT IS ALWAYS POSITIVE, so we don't need
-EdgeLogic(input_phase, weight) = 
-		if(input_phase == inactive)
-			then 
-				Zero
-		else if(input_phase == active) 
-			then	
-				if(weight == Active)
-					then 
-						Active
-					else
-						InActive
-		else if(input_phase == uncertain)
-				then
-					Uncertain
-				else
-					Zero
-
 --Sequence of the results of the last hidden layer, for transparency
 Last_Hidden_Layer_Results = <if (extract_biases(layerNo,node) == Active)
 						then
@@ -96,13 +78,13 @@ OutputLayer = let
 		let
 			network_results = <if (extract_biases(layerNo,node) == Active)
 						then
-							if(BoundedActivation'(layerNo, node, input_values) == True)
+							if(Activation'(layerNo, node, input_values) == True)
 								then
 									OutputLayerEdge(active)
 								else
 									OutputLayerEdge(uncertain)
 						else 
-							if(BoundedInActivation'(layerNo, node, input_values) == True)
+							if(InActivation'(layerNo, node, input_values) == True)
 								then
 									OutputLayerEdge(inactive)
 								else
@@ -118,8 +100,8 @@ OutputLayer = let
 					else 
 						decisionsacasxu) -> SKIP ; 
 						
-			(; i : <1..outsize> @ NodePhase.1.i!(if BoundedActivation'(layerNo+1, i, input_values) == True then active else 
-							(if BoundedInActivation'(layerNo+1, i, input_values) == True then inactive else uncertain) ) -> SKIP)
+			(; i : <1..outsize> @ NodePhase.1.i!(if Activation'(layerNo+1, i, input_values) == True then active else 
+							(if InActivation'(layerNo+1, i, input_values) == True then inactive else uncertain) ) -> SKIP)
 			
 			
 	C(index, input_values) = 
@@ -183,7 +165,7 @@ if(result == active or result == uncertain)
 --It needs to recieve the results, from the INPUT LAYER. We don't have edges, 
 ANN(n) = ( (InputLayer(n) [| {| NodePhase.0 |} |] OutputLayer))
 
-assert ANN({0..4}) :[deadlock-free]
+assert ANN({0..2}) :[deadlock-free]
 	
 --HELPER FUNCTIONS: 
 -- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --

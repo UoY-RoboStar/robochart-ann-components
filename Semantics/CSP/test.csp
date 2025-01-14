@@ -1,0 +1,7 @@
+
+F(x) = 
+	if(True)
+		then
+			let z = 2 within (x == z)
+		else
+			False
