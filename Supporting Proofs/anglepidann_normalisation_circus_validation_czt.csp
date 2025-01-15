@@ -30,11 +30,11 @@ ANNHiddenEvts = diff(Events, {| layerRes.0, layerRes.2, end |})
 -- PROCESSES --
 NodeIn(layer, node, index) = layerRes.(layer - 1).index?x -> nodeOut.layer.node.index.(x * extract_weights(layer, node, index)) -> SKIP
 
-Node(layer, node, inputSize) = (||| i:{1..inputSize} @ NodeIn(layer, node, i)) [| {| nodeOut.layer.node |} |] Collator(layer, node, inputSize) \ {| nodeOut |} 
+Node(layer, node, inputSize) = (||| i:{1..inputSize} @ NodeIn(layer, node, i)) [| {| nodeOut |} |] Collator(layer, node, inputSize) \ {| nodeOut |} 
 
 HiddenLayer(layer, size, inputSize) = [| {| layerRes.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
 
-HiddenLayers = || i : {1..(layerNo-1)} @ [ {| layerRes.(i-1), layerRes.i |} ] HiddenLayer(i, layerSize(i), layerSize(i-1))  
+HiddenLayers = || i : {1..(layerNo-1)} @ [ {| layerRes |} ] HiddenLayer(i, layerSize(i), layerSize(i-1))  
 
 Collator(layer, node, index) = let
 	C(layer, node, 0, sum) = layerRes.layer.node.sign(sum + extract_biases(layer, node)) -> SKIP
@@ -43,7 +43,7 @@ Collator(layer, node, index) = let
 	within 
 		C(layer, node, index, 0)
 
-OutputLayer = [| {| layerRes.(layerNo-1) |} |] i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1))
+OutputLayer = [| {| layerRes |} |] i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1))
 
 --Still have the inner parallel composition, for the thesis proofs. 
 ANN = ((HiddenLayers [| {| layerRes.(layerNo-1) |} |] OutputLayer) \ ANNHiddenEvts) ; ANN 
@@ -59,7 +59,7 @@ channel angleOutputE_out : Value
 Interpreter = (||| i : {1..insize} @ in.i?x -> layerRes.0.i!normIn(i, x) -> SKIP) ;
 	      (||| i : {1..outsize} @ layerRes.layerNo.i?y -> out.i!denormOut(i, y) -> SKIP) ; Interpreter
 	      
-ANNRenamed = ((Interpreter [| {| layerRes.0, layerRes.layerNo |} |] ANN) \ {| layerRes |}) [[in.1 <- anewError_in, in.2 <- adiff_in, out.1 <- angleOutputE_out]] /\ terminate -> SKIP
+ANNRenamed = ((Interpreter [| {| layerRes |} |] ANN) \ {| layerRes |}) [[in.1 <- anewError_in, in.2 <- adiff_in, out.1 <- angleOutputE_out]] /\ terminate -> SKIP
 
 assert ANNRenamed :[deadlock-free[FD]]
 assert ANNRenamed :[deterministic]

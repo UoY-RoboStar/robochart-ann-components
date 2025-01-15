@@ -9,15 +9,11 @@
 \end{zsection}
 
 \begin{circus}
-  \circchannel layerRes01: Value \\
-  \circchannel layerRes02: Value \\
-  \circchannel layerRes11: Value \\
-  \circchannel layerRes21: Value \\
-  \circchannel nodeOut111: Value \\
-  \circchannel nodeOut112: Value \\
-  \circchannel nodeOut211: Value \\
+  \circchannel layerRes: \nat \cross \nat \cross Value \\
+  \circchannel nodeOut: \nat \cross \nat \cross \nat \cross Value \\
+  \circchannel in : \nat \cross Value \\
+  \circchannel out : \nat \cross Value \\
   \circchannel\ terminate \\
-  \circchannel chan : \nat \cross \nat \cross \nat \\
 \end{circus}
 
 \begin{circus}
@@ -27,87 +23,77 @@
 \end{circus}
 
 \begin{circus}
-  \circchannelset ANNHiddenEvts == \lchanset layerRes11 \rchanset
+  \circchannelset ANNHiddenEvts == \lchanset layerRes \rchanset
 \end{circus}
 
-
+NormF because Norm taken by the RoboWorld Z specification
 \begin{axdef}
+  weights : \seq \seq \seq Value; 
+  biases : \seq \seq Value;
+  inRanges : \seq (Value \cross Value); 
+  outRanges : \seq (Value \cross Value);
+  annRange : (Value \cross Value); 
+  normF : (Value \cross (Value \cross Value) \cross (Value \cross Value)) \fun Value ; 
+  normIn : (\nat \cross Value) \fun Value; 
+  denormOut : (\nat \cross Value) \fun Value; 
   relu : Value \fun Value %
   \where %
-  \forall x : Value @ \\%
-  \t1 %
-  (x < 0 \implies (x,0) \in relu) \land \\% 
-  (x \geq 0 \implies (x,x) \in relu)
+  weights = \langle \langle \langle 0 \rangle \rangle, \langle \langle 0 \rangle \rangle \rangle \land 
+  biases = \langle \langle 0 \rangle, \langle 0 \rangle \rangle \land 
+  inRanges = \langle (0,0), (0,0) \rangle \land 
+  annRange = (0,0) \land
+  \forall n : \nat @ \\%
+      \t1 %
+        \forall r, r': Value \cross Value | r.2 > r.1 \land r'.2 > r'.1 @ \\%
+        \t1 %
+          \forall x : Value @ \\%
+          \t1 % 
+             normF(x, r, r') = (((x - r.1)) \realdiv (r.2 - r.1)) * (r'.2 - r'.1) + r'.1 \land \\%
+             normIn(n, x) = normF(x, inRanges(n), annRange) \land \\%
+             denormOut(n, x) = normF(x, annRange, outRanges(n)) \land \\%             
+            (x < 0 \implies (x,0) \in relu) \land \\% 
+            (x \geq 0 \implies (x,x) \in relu)
 \end{axdef}
 
-\begin{axdef}
-  x : \real
-  \where %
-  x = 1 \decimalpoint 25
-\end{axdef}
 
 
-\begin{circus}
-  \circprocess\ Test \circdef \ \circbegin \\%
-    State \circdef 
-    Main \circdef (chan~!1)!1?x \then \Skip \\%
-    \circspot Main
-  \circend
-\end{circus}    
-
-
+      
 \begin{circus}
   \circprocess\ AnglePIDANN \circdef \ \circbegin \\%
-      Collator \circdef l, n, i : \nat; sum : Value \circspot \\
-      \lcircguard l = 1 \land n = 1 \land i = 0 \rcircguard \circguard layerRes11~!(relu(sum + ( 0 \decimalpoint 125424 ))) \then \Skip \\%
+      Collator \circdef l, n, i : \nat; sum : Value \circspot \\%
+      \lcircguard i = 0 \rcircguard \circguard layerRes.l.n~!(relu(sum + ( biases(l)(n)))) \then \Skip \\%
       \extchoice
-      \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut111~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
-      \extchoice
-      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard nodeOut112~?x  \then Collator(l, n, (i-1), (sum+x)) \\%
-      \extchoice
-      \lcircguard l = 2 \land n = 1 \land i = 0 \rcircguard \circguard layerRes21~!(relu(sum + ( \negate 0 \decimalpoint 107753 ))) \then \Skip \\%
-      \extchoice
-      \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard nodeOut211~?x \then Collator(l, n, (i-1), (sum+x)) \\%
+      \lcircguard i > 0 \rcircguard \circguard nodeOut.l.n.i~?x \then Collator(l, n, (i-1), (sum+x)) \\%
       
-      NodeIn \circdef l, n, i : \nat \circspot \\%
-      \lcircguard l = 1 \land n = 1 \land i = 1 \rcircguard \circguard layerRes01~?x \then nodeOut111~!(x * (1 \decimalpoint 22838)) \then \Skip \\%
-      \extchoice \\%
-      \lcircguard l = 1 \land n = 1 \land i = 2 \rcircguard \circguard layerRes02~?x \then nodeOut112~!(x * (0 \decimalpoint 132874)) \then \Skip \\%
-      \extchoice \\%
-      \lcircguard l = 2 \land n = 1 \land i = 1 \rcircguard \circguard layerRes11~?x \then nodeOut211~!(x * (0 \decimalpoint 744636)) \then \Skip \\%
+       NodeIn \circdef l, n, i : \nat \circspot layerRes.(l-1).i~?x \then nodeOut.l.n.i~!(x * (weights(l)(n)(i))) \then \Skip \\%
       
-    
       Node \circdef l, n, inpSize : \nat \circspot \\%
-        \lcircguard l = 1 \land n = 1 \rcircguard \circguard
-        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
-        \lpar | \lchanset nodeOut111, nodeOut112 \rchanset | \rpar \\%
-        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut111, nodeOut112 \rchanset \\   
-        ) \\
-        \extchoice \\
-        \lcircguard l = 2 \land n = 1 \rcircguard \circguard
-        ((\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
-        \lpar | \lchanset nodeOut211 \rchanset | \rpar \\%
-        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut211 \rchanset \\   
-        ) \\%
+        (\Interleave i: 1 \upto inpSize \circspot NodeIn(l, n, i)) \\%
+        \lpar | \lchanset nodeOut \rchanset | \rpar \\%
+        Collator(l, n, inpSize, 0) \circhide \lchanset nodeOut \rchanset \\%
         
       HiddenLayer \circdef l, s, inpSize : \nat \circspot \\%
-      (\lpar \lchanset layerRes01, layerRes02 \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize)) \\%
+      (\lpar \lchanset layerRes \rchanset \rpar i : 1 \upto s \circspot Node(l, i, inpSize)) \\%
         
       HiddenLayers \circdef \\%
       HiddenLayer(1, 1, 2) \\%
       
       OutputLayer \circdef \\%
-      \lpar \lchanset layerRes11 \rchanset \rpar i : 1 \upto 1 \circspot Node(2, i, 1) \\%
+      \lpar \lchanset layerRes \rchanset \rpar i : 1 \upto 1 \circspot Node(2, i, 1) \\%
       
       ANN \circdef \\%
-      ((HiddenLayers \lpar | \lchanset layerRes11 \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
+      ((HiddenLayers \lpar | \lchanset layerRes \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
+     
+      Interpreter \circdef \\%
+      (\Interleave i : 1 \upto #inRanges \circspot (in.i?x \then layerRes.0.i!(normIn(i, x)) \then \Skip)) \circseq \\%
+      (\Interleave i : 1 \upto #outRanges \circspot layerRes.2.i?y \then out.i!(denormOut(i, y)) \then \Skip) \circseq Interpreter \\%
       
       ANNRenamed \circdef \\%
-      (ANN) \lcircrename layerRes01, layerRes02, layerRes21 := anewError\_in, adiff\_in, angleOutputE\_out \rcircrename \circinterrupt terminate \then \Skip \\%
+      ((Interpreter \lpar | \lchanset layerRes \rchanset | \rpar ANN) \circhide \lchanset layerRes \rchanset) \lcircrename in := in \rcircrename \circinterrupt terminate \then \Skip
+     
       
     \circspot ANNRenamed \\%
   \circend
 \end{circus}    
-
 
 \end{document}
