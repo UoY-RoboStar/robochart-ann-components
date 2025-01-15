@@ -1,11 +1,10 @@
 --File that contains the logic for inactivation.
 --Basic verison is FOR RELU, Bounded version takes into account the safe sets.
---
 
-
-
-
---Assume INPUT IS ALWAYS POSITIVE, so we don't need
+--Captures a single edge in an ANN model. 
+--It takes in a value input_phase of type Phases: the result of the previous layer.
+--The result is a value of type InternalPhases that represents 
+--input_phase: Phases
 EdgeLogic(input_phase, weight, first) = 
 	if(first == True) 
 		then
