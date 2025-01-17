@@ -26,6 +26,7 @@
   \circchannelset ANNHiddenEvts == \lchanset layerRes \rchanset
 \end{circus}
 
+
 NormF because Norm taken by the RoboWorld Z specification
 \begin{axdef}
   weights : \seq \seq \seq Value; 
@@ -54,6 +55,20 @@ NormF because Norm taken by the RoboWorld Z specification
             (x < 0 \implies (x,0) \in relu) \land \\% 
             (x \geq 0 \implies (x,x) \in relu)
 \end{axdef}
+
+\begin{axdef}
+  weights2 : \seq \seq \seq Value
+  \where %
+  weights2 = \langle \langle \langle 0 \rangle \rangle, \langle \langle 0 \rangle \rangle \rangle 
+\end{axdef}
+
+\begin{axdef}
+  x : \nat
+  \where %
+  x = 1
+\end{axdef}
+
+
 
 
 

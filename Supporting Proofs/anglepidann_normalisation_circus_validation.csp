@@ -1,4 +1,4 @@
-
+--This is the NORMAL semantics related to the Circus Multi-Channel one, proves that it is EQUIVALENT to the multi-channel one. 
 --ANN Channels--
 channel layerRes:{0..layerNo}.{1..maxSize}.Value
 channel nodeOut:{1..layerNo}.{1..maxSize}.{1..maxSize}.Value
