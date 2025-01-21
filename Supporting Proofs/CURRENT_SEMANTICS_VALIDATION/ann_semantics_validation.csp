@@ -1,0 +1,132 @@
+--This is proving that the CZT semantics, a SEQUENTIAL version, is the same as the parallel version.
+
+--ANN Channels--
+channel layerRes:{0..layerNo}.{1..maxSize}.Value
+channel nodeOut:{1..layerNo}.{1..maxSize}.{1..maxSize}.Value
+channel end
+channel terminate
+
+--New Channels for Normalisaiton
+channel in:{1..insize}.Value
+channel out:{1..outsize}.Value
+		
+--SEMANTIC CONSTANTS--
+Value = {0..1}
+insize = 2
+outsize = 2
+layerstructure = <2,2> 
+layerNo = #layerstructure 
+maxSize = 2
+
+--No longer used, we are setting all weights and biases to 1 for testing.
+weights = < < <1,1> >, < <1> > >
+biases = < <0>, <0> >
+
+ANNHiddenEvts = diff(Events, {| layerRes.0, layerRes.layerNo, end |})
+
+
+
+--To be sure, we will compare each process, because events are hidden as they build up. 
+--DIFFERENCES: Use sign instead of Relu, value is binary type, not the real number type. 
+--The values of the weights are all 1, and biases are 0, in this version. 
+
+-- PROCESSES --
+NodeIn(layer, node, index) = layerRes.(layer - 1).index?x -> nodeOut.layer.node.index.(x * extract_weights(layer, node, index)) -> SKIP
+
+Node(layer, node, inputSize) = (||| i:{1..inputSize} @ NodeIn(layer, node, i)) [| {| nodeOut |} |] Collator(layer, node, inputSize) \ {| nodeOut |} 
+
+HiddenLayer(layer, size, inputSize) = [| {| layerRes.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
+
+HiddenLayers = || i : {1..(layerNo-1)} @ [ {| layerRes |} ] HiddenLayer(i, layerSize(i), layerSize(i-1))  
+
+Collator(layer, node, index) = let
+	C(layer, node, 0, sum) = layerRes.layer.node.sign(sum + extract_biases(layer, node)) -> SKIP
+	C(layer, node, index, sum) = nodeOut.layer.node.index?n -> 
+										C(layer, node, (index-1), (sum+n))
+	within 
+		C(layer, node, index, 0)
+
+OutputLayer = [| {| layerRes.(layerNo-1) |} |] i: {1..outsize} @ Node(layerNo, i, layerSize(layerNo-1))
+
+--Still have the inner parallel composition, for the thesis proofs. 
+ANN = ((HiddenLayers [| {| layerRes.(layerNo-1) |} |] OutputLayer) \ ANNHiddenEvts) ; ANN 
+
+normIn(n, x) = x
+denormOut(n, x) = x
+
+--Channels, no indexed channels, so we can write it in circus
+channel anewError_in : Value
+channel adiff_in : Value
+channel angleOutputE_out : Value
+
+--Represent META-INTERLEAVING, as in Circus semantics cannot capture it fully here, so represent it with distributed interleaving, and renaming to contextual events.
+Interpreter = (||| i : {1..insize} @ in.i?x -> layerRes.0.i!normIn(i, x) -> SKIP) ;
+	      (||| i : {1..outsize} @ layerRes.layerNo.i?y -> out.i!denormOut(i, y) -> SKIP) ; Interpreter
+	
+ANNRenamed = ((Interpreter [| {| layerRes |} |] ANN) \ {| layerRes |}) [[in.1 <- anewError_in, in.2 <- adiff_in, out.1 <- angleOutputE_out]] /\ terminate -> SKIP
+
+--This is the CIRCUS IMPLEMENTED PROCESS. CHECK WITH MORE ARCHITECTURES. 
+assert ANNRenamed :[deadlock-free[FD]]
+assert ANNRenamed :[deterministic]
+assert ANNRenamed :[divergence-free]
+
+
+-- ORIGINAL process, WITH THE correct partial channels in the synchronisations  --
+NodeInO(layer, node, index) = layerRes.(layer - 1).index?x -> nodeOut.layer.node.index.(x * extract_weights(layer, node, index)) -> SKIP
+
+NodeO(layer, node, inputSize) = (||| i:{1..inputSize} @ NodeInO(layer, node, i)) [| {| nodeOut.layer.node |} |] CollatorO(layer, node, inputSize) \ {| nodeOut |} 
+
+HiddenLayerO(layer, size, inputSize) = [| {| layerRes.(layer-1) |} |] i: {1..size} @ NodeO(layer, i, inputSize) 
+
+HiddenLayersO = || i : {1..(layerNo-1)} @ [ {| layerRes.(i-1), layerRes.i |} ] HiddenLayerO(i, layerSize(i), layerSize(i-1))  
+
+CollatorO(layer, node, index) = let
+	C(layer, node, 0, sum) = layerRes.layer.node.sign(sum + extract_biases(layer, node)) -> SKIP
+	C(layer, node, index, sum) = nodeOut.layer.node.index?n -> 
+										C(layer, node, (index-1), (sum+n))
+	within 
+		C(layer, node, index, 0)
+
+OutputLayerO = [| {| layerRes.(layerNo-1) |} |] i: {1..outsize} @ NodeO(layerNo, i, layerSize(layerNo-1))
+
+--Still have the inner parallel composition, for the thesis proofs. 
+ANNO = ((HiddenLayersO [| {| layerRes.(layerNo-1) |} |] OutputLayerO) \ ANNHiddenEvts) ; ANNO 
+
+InterpreterO = (||| i : {1..insize} @ in.i?x -> layerRes.0.i!normIn(i, x) -> SKIP) ;
+	      (||| i : {1..outsize} @ layerRes.layerNo.i?y -> out.i!denormOut(i, y) -> SKIP) ; InterpreterO
+	      
+ANNRenamedO = ((InterpreterO [| {| layerRes.0, layerRes.layerNo |} |] ANNO) \ {| layerRes |}) [[in.1 <- anewError_in, in.2 <- adiff_in, out.1 <- angleOutputE_out]] /\ terminate -> SKIP
+
+assert ANNRenamedO [T= ANNRenamed
+assert ANNRenamed [T= ANNRenamedO
+
+--Abstract AnglPIDANN
+APID_OUT(anewError, adiff) = (anewError == 0 and adiff == 0) & angleOutputE_out.0 -> SKIP
+			     [] 
+			     (anewError > 0 or adiff > 0) & angleOutputE_out.1 -> SKIP
+APID_IN = (anewError_in?anewError -> adiff_in?adiff -> APID_OUT(anewError, adiff)) [] 
+	  (adiff_in?adiff -> anewError_in?anewError -> APID_OUT(anewError, adiff))
+AnglePIDANN_ABS = APID_IN /\ end -> SKIP
+
+	
+--relu activation function.
+sign(x) = if (x > 0) then 1 else 0
+
+
+-- Extraction Functions, because random access not implemented in CSPM, implemented as lists not a type of function --
+
+extract_sequence(1, sequence) = head(sequence)
+extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
+
+layerSize(0) = insize
+layerSize(layer) = extract_sequence(layer, layerstructure)
+
+--Extract single weights value
+extract_weights(layer, node, index) = 1
+--extract_sequence(index, 
+--					(extract_sequence(node, 
+--						(extract_sequence(layer, weights)))))
+
+extract_biases(layer, node) = 1
+-- (extract_sequence(node, 
+--											(extract_sequence(layer, biases))))

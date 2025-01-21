@@ -99,6 +99,9 @@ NormF because Norm taken by the RoboWorld Z specification
       ANN \circdef \\%
       ((HiddenLayers \lpar | \lchanset layerRes \rchanset | \rpar OutputLayer) \circhide ANNHiddenEvts) \circseq ANN \\%
      
+      Test \circdef \\%
+      (HiddenLayers \interleave OutputLayer) \\%
+      
       Interpreter \circdef \\%
       (\Interleave i : 1 \upto #inRanges \circspot (in.i?x \then layerRes.0.i!(normIn(i, x)) \then \Skip)) \circseq \\%
       (\Interleave i : 1 \upto #outRanges \circspot layerRes.2.i?y \then out.i!(denormOut(i, y)) \then \Skip) \circseq Interpreter \\%
