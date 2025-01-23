@@ -1,0 +1,556 @@
+
+
+
+module AnglePID
+exports
+	-- flow channels
+	channel internal__ : TIDS
+	channel enteredV, enterV, exitV, exitedV : SIDS
+	channel enter, entered: SIDS.SIDS
+	channel exit,exited: SIDS.SIDS
+	channel terminate
+	
+	-- variable channels
+	channel get_currAngleOut, set_currAngleOut: core_real
+	channel get_currNewError, set_currNewError: core_real
+	channel get_currDiff, set_currDiff: core_real
+			
+	-- shared variable channels
+	
+	-- local variable channels for defined operations that are required by the state machine
+	
+	-- declaring state machine events
+	channel angleOutputE__: TIDS.InOut.core_real
+	channel angleOutputE: InOut.core_real
+	channel anewError__: TIDS.InOut.core_real
+	channel anewError: InOut.core_real
+	channel adiff__: TIDS.InOut.core_real
+	channel adiff: InOut.core_real
+	
+	-- declaring call and ret events for undefined operations
+	
+	-- Only the undefined operations are declared here.
+	-- If the state machine is in isolation, all required operations will be undefined.
+	-- If it is in the context of a controller, the required operations not provided by the
+	-- controller will be declared here, and the defined operations will be defined in the
+	-- context of the Controller module, and therefore within scope of the state machien module.
+	
+	
+	-- definition of functions used to expose flow channels
+	ShowEvents(P,E) = P[[ entered.x____.y____ <- enteredV.y____ | entered.x____.y____ <- E]]
+					   [[ enter.x____.y____ <- enterV.y____ | enter.x____.y____ <- E]]
+					   [[ exit.x____.y____ <- exitV.y____ | exit.x____.y____ <- E]]
+					   [[ exited.x____.y____ <- exitedV.y____ | exited.x____.y____ <- E ]]
+						 
+	ShowEnteredV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowEnterV(P) = P[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowExitV(P) = P[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowExitedV(P) = P[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS]]
+				[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+				[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS]]
+				[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	
+	-- declaring identifiers of state and final states
+	datatype SIDS = SID_AnglePID
+	              | SID_AnglePID_Read
+	              | SID_AnglePID_UpdateOutput
+	
+	-- declaring identifiers of transitions
+	datatype TIDS = NULLTRANSITION__
+	              | TID_AnglePID_t0
+	              | TID_AnglePID_t1
+	              | TID_AnglePID_t2
+	
+	-- declaring identifiers of transitions that can interupt a state (excludes transitions from junctions)
+	
+	ITIDS = {
+		TID_AnglePID_t1,	TID_AnglePID_t2
+	}
+	
+	int_int = {|
+		angleOutputE__.TID_AnglePID_t1,
+		anewError__.TID_AnglePID_t1,
+		adiff__.TID_AnglePID_t1,
+		internal__.TID_AnglePID_t1,
+		angleOutputE__.TID_AnglePID_t2,
+		anewError__.TID_AnglePID_t2,
+		adiff__.TID_AnglePID_t2,
+		internal__.TID_AnglePID_t2
+	|}
+		
+	
+	internal_events = {|enter,entered,exit,exited|}
+	shared_variable_events = {|
+	|}
+			
+	
+	-- declaring all states
+	CS_AnglePID_Read_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_AnglePID_Read,SID_AnglePID_UpdateOutput},
+		y____ <- {SID_AnglePID_Read}
+	|}
+	
+	
+	AnglePID_Read_triggers = {|
+		internal__.TID_AnglePID_t2,
+		internal__.TID_AnglePID_t1
+	|}
+	
+	State_AnglePID_Read(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = let
+		T_AnglePID_t1(id__,
+				    const_AnglePID_P,
+				    const_AnglePID_D) = internal__!TID_AnglePID_t1 ->  exit.SID_AnglePID_Read.SID_AnglePID_Read -> SKIP;
+							SKIP;exited.SID_AnglePID_Read.SID_AnglePID_Read -> SKIP;
+							enter!SID_AnglePID_Read!SID_AnglePID_UpdateOutput -> entered!SID_AnglePID_Read!SID_AnglePID_UpdateOutput ->
+							State_AnglePID_Read(id__,
+									    const_AnglePID_P,
+									    const_AnglePID_D)
+		State_AnglePID_Read_execute(id__,o____) = true&(anewError.in?currNewError -> set_currNewError!currNewError -> SKIP);true&(adiff.in?currDiff -> set_currDiff!currDiff -> SKIP); 
+			entered!o____!SID_AnglePID_Read ->
+			(SKIP; STOP /\ (
+				T_AnglePID_t1(id__,
+						    const_AnglePID_P,
+						    const_AnglePID_D)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AnglePID_t2,TID_AnglePID_t1}) -> exit?y____:diff(SIDS,{SID_AnglePID_Read})!SID_AnglePID_Read -> (
+						SKIP;
+						exited!y____!SID_AnglePID_Read -> SKIP);
+						State_AnglePID_Read(id__,
+								    const_AnglePID_P,
+								    const_AnglePID_D)
+				[] angleOutputE__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AnglePID_t2,TID_AnglePID_t1})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AnglePID_Read})!SID_AnglePID_Read -> (
+						SKIP;
+						exited!y____!SID_AnglePID_Read -> SKIP);
+						State_AnglePID_Read(id__,
+								    const_AnglePID_P,
+								    const_AnglePID_D)
+				[] anewError__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AnglePID_t2,TID_AnglePID_t1})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AnglePID_Read})!SID_AnglePID_Read -> (
+						SKIP;
+						exited!y____!SID_AnglePID_Read -> SKIP);
+						State_AnglePID_Read(id__,
+								    const_AnglePID_P,
+								    const_AnglePID_D)
+				[] adiff__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AnglePID_t2,TID_AnglePID_t1})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AnglePID_Read})!SID_AnglePID_Read -> (
+						SKIP;
+						exited!y____!SID_AnglePID_Read -> SKIP);
+						State_AnglePID_Read(id__,
+								    const_AnglePID_P,
+								    const_AnglePID_D)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_AnglePID_Read})!SID_AnglePID_Read -> (State_AnglePID_Read_execute(id__,x____))
+	
+	CS_AnglePID_UpdateOutput_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_AnglePID_Read,SID_AnglePID_UpdateOutput},
+		y____ <- {SID_AnglePID_UpdateOutput}
+	|}
+	
+	
+	AnglePID_UpdateOutput_triggers = {|
+		internal__.TID_AnglePID_t2,
+		internal__.TID_AnglePID_t1
+	|}
+	
+	State_AnglePID_UpdateOutput(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = let
+		T_AnglePID_t2(id__,
+				    const_AnglePID_P,
+				    const_AnglePID_D) = internal__!TID_AnglePID_t2 ->  exit.SID_AnglePID_UpdateOutput.SID_AnglePID_UpdateOutput -> SKIP;
+							SKIP;exited.SID_AnglePID_UpdateOutput.SID_AnglePID_UpdateOutput -> SKIP;
+							get_currAngleOut?currAngleOut -> true&(angleOutputE.out!currAngleOut -> SKIP);enter!SID_AnglePID_UpdateOutput!SID_AnglePID_Read -> entered!SID_AnglePID_UpdateOutput!SID_AnglePID_Read ->
+							State_AnglePID_UpdateOutput(id__,
+									    const_AnglePID_P,
+									    const_AnglePID_D)
+		State_AnglePID_UpdateOutput_execute(id__,o____) = get_currNewError?currNewError -> get_currDiff?currDiff -> true & (set_currAngleOut!Plus(Mult(currNewError, const_AnglePID_P, core_real), Mult(currDiff, const_AnglePID_D, core_real), core_real) -> SKIP); 
+			entered!o____!SID_AnglePID_UpdateOutput ->
+			(SKIP; STOP /\ (
+				T_AnglePID_t2(id__,
+						    const_AnglePID_P,
+						    const_AnglePID_D)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AnglePID_t2,TID_AnglePID_t1}) -> exit?y____:diff(SIDS,{SID_AnglePID_UpdateOutput})!SID_AnglePID_UpdateOutput -> (
+						SKIP;
+						exited!y____!SID_AnglePID_UpdateOutput -> SKIP);
+						State_AnglePID_UpdateOutput(id__,
+								    const_AnglePID_P,
+								    const_AnglePID_D)
+				[] angleOutputE__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AnglePID_t2,TID_AnglePID_t1})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AnglePID_UpdateOutput})!SID_AnglePID_UpdateOutput -> (
+						SKIP;
+						exited!y____!SID_AnglePID_UpdateOutput -> SKIP);
+						State_AnglePID_UpdateOutput(id__,
+								    const_AnglePID_P,
+								    const_AnglePID_D)
+				[] anewError__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AnglePID_t2,TID_AnglePID_t1})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AnglePID_UpdateOutput})!SID_AnglePID_UpdateOutput -> (
+						SKIP;
+						exited!y____!SID_AnglePID_UpdateOutput -> SKIP);
+						State_AnglePID_UpdateOutput(id__,
+								    const_AnglePID_P,
+								    const_AnglePID_D)
+				[] adiff__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AnglePID_t2,TID_AnglePID_t1})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AnglePID_UpdateOutput})!SID_AnglePID_UpdateOutput -> (
+						SKIP;
+						exited!y____!SID_AnglePID_UpdateOutput -> SKIP);
+						State_AnglePID_UpdateOutput(id__,
+								    const_AnglePID_P,
+								    const_AnglePID_D)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_AnglePID_UpdateOutput})!SID_AnglePID_UpdateOutput -> (State_AnglePID_UpdateOutput_execute(id__,x____))
+	
+	
+	I_AnglePID_i0(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = let
+		T_AnglePID_t0(id__,
+				    const_AnglePID_P,
+				    const_AnglePID_D) = internal__!TID_AnglePID_t0 -> enter!SID_AnglePID!SID_AnglePID_Read -> entered!SID_AnglePID!SID_AnglePID_Read ->
+		SKIP
+	within
+		T_AnglePID_t0(id__,
+				    const_AnglePID_P,
+				    const_AnglePID_D)
+	
+	
+	State_AnglePID_Read_R(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = 
+		State_AnglePID_Read(id__,
+				    const_AnglePID_P,
+				    const_AnglePID_D)
+			[|diff(int_int,AnglePID_Read_triggers)|]
+		SKIP
+			 		
+	State_AnglePID_UpdateOutput_R(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = 
+		State_AnglePID_UpdateOutput(id__,
+				    const_AnglePID_P,
+				    const_AnglePID_D)
+			[|diff(int_int,AnglePID_UpdateOutput_triggers)|]
+		SKIP
+			 		
+		
+	STM(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = (
+		I_AnglePID_i0(id__,
+				    const_AnglePID_P,
+				    const_AnglePID_D)
+			[|
+				{|enter.x____.y____, entered.x____.y____, exit.x____.y____, exited.x____.y____ |
+					x____ <- diff(SIDS,{SID_AnglePID_Read,SID_AnglePID_UpdateOutput}),
+					y____ <- {SID_AnglePID_Read,SID_AnglePID_UpdateOutput}
+			|}|]
+		(
+			State_AnglePID_Read_R(id__,
+					    const_AnglePID_P,
+					    const_AnglePID_D)
+				[|inter(CS_AnglePID_Read_sync,CS_AnglePID_UpdateOutput_sync)|]
+			State_AnglePID_UpdateOutput_R(id__,
+					    const_AnglePID_P,
+					    const_AnglePID_D)
+		)
+	)
+	
+	-- optimized memory process
+	channel getV_currAngleOut: core_real
+	channel getV_currNewError: core_real
+	channel getV_currDiff: core_real
+	
+	-- individual memory processes
+	Memory_currAngleOut(currAngleOut) = (
+		get_currAngleOut!currAngleOut -> Memory_currAngleOut(currAngleOut)
+		[]
+		getV_currAngleOut!currAngleOut -> Memory_currAngleOut(currAngleOut)
+		[]
+		set_currAngleOut?x__ -> Memory_currAngleOut(x__)
+	)
+	Memory_currNewError(currNewError) = (
+		get_currNewError!currNewError -> Memory_currNewError(currNewError)
+		[]
+		getV_currNewError!currNewError -> Memory_currNewError(currNewError)
+		[]
+		set_currNewError?x__ -> Memory_currNewError(x__)
+	)
+	Memory_currDiff(currDiff) = (
+		get_currDiff!currDiff -> Memory_currDiff(currDiff)
+		[]
+		getV_currDiff!currDiff -> Memory_currDiff(currDiff)
+		[]
+		set_currDiff?x__ -> Memory_currDiff(x__)
+	)
+	
+	-- processes that read variables and offer transitions
+	MemoryTransitions(id__, currAngleOut
+				, currNewError
+				, currDiff
+				,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = 		
+	(internal__!TID_AnglePID_t0 -> SKIP
+	[]
+	internal__!TID_AnglePID_t1 -> SKIP
+	[]
+	internal__!TID_AnglePID_t2 -> SKIP[]
+	set_currAngleOut?x__ -> SKIP[]
+	set_currNewError?x__ -> SKIP[]
+	set_currDiff?x__ -> SKIP)
+	
+	MemoryTransitions_AnglePID(id__, const_AnglePID_P, const_AnglePID_D) = (getV_currAngleOut?currAngleOut ->
+	getV_currNewError?currNewError ->
+	getV_currDiff?currDiff ->
+	MemoryTransitions(id__, currAngleOut
+				, currNewError
+				, currDiff
+				,
+			    const_AnglePID_P,
+			    const_AnglePID_D); MemoryTransitions_AnglePID(id__, const_AnglePID_P, const_AnglePID_D))			
+	
+	-- synchronisation, hiding and process sets 
+	MemoryVariablesProcesses_AnglePID = Union(
+		{
+			{
+				(Memory_currAngleOut(0),{|set_currAngleOut,get_currAngleOut,getV_currAngleOut|}),
+				(Memory_currNewError(0),{|getV_currNewError,set_currNewError,get_currNewError|}),
+				(Memory_currDiff(0),{|set_currDiff,getV_currDiff,get_currDiff|})
+			}
+		}
+	)
+	
+	MemoryVariablesSyncSet = Union({
+		{|
+			set_currAngleOut,
+			getV_currNewError,
+			set_currDiff,
+			set_currNewError,
+			getV_currAngleOut,
+			getV_currDiff
+		|}	
+	})
+	
+	MemoryVariablesHideSet = Union({
+		{|
+			getV_currNewError,
+			getV_currAngleOut,
+			getV_currDiff
+		|}
+	})
+	
+	-- combined individual memory processes
+	MemoryVariables = ||| (P, alpha) : MemoryVariablesProcesses_AnglePID @ P
+	
+	-- complete memory process	
+	MemoryN(id__, const_AnglePID_P, const_AnglePID_D) = sbisim(diamond((sbisim(diamond(MemoryVariables)) [| MemoryVariablesSyncSet |] sbisim(diamond(MemoryTransitions_AnglePID(id__, const_AnglePID_P, const_AnglePID_D)))) \ MemoryVariablesHideSet))
+	
+	-- optimised memory
+	-- Sets of named elements identified according to transition conditions:
+	-- {}
+	-- Summary of all identified named elements:
+	-- {
+	-- currNewError
+	-- currDiff
+	-- currAngleOut
+	-- }
+	
+	-- Allocation plan:
+	-- 0:{}
+	--	=> {
+	--		TID_AnglePID_t0,
+	--		TID_AnglePID_t2,
+	--		TID_AnglePID_t1}
+	
+	-- Memory transition processes
+	MemoryTransitions_opt_0(id__) =
+	(
+		let
+			Update = Current(id__)
+			Current(id__)
+			 	   = 
+			 	   internal__!TID_AnglePID_t0 -> Update
+			 	   []
+			 	   internal__!TID_AnglePID_t2 -> Update
+			 	   []
+			 	   internal__!TID_AnglePID_t1 -> Update
+		within
+			Update
+	)
+	
+	-- Memory cell processes
+	Memory_opt_currNewError(x__) = ( 
+		get_currNewError!x__ -> Memory_opt_currNewError(x__)
+		[]
+		set_currNewError?x__ -> Memory_opt_currNewError(x__)
+	)
+	Memory_opt_currDiff(x__) = ( 
+		get_currDiff!x__ -> Memory_opt_currDiff(x__)
+		[]
+		set_currDiff?x__ -> Memory_opt_currDiff(x__)
+	)
+	Memory_opt_currAngleOut(x__) = ( 
+		get_currAngleOut!x__ -> Memory_opt_currAngleOut(x__)
+		[]
+		set_currAngleOut?x__ -> Memory_opt_currAngleOut(x__)
+	)
+	
+	-- Composition of memory, StateMachine and Memory transition processes
+	
+	MemorySTM_opt(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) =
+		sbisim(	
+		  dbisim(
+		    sbisim(dbisim(sbisim(Memory_opt_currNewError(0)
+		          	[| {|set_currNewError,get_currNewError|} |] 
+		          	dbisim(sbisim(Memory_opt_currDiff(0)
+		          	      	[| {|set_currDiff,get_currDiff|} |] 
+		          	      	dbisim(sbisim(Memory_opt_currAngleOut(0)
+		          	      	      	[| {|set_currAngleOut,get_currAngleOut|} |] 
+		          	      	      	STM_core(id__,
+		          	      	      			    const_AnglePID_P,
+		          	      	      			    const_AnglePID_D)
+		          	      	      	)\ {|set_currAngleOut,get_currAngleOut|}
+		          	      	      )
+		          	      	)\ {|set_currDiff,get_currDiff|}
+		          	      )
+		          	)\ {|set_currNewError,get_currNewError|}
+		          )
+		      	  [| {|internal__.TID_AnglePID_t1,internal__.TID_AnglePID_t0,internal__.TID_AnglePID_t2|} |]
+		      	  MemoryTransitions_opt_0(id__)
+		      	  )\{|internal__.TID_AnglePID_t1,internal__.TID_AnglePID_t0,internal__.TID_AnglePID_t2|})
+		      )
+	
+	-- main process
+	
+	MachineMemorySyncSet = Union({
+		union(
+			union(
+				{|get_currAngleOut,set_currAngleOut,
+				get_currNewError,set_currNewError,
+				get_currDiff,set_currDiff|},
+				{||}
+			)
+				
+			,
+			{|internal__.TID_AnglePID_t0,
+			internal__.TID_AnglePID_t1,
+			internal__.TID_AnglePID_t2|}
+		)
+	})
+	
+	MachineMemoryHidingSet = Union({
+		union(
+			{|get_currAngleOut,set_currAngleOut,
+			get_currNewError,set_currNewError,
+			get_currDiff,set_currDiff|},
+			{||}
+		)
+	})
+	
+	MachineInternalEvents = {|
+		internal__
+	|}
+	
+	AUX(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = (
+		(
+			STM(id__,
+					    const_AnglePID_P,
+					    const_AnglePID_D)
+				[|MachineMemorySyncSet|]
+			sbisim(diamond(MemoryN(id__, const_AnglePID_P, const_AnglePID_D)))
+		)[[
+			angleOutputE__.x____ <- angleOutputE,
+			anewError__.x____ <- anewError,
+			adiff__.x____ <- adiff
+			| x____ <- TIDS
+		]]
+		\MachineMemoryHidingSet
+	)
+	[|{|terminate|}|>SKIP\MachineInternalEvents
+	
+	
+	STM_core(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = 
+		sbisim(diamond(STM(id__,
+				    const_AnglePID_P,
+				    const_AnglePID_D)))
+		
+	AUX_opt(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = 
+		(MemorySTM_opt(id__,
+				    const_AnglePID_P,
+				    const_AnglePID_D)
+		)[[
+			angleOutputE__.x____ <- angleOutputE,
+			anewError__.x____ <- anewError,
+			adiff__.x____ <- adiff
+			| x____ <- TIDS
+		]]
+		[|{|terminate|}|>SKIP\MachineInternalEvents
+
+	-- definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+	transparent diamond
+	transparent sbisim
+	transparent dbisim
+	transparent chase
+			
+	FVS__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = AUX_opt(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D)
+	Dunopt__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = AUX(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) \ internal_events
+	D__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = AUX_opt(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) \ internal_events
+	O__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = sbisim(diamond(D__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D)))
+	VS__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = ShowV(FVS__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D))
+	VS_O__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = sbisim(diamond(VS__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D)))
+	HEXT__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) = O__(id__,
+			    const_AnglePID_P,
+			    const_AnglePID_D) [|shared_variable_events|] SKIP	
+endmodule
+
+

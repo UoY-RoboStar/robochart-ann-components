@@ -1,0 +1,126 @@
+--This is a provably equivalent process to the new (correct) segway controller. 
+--Now we just need to link this to the other controller, using the exact same method as module. 
+
+module SimplifiedSegwayController
+	exports
+	channel leftMotorVelocity: InOut.core_real
+	channel rightMotorVelocity: InOut.core_real
+	channel angle: InOut.core_real
+	channel gyroX: InOut.core_real
+	channel gyroY: InOut.core_real
+	channel gyroZ: InOut.core_real
+
+	channel setLeftMotorSpeedCall: core_real
+	channel setRightMotorSpeedCall: core_real
+	channel enableInterruptsCall
+	channel disableInterruptsCall
+
+	channel adiff:InOut.core_real
+	channel anewError:InOut.core_real
+	channel angleOutputE:InOut.core_real
+	
+	--Constants
+	const_P = 1
+	const_I = 0
+	const_D = 0
+	--Hidden channels used for synchronisation and memory
+	channel angleVal,speed,rotation
+	Type = { angleVal,speed,rotation }
+	channel start:Type
+	channel end:Type
+	
+	--Memory channels
+	--Memory, we need angle, speed, and rotation, which are calculated 
+	--by the processes at the end, and from recieveangle, it stores that value instead. 
+	channel set_angle:core_real
+	channel get_angle:core_real
+	channel set_speed:core_real
+	channel get_speed:core_real
+	channel set_rotation:core_real
+	channel get_rotation:core_real
+	
+
+	init = disableInterruptsCall -> enableInterruptsCall -> SKIP
+	
+	--setleftmotorspeedcall is not in a set somewhere.
+	--We don't need to calculate PID here, this is done by the, gyroX * const_P + angle * D
+	sendAngle = start.angleVal -> angle.in?x -> gyroX.in?y -> anewError.out?z -> adiff.out?z -> set_angle.((x * const_P) + (y * const_D)) -> end.angleVal -> SKIP
+	recieveAngle = angleOutputE.in?x -> SKIP
+	
+	--angleOutputE must happen at some point, every time, but it is not a part of the endangle
+	--event, it can happen at any time, but only after sendAngle, represented by this:
+	angleP = sendAngle;recieveAngle 
+	
+	sendSpeed = start.speed -> leftMotorVelocity.in?x -> rightMotorVelocity.in?y -> set_speed.((x * const_P) + (y * const_I)) -> end.speed -> SKIP
+	
+	speedProcess = sendSpeed
+	
+	sendRotation = start.rotation -> gyroZ.in?x -> set_angle.(x * const_D) -> end.rotation -> SKIP
+	
+	rotationProcess = sendRotation
+	--Does not run end, deadlocks on get_angle, cannot perform get_angle. 
+	End = get_angle?angleX -> get_speed?speedX -> get_rotation?rotationX -> setLeftMotorSpeedCall.(0) -> setRightMotorSpeedCall.(0) -> SKIP
+	
+	Memory_Proc = let 
+	Memory(angle_var, speed_var, rotation_var) = 
+		set_angle?x -> Memory(x, speed_var, rotation_var) []
+		get_angle.angle_var -> Memory(angle_var, speed_var, rotation_var) []
+		set_speed?x -> Memory(angle_var, x, rotation_var) []
+		get_speed.speed_var -> Memory(angle_var, speed_var, rotation_var) []
+		set_rotation?x -> Memory(angle_var, speed_var, x) []
+		get_rotation.rotation_var -> Memory(angle_var, speed_var, rotation_var)
+	within
+		Memory(0, 0, 0)
+	
+	startset = {|start|}
+	endset = {|end|}
+	--Problem is, cannot start again, completes everything, 
+	memory_events = {|set_angle, set_speed, set_rotation, get_angle, get_speed, get_rotation|}
+	actions = {|angle, gyroX, gyroY, gyroZ, anewError, adiff, angleOutputE, leftMotorVelocity, rightMotorVelocity|}
+	Body = angleP ||| speedProcess ||| rotationProcess 
+	
+	--Test is all events used by Body
+	Body_events = union(actions, memory_events)
+	
+	--StartEnd process, starter and ender process. 
+	
+	StartEnd_events = union(startset, endset)
+	--Stops after a start/end, does all, then does not start next cycle properly.
+	init_events = {disableInterruptsCall, enableInterruptsCall}
+	StartEnd = [] x : Type @ ([] y : diff(Type, {x}) @ ([] z : diff(Type, {x, y}) @ 
+		(start.x -> end.x -> start.y -> end.y -> start.z -> end.z -> SKIP)))
+	
+	StartEnd_S = start.angleVal -> end.angleVal -> start.speed -> end.speed -> start.rotation -> end.rotation -> SKIP
+	
+	--Process, this is everything without the memory process. 
+	Process = (init;(Body [union(Body_events, StartEnd_events) || StartEnd_events] StartEnd);End);Process
+	--Not full end events, but end is only used in parallel as process, end is not synchronised itself, but is as an entire process. 
+	--end needs the memory, but left and right are not synchronised, are not from the memory.
+	End_events = {|setLeftMotorSpeedCall, setRightMotorSpeedCall|}
+	Process_events = union(union(union(union(Body_events, StartEnd_events), memory_events), init_events), End_events)
+	
+	Process_WithMemory = (Process [Process_events || memory_events] Memory_Proc);Process_WithMemory
+	
+	Final_Process = Process_WithMemory;Final_Process
+
+	Hidden_Process = Final_Process \ union(memory_events, StartEnd_events)
+	
+	Process_S = (init;(Body [Body_events || StartEnd_events] StartEnd_S);End);Process_S
+	
+	Process_WithMemory_S = (Process_S [union(Body_events, init_events) || memory_events] Memory_Proc);Process_WithMemory_S
+	
+	Final_Process_S = Process_WithMemory_S;Final_Process_S
+
+	Hidden_Process_S = Final_Process_S \ union(memory_events, StartEnd_events)
+	
+	
+	--This is the visible process, used for linking to the ANN, with angleOutputE, adiff, still visible
+	V_P = Hidden_Process
+	
+	--This is the process, which refines the parallel segway (complete), without linking to an ANN, just a simplified controller.
+	H_P = Hidden_Process \ {| angleOutputE, adiff, anewError |} 
+	
+	S_P = Hidden_Process_S 
+	
+	HS_P = Hidden_Process_S \ {| angleOutputE, adiff, anewError |} 
+endmodule

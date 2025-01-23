@@ -1,0 +1,156 @@
+--Passed refinement, is the same as ANNController. 
+--Passed with P = 1. 
+module ANNSimp
+exports
+	--Changed it to 1-based, as everything else is, intentionally.
+	extract_sequence(1, sequence) = head(sequence)
+	extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
+
+	--Has special case if it refers to 0, the input layer, in that case, it refers to insize.
+	extract_layerstructure(0) = insize
+	extract_layerstructure(layer) = extract_sequence(layer, layerstructure)
+	
+	extract_weights(layer, node, index) = extract_sequence(index, 
+											(extract_sequence(node, 
+												(extract_sequence(layer, weights)))))
+
+	extract_biases(layer, node) = (extract_sequence(node, 
+												(extract_sequence(layer, biases))))
+
+	--channel in
+	--channel out
+	--InOut = {in, out}
+	--core_real = { -2..2}
+
+	channel angleOutputE:InOut.core_real
+	channel adiff:InOut.core_real
+	channel anewError:InOut.core_real
+
+	binary_to_core_real(seq, 0, sum) = sum
+	binary_to_core_real(seq, n, sum) = binary_to_core_real(tail(seq), (n-1), sum + (head(seq) * binary(n)) )
+
+	binary_to_cr(seq) = binary_to_core_real(seq, 3, 0) - 3
+
+	corereal_to_binary(1) = <0,0,1>
+	corereal_to_binary(2) = <0,1,0>
+	corereal_to_binary(3) = <0,1,1>
+	corereal_to_binary(4) = <1,0,0>
+	corereal_to_binary(5) = <1,0,1>
+
+	cr_to_binary(val) = corereal_to_binary(val+3)
+
+	binary_rec(1, sum) = sum
+	binary_rec(n, sum) = binary_rec(n-1, sum * 2)
+	binary(n) = binary_rec(n, 1)
+
+
+	insize = 6
+	outsize = 3
+	layerstructure = <3, 3> 
+	layerNo = #layerstructure 
+	maxSize = 6
+
+	weights = < < <1,0,0,0,0,0>, <0,1,0,0,0,0>, <0,0,1,0,0,0> >, < <1,0,0>, <0,1,0>, <0,0,1> > >
+	biases = < <0,0,0>, <0,0,0>>
+
+	Value = {0,1}
+
+	channel layerRes:{0..layerNo}.{1..maxSize}.Value
+	channel nodeOut:{1..layerNo}.{1..maxSize}.{1..maxSize}.Value
+
+	channel end
+	--Full process, with inputprocess, anglepid_nn and outputprocess. 
+	--hide all of layerRes, but NOT END. only thing should be end that is visible from original anglepid_Nn.
+	--Deadlocks on layerRes.2??
+	--Full spec, refined version, trace, does work. 
+
+	--Full trace refines Trace, more refined version, 	
+
+	--InputProcess
+	--Convert raw input into binary input
+	InputProcess = anewError.in?in_ -> adiff.in?in2_ -> InputProcessRaw(in_, in2_)
+
+	InputProcessRaw(in_, in2_) = InputProcessBinary(cr_to_binary(in_), 1); InputProcessBinary(cr_to_binary(in2_), 4); SKIP
+
+	--1 2 3 is first input, x, 4 5 6 is second input, y. 
+	InputProcessBinary(<>, _) = SKIP
+	InputProcessBinary(seq, index) = layerRes.0.index.(head(seq)) -> InputProcessBinary(tail(seq), index+1)
+
+	--OutputProcess, convert back, listen on layerRes.0 for now. 
+	--OutputProcess waiting for .2 there is only 1. 
+	--Need to convert 1, needs to 
+	OutputProcess = layerRes.2.1?in11 -> layerRes.2.2?in12 -> layerRes.2.3?in13 -> OutputProcessConverted(in11, in12, in13)
+
+	OutputProcessConverted(in11, in12, in13) = OutputProcessCR(binary_to_cr(<in11, in12, in13>)); SKIP
+
+	--Need a guard on here. 
+	--Is performing outputprocess.0 
+	--Doesn't matter that its 0,0,0
+	OutputProcessCR(val) = (val >= -2 and val <= 2) & angleOutputE.out.val -> SKIP
+
+
+	--ANN process definitions. 
+	ANNHiddenEvts = diff(Events, {| layerRes.0, layerRes.2, end |})
+
+	AnglePID_NN = ( (HiddenLayers [| {| layerRes.1 |} |] OutputLayer) \ ANNHiddenEvts ) [|{|end|}|>SKIP 
+
+	--Do layer's need to synchronise on anything? Yes, the layerRes inputs and outputs. 
+
+	--weights and biases aren't done that way anymore. 
+	--Layers need to sync on layerRer, input and output, don't need to sync on anything else. 
+	--Should be able to observe interactions on layerRes. 
+
+	--What do layers sync on? layerRes.layer-1 and layerRes.layer, each layer shares them. 
+	--We can just set these for now, eventually automatically generated or something. 
+	--Parallel on layerRes.previous and layerRes.next, each one what does 
+	--layerRes.0 Layer(1) layerRes.1 Layer(2) layerRes.2
+	--With each other, however, they just interact on 1, 
+	--
+	--HiddenLayer(1, 3, 6) [| layerRes.1 |] HiddenLayer(2, 3, 6) 
+	--Might have to define seperate alphabets, in replicated alphabetised parallel, for all. 
+	HiddenLayers = || i : {1..(layerNo-1)} @ [ {| layerRes.(i-1), layerRes.i |} ] HiddenLayer(i, extract_layerstructure(i), extract_layerstructure(i-1))  
+	
+	--Write it as replicated alphabetised parallel. 
+	-- --[| {| layerRes |} |] i: {1..(layerNo-1)} @ HiddenLayer(i, extract_layerstructure(i-1), extract_layerstructure(i))  
+	--This is sharing in CSP, \parallel[C]. 
+	HiddenLayer(layer, size, inputSize) = [| {| layerRes.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
+
+
+	Node(layer, node, inputSize) = (||| i:{1..inputSize} @ NodeIn(layer, node, i)) [| {| nodeOut.layer.node |} |] Collator(layer, node, inputSize) \ {| nodeOut |}
+
+	NodeIn(layer, node, index) = layerRes.(layer - 1).index?x -> nodeOut.layer.node.index.(x * extract_weights(layer, node, index)) -> SKIP
+
+	--Sign is the sign binary activation function.
+	sign(x) = if (x > 0) then 1 else 0
+
+	Collator(layer, node, index) = 
+	let
+		C(layer, node, 0, sum) = layerRes.layer.node.sign(sum + extract_biases(layer, node)) -> SKIP
+		C(layer, node, index, sum) = nodeOut.layer.node.index?n -> C(layer, node, (index-1), (sum+n))
+	within 
+		C(layer, node, index, 0)
+
+	--Temporary constants for outputlayer.
+	const_outsize = 3
+	const_outinputsize = 3
+	const_outlayersize = 3
+	const_outlayerindex = 2
+
+	OutputLayer = [| {| layerRes.(const_outlayerindex-1) |} |] i: {1..const_outsize} @ Node(const_outlayerindex, i, const_outinputsize) \ {| nodeOut |}
+
+	--Output_Node(node) = (|||i:{1..hl_size} @ In_Node_O(node, i)) [AIN_O(node) || AC_O(node)] Collator_O(node, hl_size, 0)
+
+
+	--Synchronise on nodeOut channels. 
+	--Trace examples
+	Trace = anewError.in.2 -> adiff.in.-1 -> angleOutputE.out.2 -> SKIP
+	--Should be just translating anewError, 1, ignoring adiff. 
+	--Only accept value -2?
+	Full = ( (InputProcess [| {| layerRes.0 |} |] AnglePID_NN) [| {| layerRes.2 |} |] OutputProcess ) \ {| layerRes |} 
+	--deadlocks on layerres.2.0, not synced to outputprocess? 
+	--outputprocess running, syncing on output set, not running AngleOutputE 
+	--
+	--This passes, but not when its a module? Try removing the renaming?
+	--assert Full :[deadlock-free]
+	--assert Full [T= Trace
+endmodule

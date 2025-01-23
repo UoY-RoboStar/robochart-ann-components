@@ -1,0 +1,57 @@
+--Needed to run anything RoboChart semantics related.
+include "robochart_defs.csp"
+include "core_defs.csp"
+include "my_inits.csp"
+
+--My files.
+include "SimpleSegway.csp"
+include "ANNController.csp"
+include "ANNController_simplified.csp"
+include "SimplifiedSegwayController.csp"
+include "../SegwayParallel2 (correct version)/defs/Segway.csp"
+channel r__
+transparent diamond
+transparent sbisim
+
+
+Segway_Simple = SimpleSegway::P[[
+							SimpleSegway::angle <- Segway::angle,
+							SimpleSegway::gyroX <- Segway::gyroX,
+							SimpleSegway::gyroY <- Segway::gyroY,
+							SimpleSegway::gyroZ <- Segway::gyroZ,
+							SimpleSegway::leftMotorVelocity <- Segway::leftMotorVelocity,
+							SimpleSegway::rightMotorVelocity <- Segway::rightMotorVelocity,
+							SimpleSegway::disableInterruptsCall <- Segway::disableInterruptsCall,
+							SimpleSegway::setLeftMotorSpeedCall <- Segway::setLeftMotorSpeedCall,
+							SimpleSegway::setRightMotorSpeedCall <- Segway::setRightMotorSpeedCall,
+							SimpleSegway::enableInterruptsCall <- Segway::enableInterruptsCall
+						]]
+
+P_Segway = Segway::O__(0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0,
+			    0)
+
+--All of these work.
+--Test two ANN processes: 
+assert SimpleSegway::ANNSimpP;RUN({r__}) :[deadlock-free]
+
+assert Segway_Simple;RUN({r__}) :[deadlock-free] 
+assert Segway_Simple :[deterministic]
+assert Segway_Simple :[divergence-free]
+
+--Now this works with old version.
+assert Segway_Simple [T= P_Segway
+assert P_Segway [T= Segway_Simple

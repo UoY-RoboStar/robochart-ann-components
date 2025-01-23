@@ -1,0 +1,6 @@
+(23/01/25)
+
+Segway_Simple [T= P_Segway and
+P_Segway [T= Segway_Simple both pass on FDR.
+
+This means Segway_Simple is equivalent to the automatically generated semantics of the Parallel Segway version.
