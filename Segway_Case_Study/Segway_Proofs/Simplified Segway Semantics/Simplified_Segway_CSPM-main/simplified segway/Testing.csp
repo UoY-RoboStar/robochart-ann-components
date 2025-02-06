@@ -1,18 +1,21 @@
 --Needed to run anything RoboChart semantics related.
-include "robochart_defs.csp"
-include "core_defs.csp"
-include "my_inits.csp"
+--Loaded the definitions entirely from the actual semantics (we no longer use our temporary definitions).
+--Now we have the instantiations from the instantiations.csp file, fully. This should fail, because P = 1. 
+--Does fail, SETTING, const_Segway_AnglePID_C_stm_ref0_P = 1 and  const_Segway_SegwayController_stm_ref2_P = 1
+
+include "../Segway-Parallel-Version3-Semantics/defs/robochart_defs.csp"
+include "../Segway-Parallel-Version3-Semantics/defs/core_defs.csp"
+include "../Segway-Parallel-Version3-Semantics/defs/state_defs.csp"
+include "../Segway-Parallel-Version3-Semantics/instantiations.csp"
 
 --My files.
 include "SimpleSegway.csp"
-include "ANNController.csp"
 include "ANNController_simplified.csp"
 include "SimplifiedSegwayController.csp"
-include "../SegwayParallel2 (correct version)/defs/Segway.csp"
+include "../Segway-Parallel-Version3-Semantics/defs/Segway.csp"
 channel r__
 transparent diamond
 transparent sbisim
-
 
 Segway_Simple = SimpleSegway::P[[
 							SimpleSegway::angle <- Segway::angle,
@@ -27,26 +30,30 @@ Segway_Simple = SimpleSegway::P[[
 							SimpleSegway::enableInterruptsCall <- Segway::enableInterruptsCall
 						]]
 
+--id__ is just 0? Not sure why its there, but first parameter just have it as 0. 
 P_Segway = Segway::O__(0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0,
-			    0)
+			     const_Segway_SegwayController_stm_ref0_maxAngle,
+			    const_Segway_SegwayController_stm_ref0_loopTime,
+			    const_Segway_SegwayController_stm_ref0_startupDelay,
+			    const_Segway_SegwayController_stm_ref0_speedUpdate,
+			    const_Segway_SegwayController_stm_ref0_rotationUpdate,
+			    const_Segway_SegwayController_stm_ref0_motorBudget,
+			    const_Segway_SegwayController_stm_ref0_angleBudget,
+			    const_Segway_SegwayController_stm_ref0_speedBudget,
+			    const_Segway_SegwayController_stm_ref0_rotationBudget,
+			    const_Segway_SegwayController_stm_ref2_P,
+			    const_Segway_SegwayController_stm_ref2_I,
+			    const_Segway_SegwayController_stm_ref2_maxIntegral,
+			    const_Segway_SegwayController_stm_ref3_D,
+			    const_Segway_AnglePID_C_stm_ref0_P,
+			    const_Segway_AnglePID_C_stm_ref0_D)
+			    
 
 --All of these work.
 --Test two ANN processes: 
 assert SimpleSegway::ANNSimpP;RUN({r__}) :[deadlock-free]
+assert SimpleSegway::Controller :[deadlock-free]
+assert SimplifiedSegwayController::V_P :[deadlock-free]
 
 assert Segway_Simple;RUN({r__}) :[deadlock-free] 
 assert Segway_Simple :[deterministic]

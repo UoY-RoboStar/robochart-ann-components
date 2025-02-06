@@ -19,27 +19,17 @@ exports
 	channel anewError:InOut.core_real
 	channel angleOutputE:InOut.core_real
 
-	--ANN process
-	--This definitely works.
-	ANNS = ANN::Full
-	[[ANN::TEMPORARY_INPUT.1.y <- ANN::anewError.in.y,
-	  ANN::TEMPORARY_INPUT.2.y <- ANN::adiff.in.y, ANN::final_out.1.z <- ANN::angleOutputE.out.z | y <- core_real, z <- {0,1}]] \ {|ANN::input|};ANNS
-	
 	--ANNSimplified process
-	ANNSimpP = ANNSimp::Full
-	[[ANNSimp::anewError.in.y <- ANN::anewError.in.y,
-	 ANNSimp::adiff.in.y <- ANN::adiff.in.y, ANNSimp::angleOutputE.out.y <- ANN::angleOutputE.out.y | y <- core_real]] ;ANNSimpP
+	ANNSimpP = ANNSimp::Full ; ANNSimpP
 	
 	ANNSemantics = sbisim(diamond(ANNSimpP))
 	
-	
-    --renaming these, no, all are hidden. 
-	
+
 	ANN_P = ANNSemantics[[
-		ANN::adiff.in <- SimplifiedSegwayController::adiff.out,
-		ANN::adiff.out <- SimplifiedSegwayController::adiff.in,
-		ANN::anewError.in <- SimplifiedSegwayController::anewError.out,
-		ANN::anewError.out <- SimplifiedSegwayController::anewError.in]]
+		ANNSimp::adiff.in <- SimplifiedSegwayController::adiff.out,
+		ANNSimp::adiff.out <- SimplifiedSegwayController::adiff.in,
+		ANNSimp::anewError.in <- SimplifiedSegwayController::anewError.out,
+		ANNSimp::anewError.out <- SimplifiedSegwayController::anewError.in]]
 		
 	--Controller
 	--has the same name, can use the same syntax. 
@@ -55,13 +45,11 @@ exports
 		SimplifiedSegwayController::setRightMotorSpeedCall <- setRightMotorSpeedCall,
 		SimplifiedSegwayController::enableInterruptsCall <- enableInterruptsCall,
 		SimplifiedSegwayController::disableInterruptsCall <- disableInterruptsCall,
-		SimplifiedSegwayController::angleOutputE.in <- ANN::angleOutputE.out,
-		SimplifiedSegwayController::angleOutputE.out <- ANN::angleOutputE.in
+		SimplifiedSegwayController::angleOutputE.in <- ANNSimp::angleOutputE.out,
+		SimplifiedSegwayController::angleOutputE.out <- ANNSimp::angleOutputE.in
 	]]
 	
-	syncset = {| ANN::angleOutputE, SimplifiedSegwayController::anewError, SimplifiedSegwayController::adiff |}
+	syncset = {| ANNSimp::angleOutputE, SimplifiedSegwayController::anewError, SimplifiedSegwayController::adiff |}
 	--Composing the two. 
 	P = (ANN_P [| syncset |] Controller) \ syncset
-	--This doesn't work either. But seperately they do??
-	Q = (ANN_P ||| Controller)
 endmodule

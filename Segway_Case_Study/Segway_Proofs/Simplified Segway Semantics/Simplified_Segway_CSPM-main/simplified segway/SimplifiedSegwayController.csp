@@ -23,6 +23,11 @@ module SimplifiedSegwayController
 	const_P = 1
 	const_I = 0
 	const_D = 0
+	--max integral: const_Segway_SegwayController_stm_ref2_maxIntegral
+	const_maxIntegral = 0
+	--const_BalanceSTM_maxAngle, 
+	maxAngle = 0
+	
 	--Hidden channels used for synchronisation and memory
 	channel angleVal,speed,rotation
 	Type = { angleVal,speed,rotation }
@@ -38,46 +43,83 @@ module SimplifiedSegwayController
 	channel get_speed:core_real
 	channel set_rotation:core_real
 	channel get_rotation:core_real
+	channel set_integral:core_real
+	channel get_integral:core_real
+	channel set_currAngle:core_real
+	channel get_currAngle:core_real
 	
 
 	init = disableInterruptsCall -> enableInterruptsCall -> SKIP
 	
 	--setleftmotorspeedcall is not in a set somewhere.
 	--We don't need to calculate PID here, this is done by the, gyroX * const_P + angle * D
-	sendAngle = start.angleVal -> angle.in?x -> gyroX.in?y -> anewError.out?z -> adiff.out?z -> set_angle.((x * const_P) + (y * const_D)) -> end.angleVal -> SKIP
+	--It doesn't even 
+	--Angle is -1, gyroX is -2, 
+	---1 * 1 = -1
+	---2 * -2 = 0
+	--set_angle.-1 should be. 
+	
+	--leftmotorvelocity.2, rightmotorvelocity.-2.
+	--0, the sum of them, 0. 
+	---. set_speed(0)
+	
+	--rotation, gyroZ is -2, but it shouldn't matter, D is 0, set_rotation(0)
+	
+	--setleftmotorspeedcall(-1), seems correct. 
+	sendAngle = start.angleVal -> angle.in?x -> gyroX.in?y -> anewError.out?z -> adiff.out?z -> 
+					set_currAngle.x ->
+					set_angle.Plus((Mult(x, const_P, core_real)), (Mult(y, const_D, core_real)), core_real) -> end.angleVal -> SKIP
 	recieveAngle = angleOutputE.in?x -> SKIP
 	
 	--angleOutputE must happen at some point, every time, but it is not a part of the endangle
 	--event, it can happen at any time, but only after sendAngle, represented by this:
 	angleP = sendAngle;recieveAngle 
-	
-	sendSpeed = start.speed -> leftMotorVelocity.in?x -> rightMotorVelocity.in?y -> set_speed.((x * const_P) + (y * const_I)) -> end.speed -> SKIP
+	sendSpeed = start.speed -> leftMotorVelocity.in?x -> rightMotorVelocity.in?y -> 
+   		   get_integral?prevIntegral -> 
+		   set_integral.(Plus(prevIntegral, Plus(x,y,core_real), core_real)) -> 
+ 		   get_integral?currIntegral -> 
+		   set_integral.(if currIntegral > const_maxIntegral 
+		   			then const_maxIntegral 
+		   		else if (currIntegral < - const_maxIntegral) 
+		   			then (- const_maxIntegral) else currIntegral) ->
+		   set_speed.Plus(Mult(Plus(x, y, core_real), const_P, core_real), (Mult(currIntegral, const_I, core_real)), core_real) ->
+		   end.speed -> SKIP
 	
 	speedProcess = sendSpeed
 	
-	sendRotation = start.rotation -> gyroZ.in?x -> set_angle.(x * const_D) -> end.rotation -> SKIP
+	sendRotation = start.rotation -> gyroZ.in?x -> set_rotation.(x * const_D) -> end.rotation -> SKIP
 	
 	rotationProcess = sendRotation
 	--Does not run end, deadlocks on get_angle, cannot perform get_angle. 
-	End = get_angle?angleX -> get_speed?speedX -> get_rotation?rotationX -> setLeftMotorSpeedCall.(0) -> setRightMotorSpeedCall.(0) -> SKIP
+	--currAngle, currAngle
+	End = get_angle?angleX -> get_speed?speedX -> get_rotation?rotationX -> get_currAngle?currAngle -> setLeftMotorSpeedCall.( if(currAngle < - maxAngle or currAngle > maxAngle) then 0 else
+														(Minus ( (Plus(angleX,speedX,core_real)), rotationX, core_real )) ) -> 
+										setRightMotorSpeedCall.( if(currAngle < - maxAngle or currAngle > maxAngle) then 0 else
+														Plus ( (Plus(angleX,speedX,core_real)), rotationX, core_real )) -> SKIP
 	
 	Memory_Proc = let 
-	Memory(angle_var, speed_var, rotation_var) = 
-		set_angle?x -> Memory(x, speed_var, rotation_var) []
-		get_angle.angle_var -> Memory(angle_var, speed_var, rotation_var) []
-		set_speed?x -> Memory(angle_var, x, rotation_var) []
-		get_speed.speed_var -> Memory(angle_var, speed_var, rotation_var) []
-		set_rotation?x -> Memory(angle_var, speed_var, x) []
-		get_rotation.rotation_var -> Memory(angle_var, speed_var, rotation_var)
+	Memory(angle_var, speed_var, rotation_var, integral_var, currAngle_var) = 
+		set_angle?x -> Memory(x, speed_var, rotation_var, integral_var, currAngle_var) []
+		get_angle.angle_var -> Memory(angle_var, speed_var, rotation_var, integral_var, currAngle_var) []
+		set_speed?x -> Memory(angle_var, x, rotation_var, integral_var, currAngle_var) []
+		get_speed.speed_var -> Memory(angle_var, speed_var, rotation_var, integral_var, currAngle_var) []
+		set_rotation?x -> Memory(angle_var, speed_var, x, integral_var, currAngle_var) []
+		get_rotation.rotation_var -> Memory(angle_var, speed_var, rotation_var, integral_var, currAngle_var) []
+		set_integral?x -> Memory(angle_var, speed_var, rotation_var, x, currAngle_var) [] 
+		get_integral.integral_var -> Memory(angle_var, speed_var, rotation_var, integral_var, currAngle_var) []
+		set_currAngle?x -> Memory(angle_var, speed_var, rotation_var, integral_var, x) []
+		get_currAngle.currAngle_var -> Memory(angle_var, speed_var, rotation_var, integral_var, currAngle_var)
+		
 	within
-		Memory(0, 0, 0)
+		Memory(0, 0, 0, 0, 0)
 	
 	startset = {|start|}
 	endset = {|end|}
 	--Problem is, cannot start again, completes everything, 
-	memory_events = {|set_angle, set_speed, set_rotation, get_angle, get_speed, get_rotation|}
+	memory_events = {|set_angle, set_speed, set_rotation, set_integral, set_currAngle, get_angle, get_speed, get_rotation, get_integral, get_currAngle|}
 	actions = {|angle, gyroX, gyroY, gyroZ, anewError, adiff, angleOutputE, leftMotorVelocity, rightMotorVelocity|}
-	Body = angleP ||| speedProcess ||| rotationProcess 
+	--This currently happens in any order. 
+	Body = angleP ; speedProcess ; rotationProcess 
 	
 	--Test is all events used by Body
 	Body_events = union(actions, memory_events)
@@ -89,11 +131,11 @@ module SimplifiedSegwayController
 	init_events = {disableInterruptsCall, enableInterruptsCall}
 	StartEnd = [] x : Type @ ([] y : diff(Type, {x}) @ ([] z : diff(Type, {x, y}) @ 
 		(start.x -> end.x -> start.y -> end.y -> start.z -> end.z -> SKIP)))
-	
+		
 	StartEnd_S = start.angleVal -> end.angleVal -> start.speed -> end.speed -> start.rotation -> end.rotation -> SKIP
 	
 	--Process, this is everything without the memory process. 
-	Process = (init;(Body [union(Body_events, StartEnd_events) || StartEnd_events] StartEnd);End);Process
+	Process = (init;(Body [union(Body_events, StartEnd_events) || StartEnd_events] StartEnd_S);End);Process
 	--Not full end events, but end is only used in parallel as process, end is not synchronised itself, but is as an entire process. 
 	--end needs the memory, but left and right are not synchronised, are not from the memory.
 	End_events = {|setLeftMotorSpeedCall, setRightMotorSpeedCall|}

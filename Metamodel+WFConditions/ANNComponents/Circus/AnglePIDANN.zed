@@ -42,7 +42,7 @@ NormF because Norm taken by the RoboWorld Z specification
   weights = \langle \langle \langle 0 \rangle \rangle, \langle \langle 0 \rangle \rangle \rangle \land 
   biases = \langle \langle 0 \rangle, \langle 0 \rangle \rangle \land 
   inRanges = \langle (0,0), (0,0) \rangle \land 
-  annRange = (0,0) \land
+  annRange = (0, \negate 1) \land
   \forall n : \nat @ \\%
       \t1 %
         \forall r, r': Value \cross Value | r.2 > r.1 \land r'.2 > r'.1 @ \\%

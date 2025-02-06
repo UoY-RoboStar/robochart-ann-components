@@ -1,0 +1,14 @@
+
+--
+-- RoboChart generator version 3.0.0.202401231330
+-- Automatically generated on 06-02-2025 12:14:59
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "file_SegwayRP.csp"
+
+
+
+

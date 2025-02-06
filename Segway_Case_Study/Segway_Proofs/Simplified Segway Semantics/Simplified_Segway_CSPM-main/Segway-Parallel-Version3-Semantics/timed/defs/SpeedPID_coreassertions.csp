@@ -1,0 +1,41 @@
+
+--
+-- RoboChart generator version 3.0.0.202401231330
+-- Automatically generated on 06-02-2025 12:14:59
+--
+-- Iterated compression status: true
+-- Assertions compression status: false
+--
+
+include "core_timed_defs.csp"
+include "core_defs.csp"
+include "state_timed_defs.csp"
+include "SpeedPID.csp"
+include "file_SpeedPID_defs.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+
+transparent wbisim
+channel r__
+-- generate SpeedPID
+P_SpeedPID = let
+	id__ = 0
+	
+	
+	
+within
+	SpeedPID::O__(
+		id__,
+		const_SpeedPID_P,
+		const_SpeedPID_I,
+		const_SpeedPID_maxIntegral
+	)
+assert P_SpeedPID :[deadlock-free]	
+assert P_SpeedPID;RUN({r__}) :[deadlock-free]
+assert P_SpeedPID :[deterministic]
+assert P_SpeedPID :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_SpeedPID[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_SpeedPID

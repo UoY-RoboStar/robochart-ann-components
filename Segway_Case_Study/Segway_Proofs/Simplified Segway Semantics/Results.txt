@@ -4,3 +4,8 @@ Segway_Simple [T= P_Segway and
 P_Segway [T= Segway_Simple both pass on FDR.
 
 This means Segway_Simple is equivalent to the automatically generated semantics of the Parallel Segway version.
+
+
+(06/02/25)
+
+It passes, simplified segway is equivalent to the semantics of Segway-Parallel-v3. Also, it should work with the proper memory of SpeedPID, and the calculations, it should work with all constants now. 
