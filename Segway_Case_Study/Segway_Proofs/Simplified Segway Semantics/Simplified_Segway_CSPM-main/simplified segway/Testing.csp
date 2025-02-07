@@ -17,22 +17,48 @@ channel r__
 transparent diamond
 transparent sbisim
 
-Segway_Simple = SimpleSegway::P[[
-							SimpleSegway::angle <- Segway::angle,
-							SimpleSegway::gyroX <- Segway::gyroX,
-							SimpleSegway::gyroY <- Segway::gyroY,
-							SimpleSegway::gyroZ <- Segway::gyroZ,
-							SimpleSegway::leftMotorVelocity <- Segway::leftMotorVelocity,
-							SimpleSegway::rightMotorVelocity <- Segway::rightMotorVelocity,
-							SimpleSegway::disableInterruptsCall <- Segway::disableInterruptsCall,
-							SimpleSegway::setLeftMotorSpeedCall <- Segway::setLeftMotorSpeedCall,
-							SimpleSegway::setRightMotorSpeedCall <- Segway::setRightMotorSpeedCall,
-							SimpleSegway::enableInterruptsCall <- Segway::enableInterruptsCall
+Segway_Simple = SimpleSegway::P[[	SimpleSegway::angle <- Segway::angle,
+					SimpleSegway::gyroX <- Segway::gyroX,
+					SimpleSegway::gyroY <- Segway::gyroY,
+					SimpleSegway::gyroZ <- Segway::gyroZ,
+					SimpleSegway::leftMotorVelocity <- Segway::leftMotorVelocity,
+					SimpleSegway::rightMotorVelocity <- Segway::rightMotorVelocity,
+					SimpleSegway::disableInterruptsCall <- Segway::disableInterruptsCall,
+					SimpleSegway::setLeftMotorSpeedCall <- Segway::setLeftMotorSpeedCall,
+					SimpleSegway::setRightMotorSpeedCall <- Segway::setRightMotorSpeedCall,
+					SimpleSegway::enableInterruptsCall <- Segway::enableInterruptsCall
 						]]
 
 --id__ is just 0? Not sure why its there, but first parameter just have it as 0. 
-P_Segway = Segway::O__(0,
-			     const_Segway_SegwayController_stm_ref0_maxAngle,
+TEMP_C = 1
+
+
+-- generate Segway
+P_Segway = let
+	id__ = 0
+	
+	
+	
+	const_Segway_SegwayController_stm_ref2_P = const_SpeedPID_P
+	const_Segway_SegwayController_stm_ref2_I = const_SpeedPID_I
+	const_Segway_SegwayController_stm_ref2_maxIntegral = const_SpeedPID_maxIntegral
+	const_Segway_SegwayController_stm_ref0_maxAngle = const_BalanceSTM_maxAngle
+	const_Segway_SegwayController_stm_ref0_loopTime = const_BalanceSTM_loopTime
+	const_Segway_SegwayController_stm_ref0_startupDelay = const_BalanceSTM_startupDelay
+	const_Segway_SegwayController_stm_ref0_speedUpdate = const_BalanceSTM_speedUpdate
+	const_Segway_SegwayController_stm_ref0_rotationUpdate = const_BalanceSTM_rotationUpdate
+	const_Segway_SegwayController_stm_ref0_motorBudget = const_BalanceSTM_motorBudget
+	const_Segway_SegwayController_stm_ref0_angleBudget = const_BalanceSTM_angleBudget
+	const_Segway_SegwayController_stm_ref0_speedBudget = const_BalanceSTM_speedBudget
+	const_Segway_SegwayController_stm_ref0_rotationBudget = const_BalanceSTM_rotationBudget
+	const_Segway_SegwayController_stm_ref3_D = const_RotationPID_D
+	const_Segway_AnglePID_C_stm_ref0_P = const_AnglePID_P
+	const_Segway_AnglePID_C_stm_ref0_D = const_AnglePID_D
+		
+	
+within
+	Segway::O__(id__,
+			    const_Segway_SegwayController_stm_ref0_maxAngle,
 			    const_Segway_SegwayController_stm_ref0_loopTime,
 			    const_Segway_SegwayController_stm_ref0_startupDelay,
 			    const_Segway_SegwayController_stm_ref0_speedUpdate,

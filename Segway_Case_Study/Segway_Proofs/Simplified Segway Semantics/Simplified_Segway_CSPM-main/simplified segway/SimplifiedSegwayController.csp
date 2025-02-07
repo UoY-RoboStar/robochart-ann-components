@@ -20,13 +20,11 @@ module SimplifiedSegwayController
 	channel angleOutputE:InOut.core_real
 	
 	--Constants
-	const_P = 1
-	const_I = 0
-	const_D = 0
-	--max integral: const_Segway_SegwayController_stm_ref2_maxIntegral
-	const_maxIntegral = 0
-	--const_BalanceSTM_maxAngle, 
-	maxAngle = 0
+	const_P = const_AnglePID_P
+	const_I = const_SpeedPID_I
+	const_D = const_AnglePID_D
+	const_maxIntegral = const_SpeedPID_maxIntegral 
+	maxAngle = const_BalanceSTM_maxAngle
 	
 	--Hidden channels used for synchronisation and memory
 	channel angleVal,speed,rotation
@@ -82,7 +80,8 @@ module SimplifiedSegwayController
 		   			then const_maxIntegral 
 		   		else if (currIntegral < - const_maxIntegral) 
 		   			then (- const_maxIntegral) else currIntegral) ->
-		   set_speed.Plus(Mult(Plus(x, y, core_real), const_P, core_real), (Mult(currIntegral, const_I, core_real)), core_real) ->
+		   get_integral?postIntegral ->
+		   set_speed.Plus(Mult(Plus(x, y, core_real), const_P, core_real), (Mult(postIntegral, const_I, core_real)), core_real) ->
 		   end.speed -> SKIP
 	
 	speedProcess = sendSpeed
