@@ -1,0 +1,15 @@
+--Simplified AnglePID_C controller (to keep structure).
+module AnglePID_C
+exports
+	const_P = const_AnglePID_P
+	const_I = const_SpeedPID_I
+	const_D = const_AnglePID_D
+	
+	
+	channel angleOutputE:InOut.core_real
+	channel adiff:InOut.core_real
+	channel anewError:InOut.core_real
+	
+	P = anewError.in?x -> adiff.in?y -> angleOutputE.out!Plus((Mult(x, const_P, core_real)), (Mult(y, const_D, core_real)), core_real) -> P
+	
+endmodule

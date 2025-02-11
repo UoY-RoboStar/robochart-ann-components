@@ -18,22 +18,20 @@ exports
 	channel adiff:InOut.core_real
 	channel anewError:InOut.core_real
 	channel angleOutputE:InOut.core_real
+	channel terminate
 
-	--ANNSimplified process
-	ANNSimpP = ANNSimp::Full ; ANNSimpP
 	
-	ANNSemantics = sbisim(diamond(ANNSimpP))
+	AnglePID_P = AnglePID_C::P
 	
-
-	ANN_P = ANNSemantics[[
-		ANNSimp::adiff.in <- SimplifiedSegwayController::adiff.out,
-		ANNSimp::adiff.out <- SimplifiedSegwayController::adiff.in,
-		ANNSimp::anewError.in <- SimplifiedSegwayController::anewError.out,
-		ANNSimp::anewError.out <- SimplifiedSegwayController::anewError.in]]
+	AnglePID_R = AnglePID_P[[
+		AnglePID_C::adiff.in <- SimplifiedSegwayController::adiff.out,
+		AnglePID_C::adiff.out <- SimplifiedSegwayController::adiff.in,
+		AnglePID_C::anewError.in <- SimplifiedSegwayController::anewError.out,
+		AnglePID_C::anewError.out <- SimplifiedSegwayController::anewError.in]]
 		
 	--Controller
 	--has the same name, can use the same syntax. 
-	Controller = SimplifiedSegwayController::V_P [[
+	Controller = SimplifiedSegwayController::P [[
 		
 		SimplifiedSegwayController::leftMotorVelocity <- leftMotorVelocity,
 		SimplifiedSegwayController::rightMotorVelocity <- rightMotorVelocity,
@@ -45,11 +43,21 @@ exports
 		SimplifiedSegwayController::setRightMotorSpeedCall <- setRightMotorSpeedCall,
 		SimplifiedSegwayController::enableInterruptsCall <- enableInterruptsCall,
 		SimplifiedSegwayController::disableInterruptsCall <- disableInterruptsCall,
-		SimplifiedSegwayController::angleOutputE.in <- ANNSimp::angleOutputE.out,
-		SimplifiedSegwayController::angleOutputE.out <- ANNSimp::angleOutputE.in
+		SimplifiedSegwayController::angleOutputE.in <- AnglePID_C::angleOutputE.out,
+		SimplifiedSegwayController::angleOutputE.out <- AnglePID_C::angleOutputE.in
 	]]
 	
-	syncset = {| ANNSimp::angleOutputE, SimplifiedSegwayController::anewError, SimplifiedSegwayController::adiff |}
 	--Composing the two. 
-	P = (ANN_P [| syncset |] Controller) \ syncset
+	--The skip is there to capture the structure of module memory, there is none is this case though.
+	P = ( ( SKIP [|{||}|] ( 
+		(AnglePID_R [| {| terminate, AnglePID_C::angleOutputE, SimplifiedSegwayController::anewError, SimplifiedSegwayController::adiff |} |] Controller)  
+			\ diff( {|terminate, SimplifiedSegwayController::anewError, SimplifiedSegwayController::adiff, AnglePID_C::angleOutputE|}, {|terminate|} )
+		[| union( {||}, {||} ) |] SKIP
+		) )
+		\ Union({ {||}, {||}, {||} })
+			[|{|terminate|}|>SKIP
+			)
+				\ {|terminate|}
+				
+	
 endmodule
