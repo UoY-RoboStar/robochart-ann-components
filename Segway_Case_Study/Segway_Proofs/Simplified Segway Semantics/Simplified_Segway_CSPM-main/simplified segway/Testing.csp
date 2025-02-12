@@ -3,6 +3,7 @@
 include "../Segway-Parallel-Version3-Semantics/defs/robochart_defs.csp"
 include "../Segway-Parallel-Version3-Semantics/defs/core_defs.csp"
 include "../Segway-Parallel-Version3-Semantics/defs/state_defs.csp"
+include "../Segway-Parallel-Version3-Semantics/defs/Segway_AnglePID_C.csp"
 include "../Segway-Parallel-Version3-Semantics/instantiations.csp"
 
 --My files.
@@ -122,6 +123,26 @@ SimpleController = SimplifiedSegwayController::P [[
 		SimplifiedSegwayController::anewError <- Segway_SegwayController::anewError,
 		SimplifiedSegwayController::adiff <- Segway_SegwayController::adiff
 	]]
+	
+
+P_Segway_AnglePID_C = let
+	id__ = 0
+	
+	
+	
+	const_Segway_AnglePID_C_stm_ref0_P = const_AnglePID_P
+	const_Segway_AnglePID_C_stm_ref0_D = const_AnglePID_D
+		
+within
+	Segway_AnglePID_C::O__(id__,
+			    const_Segway_AnglePID_C_stm_ref0_P,
+			    const_Segway_AnglePID_C_stm_ref0_D)
+			    
+SimpleAnglePID_C = AnglePID_C::P [[
+		AnglePID_C::angleOutputE <- Segway_AnglePID_C::angleOutputE,
+		AnglePID_C::anewError <- Segway_AnglePID_C::anewError,
+		AnglePID_C::adiff <- Segway_AnglePID_C::adiff
+	]]
 
 assert AnglePID_C::P :[deadlock-free]
 assert SimpleSegway::P :[deadlock-free]
@@ -134,4 +155,6 @@ assert P_Segway [T= Segway_Simple
 assert P_Segway_SegwayController [T= SimpleController
 assert SimpleController [T= P_Segway_SegwayController
 
+assert P_Segway_AnglePID_C [T= SimpleAnglePID_C
+assert SimpleAnglePID_C [T= P_Segway_AnglePID_C
 
