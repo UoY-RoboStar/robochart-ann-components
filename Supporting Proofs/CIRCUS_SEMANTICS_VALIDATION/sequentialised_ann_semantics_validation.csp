@@ -29,9 +29,9 @@ biases = < <0>, <0> >
 --The values of the weights are all 1, and biases are 0, in this version. 
 
 -- PROCESSES --
-NodeIn(layer, node, index) = layerRes.(layer - 1).index?x -> nodeOut.layer.node.index.(x * extract_weights(layer, node, index)) -> SKIP
+Edge(layer, node, index) = layerRes.(layer - 1).index?x -> nodeOut.layer.node.index.(x * extract_weights(layer, node, index)) -> SKIP
 
-Node(layer, node, inputSize) = (; i:<1..inputSize> @ NodeIn(layer, node, i)) [| {| nodeOut.layer.node |} |] Collator(layer, node, inputSize) \ {| nodeOut |} 
+Node(layer, node, inputSize) = (; i:<1..inputSize> @ Edge(layer, node, i)) [| {| nodeOut.layer.node |} |] Collator(layer, node, inputSize) \ {| nodeOut |} 
 
 HiddenLayer(layer, size, inputSize) = [| {| layerRes.(layer-1) |} |] i: {1..size} @ Node(layer, i, inputSize) 
 
@@ -43,7 +43,7 @@ HiddenLayersGeneralTest =  HiddenLayer(1, layerSize(1), layerSize(0)) [| {| laye
 
 Collator(layer, node, index) = let
 	C(layer, node, 0, sum) = layerRes.layer.node.sign(sum + extract_biases(layer, node)) -> SKIP
-	C(layer, node, index, sum) = nodeOut.layer.node.((layerSize(layer-1) - index) + 1)?n -> C(layer, node, (index-1), (sum+n))
+	C(layer, node, index, sum) = nodeOut.layer.node.((layerInput(layer) - index) + 1)?n -> C(layer, node, (index-1), (sum+n))
 	within 
 		C(layer, node, index, 0)
 
@@ -124,8 +124,11 @@ sign(x) = if (x > 0) then 1 else 0
 extract_sequence(1, sequence) = head(sequence)
 extract_sequence(index, sequence) = extract_sequence((index-1), tail(sequence))
 
+layerInput(1) = insize
+layerInput(layer) = extract_sequence((layer-1), layerstructure)
+
 layerSize(0) = insize
-layerSize(layer) = extract_sequence(layer, layerstructure)
+layerSize(layer) = extract_sequence((layer), layerstructure)
 
 --Extract single weights value
 extract_weights(layer, node, index) = 1

@@ -874,4 +874,5 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InputContext" eSuperTypes="#//Context"/>
   <eClassifiers xsi:type="ecore:EClass" name="OutputContext" eSuperTypes="#//Context"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OrderedEvent" eSuperTypes="#//Event"/>
 </ecore:EPackage>
