@@ -874,5 +874,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InputContext" eSuperTypes="#//Context"/>
   <eClassifiers xsi:type="ecore:EClass" name="OutputContext" eSuperTypes="#//Context"/>
-  <eClassifiers xsi:type="ecore:EClass" name="OrderedEvent" eSuperTypes="#//Event"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OrderedEvent" eSuperTypes="#//Event">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="index" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
 </ecore:EPackage>
