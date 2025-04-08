@@ -28,8 +28,6 @@ increment_val_min="0.01"
 #Failed for 0.016
 #Passed for 0.017, this is our minimum.
 epsilon="0.085" #Epsilon
-delta="0.00001" #As small as possible? 1e-6, to correspond with floating point translation format.
-#Set the x0 min and max, 
 x0_min="0"
 x0_max="0"
 x1_min="0"
@@ -40,8 +38,8 @@ x1_max="0"
 
 #set fulfills that property. 
 spec=`echo "(0.92 * $x0_min) + (0.08 * $x1_min)" | bc -l`
-y0_min=`echo "$spec + $epsilon + $delta" | bc -l`
-y0_max=`echo "$spec - $epsilon - $delta" | bc -l`
+y0_min=`echo "$spec + $epsilon" | bc -l`
+y0_max=`echo "$spec - $epsilon" | bc -l`
 #Reset file.
 echo "" > $file_path
 #Update file in loop and overwrite variable
@@ -77,7 +75,7 @@ do
 	   spec_max=`echo "(0.92 * $x0_max) + (0.08 * $x1_max)" | bc -l`
 	   
 	   #Update y0_min: 
-	   y0_min=`echo "$spec_min + $epsilon + $delta" | bc -l`
+	   y0_min=`echo "$spec_min + $epsilon" | bc -l`
 printf "x0 >= %g
 x0 <= %g
 x1 >= %g
@@ -89,7 +87,7 @@ y0 >= %g" $x0_min $x0_max $x1_min $x1_max $y0_min > $property_file
 	   echo "" >> $file_path
 	   
 	   #Update y0_max
-	   y0_max=`echo "$spec_max - $epsilon - $delta" | bc -l`
+	   y0_max=`echo "$spec_max - $epsilon" | bc -l`
 	   #Max property setup: 
 printf "x0 >= %g
 x0 <= %g
